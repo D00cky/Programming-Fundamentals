@@ -2,6 +2,30 @@
 
 ---
 
+## Antes de começar
+
+Certifique-se de que você já:
+
+- [ ] Sabe escrever loops e recursão em C ou outra linguagem (`fase1-c/01-fundamentos`, `fase1-c/02-ponteiros-memoria`)
+- [ ] Entende o que é uma função matemática básica (exponencial, logaritmo)
+- [ ] Implementou ao menos um algoritmo de ordenação (`fase1-c/04-algoritmos-ordenacao`)
+- [ ] Sabe calcular o número de iterações de um loop simples
+
+---
+
+## O que você vai aprender
+
+Ao final deste módulo você será capaz de:
+
+- Classificar algoritmos usando notação Big-O, Big-Omega e Big-Theta
+- Aplicar o Teorema Mestre para resolver recorrências divide-and-conquer
+- Calcular espaço auxiliar de algoritmos além do tempo de execução
+- Identificar se um problema pertence às classes P, NP ou NP-Completo
+- Explicar análise amortizada e aplicar o método do potencial
+- Comparar dois algoritmos e escolher o mais eficiente para um contexto dado
+
+---
+
 ## 1. Notações de Crescimento
 
 **Big-O** (O) — limite superior assintótico (pior caso):
@@ -126,9 +150,60 @@ Custo médio de operação ao longo de uma sequência, mesmo que operações ind
 
 ---
 
-## Referências
+---
 
-- **CLRS** capítulos 3, 4 (complexidade, recorrências), 34 (NP-completeness)
-- **Algorithms** — Dasgupta, Papadimitriou, Vazirani · gratuito online
-- **P vs NP Problem** — Clay Mathematics Institute (claymath.org)
-- **Complexity Zoo** — complexityzoo.uwaterloo.ca
+## Knowledge Check
+
+Responda sem consultar o material. Se travar, releia a seção correspondente.
+
+1. Qual a diferença entre O(n), Ω(n) e Θ(n)? Quando cada notação é mais útil?
+2. Um algoritmo tem dois loops aninhados, o externo roda n vezes e o interno roda log(n) vezes. Qual a complexidade total?
+3. Qual é a complexidade de busca binária? Escreva a recorrência e resolva com o Teorema Mestre.
+4. Por que Merge Sort usa O(n) de espaço auxiliar mas Quick Sort usa O(log n)?
+5. O que significa dizer que um problema está em NP? Todo problema NP é difícil de resolver?
+6. Se P = NP, o que muda no mundo da criptografia?
+7. Explique análise amortizada com o exemplo do vetor dinâmico. Por que O(n) por push é errado mesmo que às vezes aconteça?
+8. Dado T(n) = 3T(n/3) + O(n), qual é a solução pelo Teorema Mestre?
+9. Qual a diferença entre NP-Completo e NP-Hard? Um problema NP-Hard precisa estar em NP?
+10. Por que é ineficiente usar complexidade de pior caso para todos os cenários? Dê um exemplo onde o caso médio importa mais.
+
+---
+
+## Projeto — Benchmark de Algoritmos
+
+Implemente um programa que compare empiricamente a complexidade de diferentes algoritmos:
+
+**Funcionalidades:**
+- Implemente em C: Bubble Sort O(n²), Merge Sort O(n log n) e Binary Search O(log n)
+- Meça o tempo de execução real para tamanhos de entrada: 100, 1000, 10000, 100000 elementos
+- Calcule a razão entre tempos consecutivos e compare com a razão teórica esperada
+- Exiba uma tabela comparativa no terminal
+
+**Requisitos técnicos:**
+- Usar `clock()` ou `gettimeofday()` para medir tempo
+- Compilar com `gcc -Wall -Wextra -Werror -O0` (sem otimização para não distorcer)
+- Testar com arrays em ordem aleatória, crescente e decrescente
+
+**Exemplo de saída:**
+```
+Algoritmo     | n=1000  | n=10000 | n=100000 | Razão(10x)
+Bubble Sort   | 2.1ms   | 215ms   | 21500ms  | ~100x  (esperado n²: 100x)
+Merge Sort    | 0.12ms  | 1.4ms   | 16ms     | ~11.5x (esperado n log n: ~11.7x)
+Binary Search | 0.001ms | 0.001ms | 0.002ms  | ~1.3x  (esperado log n: ~1.3x)
+```
+
+---
+
+## Recursos Adicionais
+
+**Para ler/assistir agora:**
+- **CLRS** capítulos 3, 4 — notações assintóticas e recorrências, com provas rigorosas
+- **Algorithms** — Dasgupta, Papadimitriou, Vazirani · gratuito online · mais acessível que CLRS
+
+**Para consulta:**
+- **Complexity Zoo** — complexityzoo.net · catálogo completo de classes de complexidade
+- **Big-O Cheat Sheet** — bigocheatsheet.com · referência rápida de algoritmos clássicos
+
+**Para ir além:**
+- **CLRS** capítulo 34 (NP-completeness) — provas formais de NP-completude
+- **P vs NP Problem** — Clay Mathematics Institute · descrição formal do problema de 1 milhão de dólares

@@ -2,6 +2,25 @@
 
 > *"Code is read far more often than it is written."*
 
+## Antes de começar
+
+Certifique-se de que você já:
+
+- [ ] Concluiu `fase6-eng-software/01-solid` — refatoração pressupõe entender design
+- [ ] Escreve código em alguma linguagem há pelo menos alguns meses e acumulou dívida técnica
+- [ ] Tem um projeto com código que você mesmo acha difícil de ler após uma semana
+
+---
+
+## O que você vai aprender
+
+Ao final deste módulo você será capaz de:
+
+- Nomear variáveis, funções e classes de forma que o código se documente sozinho
+- Identificar e corrigir code smells clássicos: Long Method, Magic Numbers, Feature Envy
+- Aplicar refactorings do catálogo de Fowler (Extract Method, Introduce Parameter Object, etc.)
+- Decidir quando comentar e quando o comentário é sinal de código mal escrito
+
 ---
 
 ## 1. Nomes Significativos
@@ -162,8 +181,78 @@ if (transacaoPodeSerRealizada(conta, saldo, usuario)) { ... }
 
 ---
 
+## Knowledge Check
+
+Responda sem consultar o material. Se travar, releia a seção correspondente.
+
+1. O que torna um nome "significativo"? Dê um exemplo de nome ruim e sua versão melhorada.
+2. "Uma função deve fazer uma coisa." O que conta como "uma coisa"?
+3. Quando um comentário é sinal de código mal escrito? Dê um exemplo.
+4. O que é Feature Envy? Como você detecta e corrige?
+5. Qual a diferença entre Extract Method e Move Method? Quando usar cada um?
+6. Por que Magic Numbers são problemáticos além da legibilidade?
+7. O que é Command-Query Separation? Por que violar isso causa bugs sutis?
+8. Você tem um método de 80 linhas com 3 níveis de indentação. Quais refactorings aplicar e em que ordem?
+
+---
+
+## Projeto — Refatoração de Código Legado
+
+Dado o seguinte código com múltiplas violações, aplique pelo menos 6 refactorings distintos e documente cada mudança:
+
+```java
+public class Proc {
+    public static double calc(List<int[]> d, int t, boolean f, String m) {
+        double r = 0;
+        for (int i = 0; i < d.size(); i++) {
+            int[] x = d.get(i);
+            if (x[2] == 1 && f == true) {
+                if (t == 1) { r = r + (x[1] * 0.9); }
+                else if (t == 2) { r = r + (x[1] * 0.8); }
+                else { r = r + x[1]; }
+            } else if (x[2] != 1) {
+                r = r + x[1];
+            }
+        }
+        if (m.equals("USD")) { r = r * 5.0; }
+        System.out.println("Result: " + r);
+        return r;
+    }
+}
+```
+
+**Refactorings a identificar e aplicar:**
+- Nomes significativos para variáveis e parâmetros
+- Extrair constantes para magic numbers (0.9, 0.8, 5.0, 1, 2)
+- Simplificar condicionais (`f == true` → `f`)
+- Extract Method para cada responsabilidade
+- Separar cálculo de exibição (Command-Query Separation)
+- Replace Conditional with Polymorphism para os tipos de desconto
+
+**Entrega:** versão original, versão refatorada, e uma tabela listando cada refactoring aplicado com o nome do padrão do catálogo de Fowler.
+
+---
+
 ## Referências
 
 - **Clean Code** — Robert C. Martin · capítulos 1-7, 9, 14
 - **Refactoring: Improving the Design of Existing Code** — Martin Fowler · 2ª ed
 - **Refactoring.Guru** — refactoring.guru/refactoring (catálogo online gratuito)
+
+---
+
+## Recursos Adicionais
+
+Estes recursos são **opcionais** mas vão solidificar seu entendimento:
+
+**Para ler/assistir agora:**
+- **Refactoring.Guru/Refactoring** — catálogo visual gratuito de todos os refactorings de Fowler com exemplos antes/depois em Java
+- **Clean Code** caps. 1-7 — os capítulos mais densos e aplicáveis sobre nomes, funções e comentários
+
+**Para consulta:**
+- **Refactoring** — Martin Fowler 2ª ed · catálogo completo de refactorings com mecânica passo a passo
+- **Checkstyle / SpotBugs documentation** — ferramentas que automatizam detecção de code smells em Java
+
+**Para ir além:**
+- **Working Effectively with Legacy Code** — Michael Feathers · técnicas para refatorar código sem testes
+- **The Pragmatic Programmer** — Hunt & Thomas · perspectiva mais ampla sobre qualidade de código e carreira

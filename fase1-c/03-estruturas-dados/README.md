@@ -6,6 +6,29 @@ Estruturas de dados são a base de todo software eficiente. Em C, você as imple
 
 ---
 
+## Antes de começar
+
+Certifique-se de que você já:
+
+- [ ] Sabe usar `malloc`, `free` e Valgrind (`fase1-c/02-ponteiros-memoria/`)
+- [ ] Entende a sintaxe de `struct` e acesso com `->` e `.`
+- [ ] Usa ponteiros para ponteiros (`**`) para modificar ponteiros em funções
+- [ ] Conhece aritmética de ponteiros e indexação de arrays
+
+---
+
+## O que você vai aprender
+
+Ao final deste módulo você será capaz de:
+
+- Implementar lista ligada simples e duplamente ligada do zero em C
+- Construir pilha (LIFO) e fila (FIFO) usando array ou lista ligada
+- Implementar hash table com resolução de colisões por chaining
+- Analisar a complexidade de cada operação e escolher a estrutura certa para cada problema
+- Explicar o trade-off entre acesso O(1) de arrays e inserção O(1) de listas ligadas
+
+---
+
 ## 1. struct
 
 `struct` agrupa variáveis de tipos diferentes sob um nome:
@@ -235,6 +258,62 @@ Permite remoção O(1) dado o nó, e iteração nos dois sentidos.
 
 ---
 
+## Knowledge Check
+
+Responda sem consultar o material. Se travar, releia a seção correspondente.
+
+1. Qual a principal desvantagem de uma lista ligada em relação a um array? E a principal vantagem?
+2. O que significa LIFO e FIFO? Dê um exemplo real de cada.
+3. O que é "chaining" e por que é necessário em hash tables?
+4. Por que a complexidade média de lookup em hash table é O(1) mas o pior caso é O(n)?
+5. Como você definiria um `struct` que contém um ponteiro para si mesmo? Para que serve isso?
+6. Qual a diferença entre `typedef struct s_node t_node` e apenas `struct s_node`?
+7. Quando usar lista duplamente ligada em vez de simplesmente ligada?
+8. Em que situação uma fila circular com array é mais eficiente que realocação?
+
+---
+
+## Projeto — Agenda de Contatos
+
+Implemente uma agenda de contatos em linha de comando usando lista ligada.
+
+**Funcionalidades:**
+- Adicionar contato (nome, telefone, email)
+- Remover contato por nome
+- Buscar contato por nome ou parte do nome
+- Listar todos os contatos em ordem alfabética
+- Salvar e carregar agenda em arquivo de texto (formato `nome|telefone|email`)
+
+**Requisitos técnicos:**
+- Contatos armazenados em lista ligada alocada no heap
+- Inserção mantém ordem alfabética (lista sempre ordenada)
+- Compilar com `gcc -Wall -Wextra -Werror`
+- Zero memory leaks ao sair do programa
+
+**Exemplo de execução:**
+```
+agenda> add Ana 11999999999 ana@email.com
+Contato adicionado: Ana
+
+agenda> add Bruno 11988888888 bruno@email.com
+Contato adicionado: Bruno
+
+agenda> list
+[1] Ana       | 11999999999 | ana@email.com
+[2] Bruno     | 11988888888 | bruno@email.com
+
+agenda> search ana
+Ana | 11999999999 | ana@email.com
+
+agenda> remove Ana
+Contato removido: Ana
+
+agenda> quit
+Agenda salva. Até logo.
+```
+
+---
+
 ## Exercícios
 
 **→ [`ex01-linked-list/`](ex01-linked-list/main.c)** — lista com push, pop, insert, delete, reverse
@@ -244,9 +323,18 @@ Permite remoção O(1) dado o nó, e iteração nos dois sentidos.
 
 ---
 
-## Referências
+## Recursos Adicionais
 
-- **K&R** capítulo 6 (Structures)
-- **Algorithms** — Sedgewick & Wayne (capítulos 1-3)
-- CS50x semanas 5 e além
-- **Visualgo** — visualgo.net (animações de estruturas de dados)
+Estes recursos são **opcionais** mas vão solidificar seu entendimento:
+
+**Para ler/assistir agora:**
+- **K&R** capítulo 6 (Structures) — leitura recomendada antes de avançar
+- [Visualgo](https://visualgo.net) — animações interativas de todas as estruturas deste módulo
+
+**Para consulta:**
+- **Algorithms** — Sedgewick & Wayne, capítulos 1-3 (implementações em C-like)
+- CS50x semanas 5+ — estruturas de dados com animações visuais
+
+**Para ir além:**
+- **CLRS** capítulos 10-11 (Elementary Data Structures, Hash Tables) — análise formal
+- [Hash Tables: Theory and Practice](https://en.wikipedia.org/wiki/Hash_table) — análise de funções hash e estratégias de colisão

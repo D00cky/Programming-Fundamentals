@@ -1,5 +1,25 @@
 # 02 — Paradigmas Algorítmicos
 
+## Antes de começar
+
+Certifique-se de que você já:
+
+- [ ] Implementou Merge Sort e entende a ideia de Divide & Conquer (`fase1-c/04-algoritmos-ordenacao`)
+- [ ] Sabe usar recursão com caso base e redução do problema (`fase1-c/01-fundamentos`)
+- [ ] Concluiu `fase5-teoria-cs/01-complexidade` — especialmente análise de recorrências e Teorema Mestre
+
+---
+
+## O que você vai aprender
+
+Ao final deste módulo você será capaz de:
+
+- Identificar qual paradigma algorítmico aplicar a um problema dado
+- Implementar Programação Dinâmica com memoização (top-down) e tabulação (bottom-up)
+- Provar corretude de um algoritmo greedy com exchange argument informal
+- Implementar backtracking com pruning eficiente para problemas combinatórios
+- Resolver problemas clássicos: Knapsack 0/1, LCS, Interval Scheduling, N-Rainhas
+
 ---
 
 ## 1. Divide & Conquer
@@ -154,9 +174,79 @@ backtrack(estado):
 
 ---
 
+## Knowledge Check
+
+Responda sem consultar o material. Se travar, releia a seção correspondente.
+
+1. Qual a diferença entre Divide & Conquer e Programação Dinâmica? Quando cada um é mais adequado?
+2. O que são "subproblemas sobrepostos"? Por que isso torna D&C ineficiente em alguns casos?
+3. Explique memoização vs tabulação com Fibonacci como exemplo. Qual consome mais stack?
+4. Por que Coin Change com moedas {1, 3, 4} e valor 6 falha com greedy mas não com DP?
+5. O que é "subestrutura ótima"? Dê um exemplo de problema que tem e um que não tem.
+6. Descreva o exchange argument para provar que Interval Scheduling greedy é ótimo.
+7. No backtracking para N-Rainhas, qual informação você usa para podar ramos inválidos?
+8. Qual a complexidade de tempo e espaço do Knapsack 0/1 com DP tabulação?
+
+---
+
+## Projeto — Três Paradigmas na Prática
+
+Implemente três problemas clássicos, cada um com o paradigma correto:
+
+**Problema 1 — Knapsack 0/1 (DP):**
+- `n` itens com peso e valor; capacidade máxima `W`
+- Retorna valor máximo e lista de itens selecionados
+- Implementar tanto top-down (memoização) quanto bottom-up (tabulação)
+
+**Problema 2 — Interval Scheduling (Greedy):**
+- Lista de tarefas com hora de início e fim
+- Retorna máximo de tarefas não sobrepostas e quais são elas
+- Incluir comentário explicando por que a escolha greedy é correta
+
+**Problema 3 — N-Rainhas (Backtracking):**
+- Encontrar todas as soluções para N rainhas em tabuleiro N×N
+- Implementar com pruning por linha, coluna e diagonal
+- Imprimir número total de soluções e uma delas visualmente
+
+**Requisitos técnicos:**
+- Em C ou C++, compilar sem warnings com `-Wall -Wextra`
+- Cada problema em arquivo separado com `main` de teste
+
+**Exemplo de saída — N-Rainhas n=5:**
+```
+Soluções encontradas: 10
+
+Solução 1:
+. Q . . .
+. . . Q .
+Q . . . .
+. . Q . .
+. . . . Q
+```
+
+---
+
 ## Referências
 
 - **CLRS** capítulos 15 (DP), 16 (Greedy)
 - **Competitive Programmer's Handbook** — capítulos 5-7
 - **Dynamic Programming for Coding Interviews** — Meenakshi & Kamal
 - **LeetCode** — categoria DP e Greedy para praticar
+
+---
+
+## Recursos Adicionais
+
+Estes recursos são **opcionais** mas vão solidificar seu entendimento:
+
+**Para ler/assistir agora:**
+- **Competitive Programmer's Handbook** caps. 5-7 — gratuito online, exemplos práticos de DP e Greedy com implementação em C++
+- **MIT 6.006** (YouTube/OCW) — aulas sobre DP com rigor formal e exemplos clássicos
+
+**Para consulta:**
+- **LeetCode** categorias DP e Greedy — centenas de problemas ordenados por dificuldade para praticar
+- **CLRS capítulos 15-16** — provas formais de corretude de DP e algoritmos greedy
+
+**Para ir além:**
+- **Competitive Programming** — Halim & Halim · capítulo de DP orientado a competição
+- **Steven Skiena: The Algorithm Design Manual** — catálogo de problemas com qual paradigma usar

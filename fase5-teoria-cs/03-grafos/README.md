@@ -1,5 +1,26 @@
 # 03 — Teoria dos Grafos
 
+## Antes de começar
+
+Certifique-se de que você já:
+
+- [ ] Domina structs e ponteiros em C ou C++ (`fase1-c/02-ponteiros-memoria`)
+- [ ] Implementou listas ligadas e sabe usar alocação dinâmica (`fase1-c/03-estruturas-dados`)
+- [ ] Entende recursão e sabe implementar algoritmos com call stack
+- [ ] Concluiu `fase5-teoria-cs/01-complexidade` — notação Big-O e análise de loops
+
+---
+
+## O que você vai aprender
+
+Ao final deste módulo você será capaz de:
+
+- Implementar BFS e DFS e usá-los para detectar ciclos e componentes conexos
+- Implementar Dijkstra para menor caminho em grafos com pesos não-negativos
+- Implementar Kruskal com Union-Find para Árvore Geradora Mínima
+- Realizar ordenação topológica em DAGs usando DFS ou algoritmo de Kahn
+- Escolher a representação correta (lista vs. matriz de adjacência) para cada contexto
+
 ---
 
 ## 1. Fundamentos
@@ -176,9 +197,81 @@ Complexidade: O(V · E²) com Edmonds-Karp
 
 ---
 
+## Knowledge Check
+
+Responda sem consultar o material. Se travar, releia a seção correspondente.
+
+1. Quando usar lista de adjacência vs. matriz de adjacência? O que muda em memória e tempo de acesso?
+2. BFS e DFS têm a mesma complexidade O(V+E). Qual usar para encontrar menor caminho não ponderado?
+3. Por que Dijkstra não funciona com pesos negativos? O que Bellman-Ford faz diferente?
+4. Descreva Kruskal em palavras. Por que Union-Find é necessário?
+5. O que é uma ordenação topológica? Em que tipo de grafo ela existe?
+6. Como detectar se um grafo dirigido tem ciclo usando DFS?
+7. Qual a diferença entre MST e menor caminho? Um MST garante menor caminho entre dois vértices?
+8. O que são Componentes Fortemente Conexos (SCC)? Dê um exemplo de uso prático.
+
+---
+
+## Projeto — Sistema de Mapa de Cidades
+
+Implemente um programa que simula um sistema de rotas entre cidades:
+
+**Funcionalidades:**
+- Carregar grafo de um arquivo de texto (vértices = cidades, arestas = estradas com distância km)
+- Calcular menor caminho entre duas cidades (Dijkstra)
+- Calcular a rede de estradas mínima que conecta todas as cidades (MST com Kruskal)
+- Detectar se todas as cidades são alcançáveis a partir de uma origem (BFS)
+- Exibir o resultado formatado no terminal
+
+**Formato do arquivo de entrada:**
+```
+5 7          # vertices arestas
+São Paulo Campinas 90
+São Paulo Santos 80
+Campinas Ribeirão 180
+...
+```
+
+**Exemplo de saída:**
+```
+=== Menor caminho: São Paulo → Ribeirão ===
+São Paulo → Campinas → Ribeirão (270 km)
+
+=== Rede mínima (MST) ===
+Total: 5 arestas, 490 km
+São Paulo - Santos (80 km)
+São Paulo - Campinas (90 km)
+...
+```
+
+**Requisitos técnicos:**
+- Em C ou C++, compilar sem warnings com `-Wall -Wextra`
+- Usar lista de adjacência para representar o grafo
+- Union-Find com path compression para Kruskal
+
+---
+
 ## Referências
 
 - **CLRS** capítulos 22-26 (grafos, menor caminho, MST, fluxo)
 - **Competitive Programmer's Handbook** — capítulos 11-15
 - **Visualgo** — visualgo.net/en/sssp (animações)
 - **Graph Theory** — Douglas West (mais teórico)
+
+---
+
+## Recursos Adicionais
+
+Estes recursos são **opcionais** mas vão solidificar seu entendimento:
+
+**Para ler/assistir agora:**
+- **Visualgo** (visualgo.net) — animações interativas de BFS, DFS, Dijkstra, Kruskal; ótimo para construir intuição visual
+- **MIT 6.006** aulas de grafos (YouTube/OCW) — cobertura rigorosa com provas de corretude
+
+**Para consulta:**
+- **Competitive Programmer's Handbook** caps. 11-15 — implementações prontas em C++ com análise de complexidade
+- **CLRS capítulos 22-26** — algoritmos de grafos com provas formais
+
+**Para ir além:**
+- **Introduction to Graph Theory** — Douglas West · fundamentos matemáticos rigorosos
+- **Network Flows** — Ahuja, Magnanti, Orlin · cobertura avançada de fluxo máximo e aplicações

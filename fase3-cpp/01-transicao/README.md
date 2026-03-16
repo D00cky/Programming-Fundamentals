@@ -1,5 +1,31 @@
 # 01 — Transição C → C++
 
+> *"C++ is a better C, and then some."*
+
+---
+
+## Antes de começar
+
+Certifique-se de que você já:
+
+- [ ] Escreve C com ponteiros, structs e alocação dinâmica (`fase1-c/`)
+- [ ] Entende o que são memory leaks e sabe detectá-los com Valgrind
+- [ ] Implementou pelo menos uma estrutura de dados do zero em C
+- [ ] Conhece o conceito de escopo de variáveis e funções
+
+---
+
+## O que você vai aprender
+
+Ao final deste módulo você será capaz de:
+
+- Usar referências C++ como alternativa mais segura a ponteiros
+- Organizar código com namespaces para evitar colisões de nomes
+- Usar `std::string` e I/O streams (`cout`, `cin`, `fstream`)
+- Escrever classes com encapsulamento, construtor e destrutor
+- Aplicar RAII para gerenciar recursos sem memory leaks
+- Distinguir `new`/`delete` de `malloc`/`free` e saber quando usar cada um
+
 ---
 
 ## 1. O que muda primeiro
@@ -191,6 +217,54 @@ delete[] arr;                // libera array ([] obrigatório!)
 
 ---
 
+## Knowledge Check
+
+Responda sem consultar o material. Se travar, releia a seção correspondente.
+
+1. Qual a diferença entre uma referência C++ e um ponteiro? Cite três diferenças.
+2. Por que `using namespace std` é desaconselhado em arquivos header?
+3. O que é RAII? Por que ele elimina a necessidade de chamar `free()` manualmente?
+4. O que acontece se você `delete p` (sem colchetes) em um array alocado com `new int[10]`?
+5. Por que `const std::string &s` é preferido a `std::string s` como parâmetro de função?
+6. O que o destrutor `~Buffer()` garante que o C puro não garante?
+7. Qual a diferença entre `std::cin >> s` e `std::getline(std::cin, s)`?
+8. Por que `std::string` é mais seguro que `char *` para manipulação de strings?
+
+---
+
+## Projeto — Calculadora RPN com RAII
+
+Implemente uma calculadora em notação polonesa reversa (RPN) usando C++.
+
+**Funcionalidades:**
+- Lê expressões como `3 4 + 2 * 7 /` do stdin
+- Operadores suportados: `+`, `-`, `*`, `/`, `%`
+- Detecta erros: divisão por zero, operandos insuficientes, token inválido
+- Imprime o resultado ou mensagem de erro
+- Histórico de cálculos com `h`; sair com `q`
+
+**Requisitos técnicos:**
+- Usar classe `Pilha` com RAII (sem memory leaks)
+- Usar `std::string` e `std::istringstream` para parsing
+- Compilar com `g++ -Wall -Wextra -Werror -std=c++17`
+- Zero memory leaks verificado com Valgrind
+
+**Exemplo de execução:**
+```
+rpn> 3 4 + 2 *
+14
+rpn> 10 2 /
+5
+rpn> 5 0 /
+Erro: divisão por zero
+rpn> 1 +
+Erro: operandos insuficientes
+rpn> q
+Até logo.
+```
+
+---
+
 ## Exercícios
 
 **ex01:** classe `Complexo` com soma, subtração, módulo, impressão
@@ -199,8 +273,18 @@ delete[] arr;                // libera array ([] obrigatório!)
 
 ---
 
-## Referências
+## Recursos Adicionais
 
-- **A Tour of C++** — capítulos 1-4
-- **cppreference.com** — std::string, std::cout, classes
-- **C++ Primer** (5ª ed) — capítulos 1-7
+Estes recursos são **opcionais** mas vão solidificar seu entendimento:
+
+**Para ler/assistir agora:**
+- **A Tour of C++** — Bjarne Stroustrup, capítulos 1-4 — introdução concisa pelo criador da linguagem
+- **C++ Primer** (5ª ed) — capítulos 1-7 — mais didático e detalhado
+
+**Para consulta:**
+- [cppreference.com](https://cppreference.com) — std::string, std::cout, classes, tudo
+- [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines) — boas práticas oficiais
+
+**Para ir além:**
+- **Effective C++** — Scott Meyers, itens 1-20 — armadilhas comuns na transição de C para C++
+- [CppCon talks (YouTube)](https://www.youtube.com/user/CppCon) — palestras sobre C++ moderno
