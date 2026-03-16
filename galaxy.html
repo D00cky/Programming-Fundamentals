@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galaxy Roadmap — Programming Fundamentals</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #050810;
+    color: #e0e8ff;
+    font-family: 'Courier New', monospace;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  #starfield {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+  }
+
+  #galaxy-container {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 1;
+  }
+
+  /* SVG node styles */
+  .node circle {
+    cursor: pointer;
+    transition: filter 0.2s, r 0.2s;
+  }
+
+  .node circle.status-done {
+    filter: drop-shadow(0 0 8px currentColor) drop-shadow(0 0 16px currentColor);
+  }
+
+  .node circle.status-active {
+    filter: drop-shadow(0 0 6px currentColor);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .node circle.status-todo {
+    opacity: 0.35;
+  }
+
+  .node circle.status-start {
+    filter: drop-shadow(0 0 12px #fff) drop-shadow(0 0 24px #aac);
+  }
+
+  @keyframes pulse {
+    0%, 100% { filter: drop-shadow(0 0 4px currentColor); opacity: 0.6; }
+    50% { filter: drop-shadow(0 0 12px currentColor) drop-shadow(0 0 20px currentColor); opacity: 1; }
+  }
+
+  .node:hover circle {
+    filter: drop-shadow(0 0 14px currentColor) drop-shadow(0 0 28px currentColor) !important;
+    opacity: 1 !important;
+    animation: none !important;
+  }
+
+  .node-label {
+    font-size: 9px;
+    fill: #b0bcd8;
+    text-anchor: middle;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    font-family: 'Courier New', monospace;
+  }
+
+  .node:hover .node-label { opacity: 1; }
+
+  .ring-label {
+    font-size: 10px;
+    fill: #4a5568;
+    text-anchor: middle;
+    pointer-events: none;
+    letter-spacing: 2px;
+    font-family: 'Courier New', monospace;
+  }
+
+  /* Tooltip */
+  #tooltip {
+    position: fixed;
+    background: rgba(10, 15, 30, 0.95);
+    border: 1px solid #2a3a5c;
+    border-radius: 8px;
+    padding: 10px 14px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    max-width: 240px;
+    z-index: 100;
+    box-shadow: 0 0 20px rgba(100, 140, 255, 0.2);
+  }
+
+  #tooltip.visible { opacity: 1; }
+
+  #tooltip .tt-label {
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+
+  #tooltip .tt-phase {
+    font-size: 10px;
+    opacity: 0.6;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+  }
+
+  #tooltip .tt-desc {
+    font-size: 11px;
+    opacity: 0.85;
+    line-height: 1.5;
+  }
+
+  #tooltip .tt-status {
+    font-size: 10px;
+    margin-top: 6px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+
+  .status-pill-done { background: rgba(79, 195, 71, 0.2); color: #4fc347; }
+  .status-pill-active { background: rgba(79, 147, 247, 0.2); color: #4f93f7; }
+  .status-pill-todo { background: rgba(80, 80, 100, 0.2); color: #666; }
+
+  /* Legend */
+  #legend {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 10;
+    background: rgba(5, 8, 16, 0.8);
+    border: 1px solid #1a2a40;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 11px;
+  }
+
+  #legend h3 {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #4a5578;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    color: #8090b0;
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* Title */
+  #title {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  #title h1 {
+    font-size: 18px;
+    letter-spacing: 4px;
+    color: #c0ccff;
+    text-shadow: 0 0 20px rgba(150, 170, 255, 0.5);
+    text-transform: uppercase;
+  }
+
+  #title p {
+    font-size: 10px;
+    color: #3a4a6a;
+    letter-spacing: 3px;
+    margin-top: 4px;
+  }
+
+  /* Pan/zoom hint */
+  #hint {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 10;
+    font-size: 10px;
+    color: #2a3a5a;
+    letter-spacing: 1px;
+    text-align: right;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="starfield"></canvas>
+
+<div id="galaxy-container">
+  <svg id="galaxy-svg" width="100%" height="100%"></svg>
+</div>
+
+<div id="tooltip">
+  <div class="tt-label"></div>
+  <div class="tt-phase"></div>
+  <div class="tt-desc"></div>
+  <div class="tt-status"></div>
+</div>
+
+<div id="title">
+  <h1>Galaxy Roadmap</h1>
+  <p>C → C++ → Java · Programming Fundamentals</p>
+</div>
+
+<div id="legend">
+  <h3>Fases</h3>
+  <div class="legend-item"><div class="legend-dot" style="background:#7c83fd"></div> Fase 0 — Fundação</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#4fc3f7"></div> Fase 1 — C</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#4db6ac"></div> Fase 2 — Sistemas</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ffd54f"></div> Fase 3 — C++</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ff8a65"></div> Fase 4 — Java</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ce93d8"></div> Fase 5 — Teoria CS</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#a5d6a7"></div> Fase 6 — Eng. Software</div>
+  <div style="margin-top:10px; border-top:1px solid #1a2a40; padding-top:10px;">
+    <div class="legend-item"><div class="legend-dot" style="background:#4fc347; box-shadow:0 0 6px #4fc347"></div> Concluído</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#4f93f7; box-shadow:0 0 6px #4f93f7"></div> Em andamento</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#333; border:1px solid #444"></div> Bloqueado</div>
+  </div>
+</div>
+
+<div id="hint">scroll: zoom · drag: pan · hover: info</div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────────
+
+const PHASE_COLORS = {
+  '-1': '#ffffff',   // START
+   '0': '#7c83fd',   // Fundação
+   '1': '#4fc3f7',   // C
+   '2': '#4db6ac',   // Sistemas
+   '3': '#ffd54f',   // C++
+   '4': '#ff8a65',   // Java
+   '5': '#ce93d8',   // Teoria CS
+   '6': '#a5d6a7',   // Eng. Software
+};
+
+const PHASE_NAMES = {
+  '-1': '',
+   '0': 'FASE 0 · FUNDAÇÃO',
+   '1': 'FASE 1 · C',
+   '2': 'FASE 2 · SISTEMAS',
+   '3': 'FASE 3 · C++',
+   '4': 'FASE 4 · JAVA',
+   '5': 'FASE 5 · TEORIA CS',
+   '6': 'FASE 6 · ENG. SOFTWARE',
+};
+
+// ring: fractional rings allow sub-rings for projects
+const nodes = [
+  // ── CENTRO ────────────────────────────────────────────────────────────────
+  { id: 'start',          label: 'START',           phase: -1, ring: 0,   status: 'done',   size: 18,
+    desc: 'Ponto de partida da jornada.' },
+
+  // ── FASE 0 (anel 1) ───────────────────────────────────────────────────────
+  { id: 'f0_cpu',         label: 'CPU & Memória',   phase: 0,  ring: 1,   status: 'done',   size: 10,
+    desc: 'Fetch-decode-execute, registradores, hierarquia de memória (L1/L2/RAM/disco).' },
+  { id: 'f0_num',         label: 'Representação\nNumérica', phase: 0, ring: 1, status: 'done', size: 10,
+    desc: 'Binário, hexadecimal, complemento de dois, IEEE 754, ASCII/Unicode.' },
+  { id: 'f0_so',          label: 'Intro ao SO',     phase: 0,  ring: 1,   status: 'done',   size: 10,
+    desc: 'Kernel, processos, memória virtual, syscalls, arquivos — visão geral.' },
+  { id: 'f0_term',        label: 'Terminal & Shell', phase: 0, ring: 1,   status: 'done',   size: 10,
+    desc: 'bash, zsh, pipes, redirecionamento, variáveis de ambiente, scripting básico.' },
+  { id: 'f0_git',         label: 'Git',             phase: 0,  ring: 1,   status: 'done',   size: 10,
+    desc: 'init, add, commit, branch, merge, rebase, resolução de conflitos, GitHub.' },
+  { id: 'f0_comp',        label: 'Compilação',      phase: 0,  ring: 1,   status: 'done',   size: 10,
+    desc: 'Pré-processador → compilador → assembler → linker. gcc flags, Make.' },
+
+  // ── FASE 1 módulos (anel 2) ───────────────────────────────────────────────
+  { id: 'f1_fund',        label: 'Fundamentos C',   phase: 1,  ring: 2,   status: 'active', size: 11,
+    desc: 'Tipos, operadores, controle de fluxo, funções, arrays, strings, I/O.' },
+  { id: 'f1_ptr',         label: 'Ponteiros\n& Memória', phase: 1, ring: 2, status: 'todo', size: 11,
+    desc: 'Aritmética de ponteiros, stack vs heap, malloc/free, buffer overflow.' },
+  { id: 'f1_ds',          label: 'Estruturas\nde Dados', phase: 1, ring: 2, status: 'todo', size: 11,
+    desc: 'Listas ligadas, pilhas, filas, hash tables — implementação em C.' },
+  { id: 'f1_sort',        label: 'Algoritmos\nde Ordenação', phase: 1, ring: 2, status: 'todo', size: 11,
+    desc: 'Bubble, selection, insertion, merge, quick, heap sort. Análise de complexidade.' },
+  { id: 'f1_trees',       label: 'Árvores',         phase: 1,  ring: 2,   status: 'todo',   size: 11,
+    desc: 'BST, AVL, Red-Black, heap, trie — operações e balanceamento.' },
+  { id: 'f1_adv',         label: 'Algoritmos\nAvançados', phase: 1, ring: 2, status: 'todo', size: 11,
+    desc: 'Grafos (BFS/DFS), programação dinâmica básica, backtracking.' },
+  { id: 'f1_tools',       label: 'Dev Tools',       phase: 1,  ring: 2,   status: 'todo',   size: 10,
+    desc: 'gdb, valgrind, AddressSanitizer, Makefile avançado.' },
+
+  // ── FASE 1 projetos (anel 2.5) ────────────────────────────────────────────
+  { id: 'p_libft',        label: 'libft',           phase: 1,  ring: 2.5, status: 'todo',   size: 9,
+    desc: 'Reimplementar a libc do zero: funções de string, memória, lista ligada.' },
+  { id: 'p_ftprintf',     label: 'ft_printf',       phase: 1,  ring: 2.5, status: 'todo',   size: 9,
+    desc: 'Implementar printf com variadic functions e formatadores.' },
+  { id: 'p_gnl',          label: 'get_next_line',   phase: 1,  ring: 2.5, status: 'todo',   size: 9,
+    desc: 'Leitura linha-a-linha de fd com buffer estático.' },
+  { id: 'p_pushswap',     label: 'push_swap',       phase: 1,  ring: 2.5, status: 'todo',   size: 9,
+    desc: 'Ordenação com duas pilhas e conjunto mínimo de operações.' },
+  { id: 'p_minitalk',     label: 'minitalk',        phase: 1,  ring: 2.5, status: 'todo',   size: 9,
+    desc: 'Comunicação entre processos via SIGUSR1/SIGUSR2, bit-a-bit.' },
+  { id: 'p_pipex',        label: 'pipex',           phase: 1,  ring: 2.5, status: 'todo',   size: 9,
+    desc: 'Recriar o comportamento de pipe no shell: fork + dup2 + execve.' },
+
+  // ── FASE 2 módulos (anel 3) ───────────────────────────────────────────────
+  { id: 'f2_proc',        label: 'Processos\n& Sinais', phase: 2, ring: 3, status: 'todo', size: 11,
+    desc: 'fork, exec, wait, signals, waitpid, pipe — fundamentos do POSIX.' },
+  { id: 'f2_fd',          label: 'I/O & Descr.\nde Arquivo', phase: 2, ring: 3, status: 'todo', size: 11,
+    desc: 'open/read/write/close, redirecionamento, dup2, /proc filesystem.' },
+  { id: 'f2_threads',     label: 'Threads\n& Concorrência', phase: 2, ring: 3, status: 'todo', size: 11,
+    desc: 'pthreads, mutex, semáforos, race conditions, deadlock, dining philosophers.' },
+  { id: 'f2_sockets',     label: 'Sockets\n& Redes', phase: 2, ring: 3, status: 'todo', size: 11,
+    desc: 'TCP/IP, socket(), bind(), listen(), accept(), send/recv — cliente/servidor.' },
+
+  // ── FASE 2 projetos (anel 3.5) ────────────────────────────────────────────
+  { id: 'p_philo',        label: 'philosophers',    phase: 2,  ring: 3.5, status: 'todo',   size: 9,
+    desc: 'Jantar dos filósofos: threads, mutexes, evitar deadlock e starvation.' },
+  { id: 'p_minishell',    label: 'minishell',       phase: 2,  ring: 3.5, status: 'todo',   size: 9,
+    desc: 'Mini shell POSIX: parsing, exec, pipes, redirections, builtins, signals.' },
+
+  // ── FASE 3 C++ (anel 4) ───────────────────────────────────────────────────
+  { id: 'f3_trans',       label: 'C → C++',         phase: 3,  ring: 4,   status: 'todo',   size: 11,
+    desc: 'Namespaces, referências, RAII, streams, classes básicas, construtores.' },
+  { id: 'f3_oop',         label: 'OOP',             phase: 3,  ring: 4,   status: 'todo',   size: 11,
+    desc: 'Herança, polimorfismo, funções virtuais, interfaces, design patterns.' },
+  { id: 'f3_stl',         label: 'STL',             phase: 3,  ring: 4,   status: 'todo',   size: 11,
+    desc: 'vector, map, set, list, deque, iterators, algorithms (sort, find, etc).' },
+  { id: 'f3_modern',      label: 'Modern C++',      phase: 3,  ring: 4,   status: 'todo',   size: 11,
+    desc: 'C++11/14/17/20: smart pointers, lambdas, move semantics, auto, constexpr.' },
+
+  // ── FASE 3 projetos (anel 4.5) ────────────────────────────────────────────
+  { id: 'p_cpp_modules',  label: 'CPP Modules',     phase: 3,  ring: 4.5, status: 'todo',   size: 9,
+    desc: 'Módulos 00–09 da 42: OOP progressivo, herança múltipla, templates.' },
+  { id: 'p_cpp_containers', label: 'CPP Containers', phase: 3, ring: 4.5, status: 'todo',   size: 9,
+    desc: 'Reimplementar vector, map, stack, set da STL com iterators.' },
+
+  // ── FASE 4 Java (anel 5) ──────────────────────────────────────────────────
+  { id: 'f4_fund',        label: 'Java Fundamentos', phase: 4, ring: 5,   status: 'todo',   size: 11,
+    desc: 'Tipos, OOP, interfaces, generics, exceções, enums, lambdas (Java 8+).' },
+  { id: 'f4_coll',        label: 'Collections\n& Streams', phase: 4, ring: 5, status: 'todo', size: 11,
+    desc: 'ArrayList, HashMap, LinkedList, Stream API, Optional, functional style.' },
+  { id: 'f4_conc',        label: 'Concorrência\nJava', phase: 4, ring: 5, status: 'todo', size: 11,
+    desc: 'Thread, Executor, CompletableFuture, synchronized, locks, AtomicXxx.' },
+  { id: 'f4_jvm',         label: 'JVM Internals',   phase: 4,  ring: 5,   status: 'todo',   size: 11,
+    desc: 'Bytecode, ClassLoader, GC (G1, ZGC), JIT, profiling, heap tuning.' },
+  { id: 'f4_patterns',    label: 'Design Patterns', phase: 4,  ring: 5,   status: 'todo',   size: 11,
+    desc: 'GoF 23 patterns: Singleton, Factory, Observer, Strategy, Decorator…' },
+
+  // ── FASE 4 projetos (anel 5.5) ────────────────────────────────────────────
+  { id: 'p_java_ds',      label: 'Java DS',         phase: 4,  ring: 5.5, status: 'todo',   size: 9,
+    desc: 'Reimplementar estruturas de dados clássicas em Java com generics.' },
+  { id: 'p_java_crud',    label: 'Java CRUD',       phase: 4,  ring: 5.5, status: 'todo',   size: 9,
+    desc: 'API REST simples com Spring Boot, JPA/Hibernate, banco de dados.' },
+  { id: 'p_java_conc',    label: 'Java Concurrent', phase: 4,  ring: 5.5, status: 'todo',   size: 9,
+    desc: 'Produtor-consumidor, thread pool, fork-join framework.' },
+
+  // ── FASE 5 Teoria CS (anel 6) ─────────────────────────────────────────────
+  { id: 'f5_complex',     label: 'Complexidade',    phase: 5,  ring: 6,   status: 'todo',   size: 11,
+    desc: 'P, NP, NP-completo, reduções, Big-O análise rigorosa, Master Theorem.' },
+  { id: 'f5_paradigms',   label: 'Paradigmas',      phase: 5,  ring: 6,   status: 'todo',   size: 11,
+    desc: 'Programação dinâmica, greedy, divide & conquer — prova de correção.' },
+  { id: 'f5_graphs',      label: 'Grafos',          phase: 5,  ring: 6,   status: 'todo',   size: 11,
+    desc: 'Dijkstra, Bellman-Ford, Floyd-Warshall, MST (Kruskal/Prim), SCC.' },
+  { id: 'f5_compilers',   label: 'Compiladores',    phase: 5,  ring: 6,   status: 'todo',   size: 11,
+    desc: 'Léxico, parser (LL/LR), AST, geração de código, otimizações básicas.' },
+  { id: 'f5_crypto',      label: 'Criptografia',    phase: 5,  ring: 6,   status: 'todo',   size: 11,
+    desc: 'Simétrica (AES), assimétrica (RSA/EC), hashes, TLS, certificados.' },
+
+  // ── FASE 6 Eng. Software (anel 7) ─────────────────────────────────────────
+  { id: 'f6_solid',       label: 'SOLID',           phase: 6,  ring: 7,   status: 'todo',   size: 11,
+    desc: 'Single Responsibility, Open/Closed, Liskov, Interface Segregation, DI.' },
+  { id: 'f6_clean',       label: 'Clean Code',      phase: 6,  ring: 7,   status: 'todo',   size: 11,
+    desc: 'Naming, funções pequenas, comentários, refactoring, code smells.' },
+  { id: 'f6_tests',       label: 'Testes',          phase: 6,  ring: 7,   status: 'todo',   size: 11,
+    desc: 'TDD, unit/integration/e2e, mocks, cobertura, JUnit, GoogleTest.' },
+  { id: 'f6_arch',        label: 'Arquitetura',     phase: 6,  ring: 7,   status: 'todo',   size: 11,
+    desc: 'Clean Architecture, Hexagonal, DDD, microservices vs monolith.' },
+  { id: 'f6_cicd',        label: 'CI/CD',           phase: 6,  ring: 7,   status: 'todo',   size: 11,
+    desc: 'GitHub Actions, Docker, containers, deploy automatizado, SRE basics.' },
+];
+
+const links = [
+  // START → Fase 0
+  { source: 'start',    target: 'f0_cpu'   },
+  { source: 'start',    target: 'f0_num'   },
+  { source: 'start',    target: 'f0_so'    },
+  { source: 'start',    target: 'f0_term'  },
+  { source: 'start',    target: 'f0_git'   },
+  { source: 'start',    target: 'f0_comp'  },
+
+  // Fase 0 → Fase 1
+  { source: 'f0_cpu',   target: 'f1_fund'  },
+  { source: 'f0_num',   target: 'f1_fund'  },
+  { source: 'f0_so',    target: 'f1_fund'  },
+  { source: 'f0_comp',  target: 'f1_fund'  },
+  { source: 'f0_git',   target: 'f1_tools' },
+  { source: 'f0_term',  target: 'f1_tools' },
+
+  // Fase 1 módulos
+  { source: 'f1_fund',  target: 'f1_ptr'   },
+  { source: 'f1_ptr',   target: 'f1_ds'    },
+  { source: 'f1_ds',    target: 'f1_sort'  },
+  { source: 'f1_ds',    target: 'f1_trees' },
+  { source: 'f1_trees', target: 'f1_adv'   },
+  { source: 'f1_sort',  target: 'f1_adv'   },
+  { source: 'f1_tools', target: 'f1_fund'  },
+
+  // Fase 1 → projetos
+  { source: 'f1_fund',  target: 'p_libft'    },
+  { source: 'f1_fund',  target: 'p_gnl'      },
+  { source: 'p_libft',  target: 'p_ftprintf' },
+  { source: 'f1_ptr',   target: 'p_gnl'      },
+  { source: 'f1_ds',    target: 'p_pushswap' },
+  { source: 'f0_so',    target: 'p_minitalk' },
+  { source: 'f0_so',    target: 'p_pipex'    },
+  { source: 'p_gnl',    target: 'p_pipex'    },
+
+  // Fase 1 projetos → Fase 2
+  { source: 'p_pipex',  target: 'f2_proc'    },
+  { source: 'p_minitalk', target: 'f2_proc'  },
+  { source: 'f1_adv',   target: 'f2_proc'    },
+  { source: 'f1_adv',   target: 'f2_fd'      },
+
+  // Fase 2 módulos
+  { source: 'f2_proc',  target: 'f2_fd'      },
+  { source: 'f2_proc',  target: 'f2_threads' },
+  { source: 'f2_fd',    target: 'f2_threads' },
+  { source: 'f2_threads', target: 'f2_sockets' },
+
+  // Fase 2 projetos
+  { source: 'f2_threads', target: 'p_philo'  },
+  { source: 'f2_proc',  target: 'p_minishell' },
+  { source: 'f2_fd',    target: 'p_minishell' },
+
+  // Fase 2 → Fase 3
+  { source: 'p_minishell', target: 'f3_trans' },
+  { source: 'f2_threads',  target: 'f3_trans' },
+  { source: 'f1_adv',      target: 'f3_trans' },
+
+  // Fase 3
+  { source: 'f3_trans', target: 'f3_oop'     },
+  { source: 'f3_oop',   target: 'f3_stl'     },
+  { source: 'f3_stl',   target: 'f3_modern'  },
+  { source: 'f3_oop',   target: 'p_cpp_modules' },
+  { source: 'f3_stl',   target: 'p_cpp_containers' },
+
+  // Fase 3 → Fase 4
+  { source: 'f3_oop',   target: 'f4_fund'    },
+  { source: 'f3_modern', target: 'f4_fund'   },
+
+  // Fase 4
+  { source: 'f4_fund',  target: 'f4_coll'    },
+  { source: 'f4_coll',  target: 'f4_conc'    },
+  { source: 'f4_coll',  target: 'f4_patterns' },
+  { source: 'f4_conc',  target: 'f4_jvm'     },
+  { source: 'f4_fund',  target: 'p_java_ds'  },
+  { source: 'f4_coll',  target: 'p_java_crud' },
+  { source: 'f4_conc',  target: 'p_java_conc' },
+
+  // Fase 4 → Fase 5
+  { source: 'f4_patterns', target: 'f5_complex' },
+  { source: 'f1_adv',      target: 'f5_complex' },
+  { source: 'f1_adv',      target: 'f5_paradigms' },
+  { source: 'f5_complex',  target: 'f5_paradigms' },
+  { source: 'f5_paradigms', target: 'f5_graphs'   },
+  { source: 'f5_complex',  target: 'f5_compilers' },
+  { source: 'f5_complex',  target: 'f5_crypto'    },
+
+  // Fase 5 → Fase 6
+  { source: 'f5_complex', target: 'f6_arch'  },
+  { source: 'f4_patterns', target: 'f6_solid' },
+  { source: 'f6_solid',  target: 'f6_clean'  },
+  { source: 'f6_clean',  target: 'f6_tests'  },
+  { source: 'f6_tests',  target: 'f6_arch'   },
+  { source: 'f6_arch',   target: 'f6_cicd'   },
+];
+
+// ─── STARFIELD ───────────────────────────────────────────────────────────────
+
+(function initStars() {
+  const canvas = document.getElementById('starfield');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+  let W, H;
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function makeStars(n) {
+    stars = [];
+    for (let i = 0; i < n; i++) {
+      stars.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: Math.random() * 1.2 + 0.1,
+        a: Math.random(),
+        da: (Math.random() - 0.5) * 0.003,
+        drift: (Math.random() - 0.5) * 0.02,
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    for (const s of stars) {
+      s.a += s.da;
+      if (s.a <= 0 || s.a >= 1) s.da = -s.da;
+      s.x += s.drift;
+      if (s.x < 0) s.x = W;
+      if (s.x > W) s.x = 0;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(200, 210, 255, ${s.a * 0.7})`;
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  makeStars(350);
+  draw();
+  window.addEventListener('resize', () => { resize(); makeStars(350); });
+})();
+
+// ─── GALAXY LAYOUT ───────────────────────────────────────────────────────────
+
+const RING_RADIUS = {
+  0: 0,
+  1: 110,
+  2: 200,
+  2.5: 270,
+  3: 340,
+  3.5: 400,
+  4: 465,
+  4.5: 520,
+  5: 585,
+  5.5: 640,
+  6: 700,
+  7: 760,
+};
+
+// Group nodes by ring
+const byRing = {};
+nodes.forEach(n => {
+  if (!byRing[n.ring]) byRing[n.ring] = [];
+  byRing[n.ring].push(n);
+});
+
+// Assign angular positions: distribute within a sector per ring
+// Main rings occupy ~270° arc; sub-rings (x.5) occupy ~180°
+// Ring 0 = center (no angle needed)
+const SECTOR = {
+  0:   { start: 0,   span: Math.PI * 2 },
+  1:   { start: 0,   span: Math.PI * 2 },
+  2:   { start: -Math.PI * 0.9, span: Math.PI * 1.8 },
+  2.5: { start: -Math.PI * 0.7, span: Math.PI * 1.4 },
+  3:   { start: -Math.PI * 0.6, span: Math.PI * 1.2 },
+  3.5: { start: -Math.PI * 0.3, span: Math.PI * 0.6 },
+  4:   { start: Math.PI * 0.1,  span: Math.PI * 1.1 },
+  4.5: { start: Math.PI * 0.25, span: Math.PI * 0.6 },
+  5:   { start: Math.PI * 0.4,  span: Math.PI * 1.3 },
+  5.5: { start: Math.PI * 0.65, span: Math.PI * 0.6 },
+  6:   { start: Math.PI * 0.7,  span: Math.PI * 1.5 },
+  7:   { start: Math.PI * 0.9,  span: Math.PI * 1.8 },
+};
+
+nodes.forEach(n => {
+  if (n.ring === 0) {
+    n.ax = 0; n.ay = 0;
+    return;
+  }
+  const group = byRing[n.ring];
+  const idx = group.indexOf(n);
+  const count = group.length;
+  const sec = SECTOR[n.ring];
+  const angle = count === 1
+    ? sec.start + sec.span / 2
+    : sec.start + (idx / (count - 1)) * sec.span;
+  const r = RING_RADIUS[n.ring];
+  n.ax = Math.cos(angle) * r;
+  n.ay = Math.sin(angle) * r;
+});
+
+// Build lookup
+const nodeMap = {};
+nodes.forEach(n => nodeMap[n.id] = n);
+
+// ─── RENDER ──────────────────────────────────────────────────────────────────
+
+const svg = d3.select('#galaxy-svg');
+const W0 = window.innerWidth, H0 = window.innerHeight;
+const cx = W0 / 2, cy = H0 / 2;
+
+// Zoom/pan
+const g = svg.append('g').attr('transform', `translate(${cx},${cy})`);
+
+const zoom = d3.zoom()
+  .scaleExtent([0.3, 3])
+  .on('zoom', (event) => {
+    g.attr('transform', `translate(${event.transform.x},${event.transform.y}) scale(${event.transform.k})`);
+  });
+
+svg.call(zoom);
+svg.call(zoom.translateTo, cx, cy);
+
+// ── Ring orbit lines ─────────────────────────────────────────────────────────
+const ringOrbitLayer = g.append('g').attr('class', 'ring-orbits');
+Object.entries(RING_RADIUS).forEach(([ring, r]) => {
+  if (r === 0) return;
+  ringOrbitLayer.append('circle')
+    .attr('cx', 0).attr('cy', 0)
+    .attr('r', r)
+    .attr('fill', 'none')
+    .attr('stroke', '#0d1528')
+    .attr('stroke-width', 1);
+});
+
+// ── Ring labels ──────────────────────────────────────────────────────────────
+const ringLabelLayer = g.append('g').attr('class', 'ring-labels');
+[
+  [1, 'FASE 0'],
+  [2, 'FASE 1'],
+  [3, 'FASE 2'],
+  [4, 'FASE 3'],
+  [5, 'FASE 4'],
+  [6, 'FASE 5'],
+  [7, 'FASE 6'],
+].forEach(([ring, lbl]) => {
+  const r = RING_RADIUS[ring];
+  ringLabelLayer.append('text')
+    .attr('x', 0)
+    .attr('y', -r - 4)
+    .attr('class', 'ring-label')
+    .text(lbl);
+});
+
+// ── Links ────────────────────────────────────────────────────────────────────
+const linkLayer = g.append('g').attr('class', 'links');
+
+links.forEach(l => {
+  const s = nodeMap[l.source];
+  const t = nodeMap[l.target];
+  if (!s || !t) return;
+
+  // Determine color: use source phase color with low opacity
+  const col = PHASE_COLORS[String(s.phase)] || '#4466aa';
+
+  linkLayer.append('line')
+    .attr('x1', s.ax).attr('y1', s.ay)
+    .attr('x2', t.ax).attr('y2', t.ay)
+    .attr('stroke', col)
+    .attr('stroke-width', 0.6)
+    .attr('stroke-opacity', 0.18);
+});
+
+// ── Nodes ────────────────────────────────────────────────────────────────────
+const tooltip = document.getElementById('tooltip');
+
+const nodeLayer = g.append('g').attr('class', 'nodes');
+
+nodes.forEach(n => {
+  const color = PHASE_COLORS[String(n.phase)] || '#ffffff';
+  const grp = nodeLayer.append('g')
+    .attr('class', 'node')
+    .attr('transform', `translate(${n.ax},${n.ay})`);
+
+  // Outer glow ring for done/active
+  if (n.status === 'done' || n.status === 'active') {
+    grp.append('circle')
+      .attr('r', n.size + 4)
+      .attr('fill', 'none')
+      .attr('stroke', color)
+      .attr('stroke-width', 1)
+      .attr('stroke-opacity', 0.15);
+  }
+
+  const circ = grp.append('circle')
+    .attr('r', n.size)
+    .attr('fill', n.status === 'todo' ? '#0d1528' : color)
+    .attr('stroke', color)
+    .attr('stroke-width', n.status === 'todo' ? 1 : 1.5)
+    .attr('class', `status-${n.status}`)
+    .style('color', color);
+
+  // Label
+  const labelLines = n.label.split('\n');
+  const labelGrp = grp.append('g').attr('class', 'node-label-group');
+  labelLines.forEach((line, i) => {
+    labelGrp.append('text')
+      .attr('class', 'node-label')
+      .attr('x', 0)
+      .attr('y', n.size + 12 + i * 11)
+      .text(line);
+  });
+
+  // Always-visible label for ring 0-1 (core nodes)
+  if (n.ring <= 1) {
+    labelGrp.selectAll('text').style('opacity', 1);
+  }
+
+  // Tooltip events
+  grp
+    .on('mouseover', function(event) {
+      const statusLabels = { done: 'Concluído', active: 'Em andamento', todo: 'Bloqueado / A fazer' };
+      const statusClasses = { done: 'status-pill-done', active: 'status-pill-active', todo: 'status-pill-todo' };
+      tooltip.querySelector('.tt-label').textContent = n.label.replace('\n', ' ');
+      tooltip.querySelector('.tt-label').style.color = color;
+      tooltip.querySelector('.tt-phase').textContent = PHASE_NAMES[String(n.phase)] || '';
+      tooltip.querySelector('.tt-desc').textContent = n.desc;
+      const pill = tooltip.querySelector('.tt-status');
+      pill.textContent = statusLabels[n.status];
+      pill.className = `tt-status ${statusClasses[n.status]}`;
+      tooltip.classList.add('visible');
+      positionTooltip(event);
+    })
+    .on('mousemove', positionTooltip)
+    .on('mouseleave', function() {
+      tooltip.classList.remove('visible');
+    });
+});
+
+function positionTooltip(event) {
+  const tw = tooltip.offsetWidth || 240;
+  const th = tooltip.offsetHeight || 80;
+  let x = event.clientX + 14;
+  let y = event.clientY - 10;
+  if (x + tw > window.innerWidth - 10) x = event.clientX - tw - 14;
+  if (y + th > window.innerHeight - 10) y = window.innerHeight - th - 10;
+  tooltip.style.left = x + 'px';
+  tooltip.style.top  = y + 'px';
+}
+
+// ─── RESIZE ──────────────────────────────────────────────────────────────────
+window.addEventListener('resize', () => {
+  const nw = window.innerWidth, nh = window.innerHeight;
+  zoom.translateTo(svg, nw / 2, nh / 2);
+});
+</script>
+</body>
+</html>
