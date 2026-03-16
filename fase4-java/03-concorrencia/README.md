@@ -1,5 +1,31 @@
 # 03 — Concorrência em Java
 
+> *"Concurrency is not parallelism."* — Rob Pike
+
+---
+
+## Antes de começar
+
+Certifique-se de que você já:
+
+- [ ] Usou `ArrayList`, `HashMap` e Stream API (`fase4-java/02`)
+- [ ] Entende o que é uma race condition e mutex (`fase2-sistemas/03`)
+- [ ] Implementou produtor-consumidor com semáforos em C
+- [ ] Conhece o conceito de thread-safety
+
+---
+
+## O que você vai aprender
+
+Ao final deste módulo você será capaz de:
+
+- Criar e sincronizar threads com `Thread`, `Runnable` e `ExecutorService`
+- Usar `synchronized`, `ReentrantLock` e classes atômicas (`AtomicInteger`)
+- Compor operações assíncronas com `CompletableFuture`
+- Implementar produtor-consumidor com `BlockingQueue`
+- Explicar a diferença entre `volatile` e `synchronized`
+- Usar o framework `java.util.concurrent` para evitar primitivas de baixo nível
+
 ---
 
 ## 1. Thread
@@ -160,6 +186,50 @@ void loop() {
 
 ---
 
+## Knowledge Check
+
+Responda sem consultar o material. Se travar, releia a seção correspondente.
+
+1. Qual a diferença entre `Thread.start()` e `Thread.run()`?
+2. Por que `synchronized` num método de instância bloqueia `this` e não a classe?
+3. Qual a diferença entre `AtomicInteger.incrementAndGet()` e `synchronized` para um contador?
+4. Por que `volatile` não é suficiente para `contador++`?
+5. O que `CompletableFuture.allOf` faz? Quando você o usaria?
+6. Qual a diferença entre `ExecutorService.shutdown()` e `shutdownNow()`?
+7. Por que `BlockingQueue.put()` bloqueia? O que acontece com a thread chamadora?
+8. O que é starvation em concorrência? Como `ReentrantLock(fair=true)` ajuda?
+
+---
+
+## Projeto — Web Scraper Concorrente
+
+Implemente um scraper que busca dados de N URLs em paralelo e agrega os resultados.
+
+**Funcionalidades:**
+- Receber lista de URLs de um arquivo
+- Buscar cada URL em paralelo com `CompletableFuture`
+- Extrair título da página (tag `<title>`)
+- Limitar a 5 requisições simultâneas com `Executors.newFixedThreadPool(5)`
+- Exibir resultados na ordem de conclusão; exibir erros sem abortar as demais
+
+**Requisitos técnicos:**
+- Usar `CompletableFuture.supplyAsync` com pool customizado
+- Usar `ConcurrentHashMap` para acumular resultados de forma thread-safe
+- Timeout de 5 segundos por URL
+- Compilar e rodar com `java`
+
+**Exemplo de execução:**
+```
+$ java Scraper urls.txt
+[1/10] https://example.com → "Example Domain" (142ms)
+[2/10] https://httpbin.org → "httpbin.org" (89ms)
+[ERR]  https://invalid.url → Connection refused
+...
+=== Concluído: 9/10 sucessos em 1.2s ===
+```
+
+---
+
 ## Exercícios
 
 **ex01:** thread pool manual: implementar `SimpleExecutor` com array de threads e BlockingQueue
@@ -170,8 +240,18 @@ void loop() {
 
 ---
 
-## Referências
+## Recursos Adicionais
 
-- **Java Concurrency in Practice** — Goetz et al. · a referência definitiva
-- **Effective Java** — capítulos sobre concorrência (items 78-84)
-- **Oracle Concurrency Tutorial** — docs.oracle.com/javase/tutorial/essential/concurrency
+Estes recursos são **opcionais** mas vão solidificar seu entendimento:
+
+**Para ler/assistir agora:**
+- **Java Concurrency in Practice** — Brian Goetz et al. — a referência definitiva em concorrência Java
+- [Oracle Concurrency Tutorial](https://docs.oracle.com/javase/tutorial/essential/concurrency/) — tutorial oficial
+
+**Para consulta:**
+- **Effective Java** — Joshua Bloch, items 78-84 (concorrência)
+- [java.util.concurrent Javadoc](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/package-summary.html)
+
+**Para ir além:**
+- **The Art of Multiprocessor Programming** — Herlihy & Shavit — teoria e algoritmos lock-free
+- Project Loom (Virtual Threads, Java 21) — concorrência com threads virtuais de baixo custo

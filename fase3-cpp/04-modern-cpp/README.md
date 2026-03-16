@@ -4,6 +4,30 @@
 
 ---
 
+## Antes de começar
+
+Certifique-se de que você já:
+
+- [ ] Usa herança, polimorfismo e templates C++ (`fase3-cpp/02` e `03`)
+- [ ] Implementou a Regra dos 3 e entende copy constructor e copy assignment
+- [ ] Usa `std::vector`, `std::map` e algoritmos da STL
+- [ ] Entende o problema de memory leaks e como RAII os resolve
+
+---
+
+## O que você vai aprender
+
+Ao final deste módulo você será capaz de:
+
+- Usar `auto` e `decltype` para inferência de tipos
+- Gerenciar memória com `unique_ptr` e `shared_ptr` sem `new`/`delete` manual
+- Escrever lambdas com captura por valor e por referência
+- Implementar move semantics com rvalue references (`&&`)
+- Usar `std::optional`, `std::variant` e `constexpr` (C++17)
+- Aplicar `if constexpr` para código condicional em tempo de compilação
+
+---
+
 ## 1. auto e Type Inference
 
 ```cpp
@@ -168,6 +192,49 @@ void processa(T val) {
 
 ---
 
+## Knowledge Check
+
+Responda sem consultar o material. Se travar, releia a seção correspondente.
+
+1. Qual a diferença entre `unique_ptr` e `shared_ptr`? Quando usar cada um?
+2. O que `std::move()` faz? O estado do objeto movido é garantido?
+3. O que `[=]` vs `[&]` na captura de uma lambda significa?
+4. Por que `make_unique<T>()` é preferível a `new T()` diretamente?
+5. O que `weak_ptr` resolve que `shared_ptr` não resolve sozinho?
+6. Como `constexpr` difere de `const`?
+7. O que é uma rvalue reference (`&&`)? Como o compilador decide se usa move ou copy?
+8. O que `std::optional` resolve que `nullptr` não resolve elegantemente?
+
+---
+
+## Projeto — Factory com Smart Pointers
+
+Implemente um sistema de plugins usando factory method + unique_ptr.
+
+**Funcionalidades:**
+- Interface abstrata `Plugin` com `nome()`, `executar(std::string input)`, `resultado()`
+- Implementações: `PluginUpper` (maiúsculas), `PluginReverse` (inverter string), `PluginWordCount` (contar palavras)
+- Factory `PluginFactory::criar(std::string tipo)` → `unique_ptr<Plugin>`
+- Pipeline: encadear plugins em sequência, passando saída de um para entrada do próximo
+
+**Requisitos técnicos:**
+- Sem `new`/`delete` explícito — apenas `make_unique`
+- Usar lambdas para filtros opcionais no pipeline
+- Compilar com `g++ -Wall -Wextra -Werror -std=c++17`
+- Zero memory leaks
+
+**Exemplo de execução:**
+```
+$ ./plugins
+pipeline> upper | reverse | wordcount
+input: hello world foo bar
+[upper]     → HELLO WORLD FOO BAR
+[reverse]   → RAB OOF DLROW OLLEH
+[wordcount] → 4 palavras
+```
+
+---
+
 ## Exercícios
 
 **ex01:** refatorar a classe Buffer do módulo 01 usando unique_ptr — eliminar o destrutor manual
@@ -176,9 +243,18 @@ void processa(T val) {
 
 ---
 
-## Referências
+## Recursos Adicionais
 
-- **Effective Modern C++** — Scott Meyers (os 42 itens essenciais)
-- **C++17 The Complete Guide** — Nicolai Josuttis
-- **cppreference.com** — smart pointers, lambdas, move semantics
-- CppCon talks: "Back to Basics: Move Semantics" (YouTube)
+Estes recursos são **opcionais** mas vão solidificar seu entendimento:
+
+**Para ler/assistir agora:**
+- **Effective Modern C++** — Scott Meyers — os 42 itens essenciais do C++ moderno
+- [CppCon "Back to Basics: Move Semantics"](https://www.youtube.com/watch?v=St0MNEU5b0o) — Klaus Iglberger
+
+**Para consulta:**
+- [cppreference: smart pointers](https://en.cppreference.com/w/cpp/memory) — unique_ptr, shared_ptr, weak_ptr
+- [cppreference: lambdas](https://en.cppreference.com/w/cpp/language/lambda) — sintaxe e captura
+
+**Para ir além:**
+- **C++17 The Complete Guide** — Nicolai Josuttis — std::optional, std::variant, std::any
+- [CppCon "Cpp Type Erasure"](https://www.youtube.com/watch?v=tbUCHifyT24) — padrão avançado usando concepts

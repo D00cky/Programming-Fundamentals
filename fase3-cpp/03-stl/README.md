@@ -1,5 +1,30 @@
 # 03 — Templates & STL
 
+> *"Generic programming is about abstracting and classifying algorithms and data structures."* — Alexander Stepanov
+
+---
+
+## Antes de começar
+
+Certifique-se de que você já:
+
+- [ ] Escreveu classes C++ com herança e polimorfismo (`fase3-cpp/02`)
+- [ ] Usa referências, `const`, e `override` corretamente
+- [ ] Entende a Regra dos 3 e quando definir destrutor customizado
+- [ ] Implementou pelo menos uma estrutura de dados genérica em C
+
+---
+
+## O que você vai aprender
+
+Ao final deste módulo você será capaz de:
+
+- Escrever templates de função e de classe para código genérico
+- Usar os containers principais da STL: `vector`, `map`, `unordered_map`, `set`, `stack`, `queue`
+- Iterar com range-based for, iteradores e `auto`
+- Usar algoritmos de `<algorithm>`: `sort`, `find`, `count_if`, `transform`, `remove_if`
+- Escolher o container STL correto para cada situação baseado em complexidade
+
 ---
 
 ## 1. Templates de Função
@@ -160,6 +185,55 @@ std::remove_if(v.begin(), v.end(), [](int x){ return x % 2 == 0; });
 
 ---
 
+## Knowledge Check
+
+Responda sem consultar o material. Se travar, releia a seção correspondente.
+
+1. Qual a diferença entre `std::map` e `std::unordered_map`? Quando usar cada um?
+2. Por que `std::vector::push_back` tem complexidade amortizada O(1) e não sempre O(1)?
+3. O que é o "erase-remove idiom"? Por que `remove_if` sozinho não remove de um vector?
+4. Como um template de função difere de uma função normal em termos de geração de código?
+5. Qual a diferença entre `v[i]` e `v.at(i)`? Quando cada um lança exceção?
+6. Por que `std::list` raramente é preferível a `std::vector` na prática moderna?
+7. O que faz `std::unique`? Por que requer que o container esteja ordenado?
+8. Qual container usar para implementar uma fila de prioridade (max-heap)?
+
+---
+
+## Projeto — Analisador de Texto
+
+Implemente um programa que analisa texto de um arquivo e produz estatísticas usando STL.
+
+**Funcionalidades:**
+- Ler arquivo de texto passado como argumento
+- Contar frequência de cada palavra (case-insensitive, ignorar pontuação)
+- Listar as 20 palavras mais frequentes em ordem decrescente
+- Listar palavras únicas em ordem alfabética
+- Contar total de palavras, palavras únicas e tamanho médio de palavra
+
+**Requisitos técnicos:**
+- Usar `std::unordered_map<std::string, int>` para contagem
+- Usar `std::sort` com lambda para ordenar por frequência
+- Usar `std::set<std::string>` para palavras únicas
+- Compilar com `g++ -Wall -Wextra -Werror -std=c++17`
+
+**Exemplo de execução:**
+```
+$ ./textanalyzer livro.txt
+=== Análise de livro.txt ===
+Total de palavras:  12.453
+Palavras únicas:     2.891
+Tamanho médio:       4.7 chars
+
+=== Top 10 mais frequentes ===
+ 1. the       : 842
+ 2. and       : 721
+ 3. a         : 654
+...
+```
+
+---
+
 ## Exercícios
 
 **ex01:** usar vector, map, set para contar frequência de palavras num texto
@@ -168,8 +242,18 @@ std::remove_if(v.begin(), v.end(), [](int x){ return x % 2 == 0; });
 
 ---
 
-## Referências
+## Recursos Adicionais
 
-- **cppreference.com** — containers, algorithms, iterators
-- **Effective STL** — Scott Meyers
+Estes recursos são **opcionais** mas vão solidificar seu entendimento:
+
+**Para ler/assistir agora:**
+- [cppreference.com](https://cppreference.com) — containers, algorithms, iterators — a referência definitiva
 - **C++ Primer** capítulos 9-11 (sequential containers, associative containers)
+
+**Para consulta:**
+- **Effective STL** — Scott Meyers — 50 maneiras de usar a STL corretamente
+- Complexidades garantidas de cada container: [cppreference containers](https://en.cppreference.com/w/cpp/container)
+
+**Para ir além:**
+- [CppCon "STL Algorithms — Why You Should Use Them"](https://www.youtube.com/watch?v=2olsGf6JIkU) — Sean Parent
+- **C++17 The Complete Guide** — Nicolai Josuttis (structured bindings, std::optional, etc.)

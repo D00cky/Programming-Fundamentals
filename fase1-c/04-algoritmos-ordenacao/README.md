@@ -6,6 +6,29 @@ Ordenação é o problema mais estudado em CS. Cada algoritmo revela um trade-of
 
 ---
 
+## Antes de começar
+
+Certifique-se de que você já:
+
+- [ ] Manipula arrays e escreve funções que recebem arrays como parâmetros
+- [ ] Entende ponteiros básicos e passagem de endereços (`fase1-c/02-ponteiros-memoria/`)
+- [ ] Conhece a notação Big-O em nível conceitual (O(n), O(n²), O(log n))
+
+---
+
+## O que você vai aprender
+
+Ao final deste módulo você será capaz de:
+
+- Implementar do zero: Bubble Sort, Selection Sort, Insertion Sort, Merge Sort, Quick Sort e Heap Sort
+- Analisar a complexidade de tempo (melhor, médio e pior caso) de cada algoritmo
+- Escolher o algoritmo certo para cada situação real
+- Explicar o que é um algoritmo de ordenação estável e por que importa
+- Usar `qsort()` da stdlib com função comparadora customizada
+- Medir o tempo de execução com `clock()` e comparar algoritmos empiricamente
+
+---
+
 ## Análise de Complexidade
 
 **Big-O** descreve como o tempo cresce com o input:
@@ -211,6 +234,54 @@ qsort(arr, n, sizeof(int), cmp_int);
 
 ---
 
+## Knowledge Check
+
+Responda sem consultar o material. Se travar, releia a seção correspondente.
+
+1. Qual a diferença prática entre um algoritmo O(n²) e um O(n log n) para n = 1.000.000?
+2. O que significa dizer que um algoritmo de ordenação é "estável"? Por que isso importa?
+3. Por que Insertion Sort tem complexidade O(n) no melhor caso?
+4. Em que condição Quick Sort degenera para O(n²)? Como evitar?
+5. Qual a desvantagem de Merge Sort em relação a Quick Sort e Heap Sort?
+6. Por que busca binária exige array ordenado? O que acontece se o array não estiver?
+7. Como você escreveria uma função comparadora para `qsort` que ordena strings em ordem decrescente?
+8. O que é análise de complexidade de espaço? Qual algoritmo deste módulo usa O(1) espaço extra?
+9. Qual algoritmo usaria para ordenar uma lista de 10 elementos dentro de um programa maior? E 10 milhões?
+
+---
+
+## Projeto — Benchmark de Ordenação
+
+Implemente um programa que mede e compara a performance real dos algoritmos.
+
+**Funcionalidades:**
+- Gerar arrays aleatórios de tamanho 1.000, 10.000 e 100.000
+- Ordenar cada array com todos os 6 algoritmos implementados
+- Medir tempo com `clock()` e exibir tabela comparativa
+- Testar também com arrays já ordenados e arrays em ordem inversa
+
+**Requisitos técnicos:**
+- Copiar o array original antes de cada sort (comparar na mesma entrada)
+- Compilar com `gcc -Wall -Wextra -Werror -O0` (sem otimização do compilador)
+- Verificar que o array está corretamente ordenado após cada algoritmo
+
+**Exemplo de execução:**
+```
+Benchmark — n = 10.000 (aleatório)
+┌─────────────────┬──────────────┬──────────────┬──────────────┐
+│ Algoritmo       │ Aleatório    │ Ordenado     │ Invertido    │
+├─────────────────┼──────────────┼──────────────┼──────────────┤
+│ Bubble Sort     │  245.3 ms    │    1.2 ms    │  248.7 ms    │
+│ Selection Sort  │  198.1 ms    │  197.9 ms    │  199.0 ms    │
+│ Insertion Sort  │  112.4 ms    │    0.8 ms    │  224.1 ms    │
+│ Merge Sort      │    4.2 ms    │    3.1 ms    │    3.3 ms    │
+│ Quick Sort      │    2.9 ms    │   89.4 ms    │   91.2 ms    │
+│ Heap Sort       │    5.1 ms    │    4.8 ms    │    4.9 ms    │
+└─────────────────┴──────────────┴──────────────┴──────────────┘
+```
+
+---
+
 ## Exercícios
 
 **→ [`ex01-basicos/`](ex01-basicos/main.c)** — bubble, selection, insertion; medir iterações
@@ -220,9 +291,18 @@ qsort(arr, n, sizeof(int), cmp_int);
 
 ---
 
-## Referências
+## Recursos Adicionais
 
-- **Introduction to Algorithms (CLRS)** — capítulos 2, 6, 7, 8
-- **Algorithms** — Sedgewick & Wayne
-- **Sorting Algorithms Animations** — toptal.com/developers/sorting-algorithms
-- **Visualgo** — visualgo.net/en/sorting
+Estes recursos são **opcionais** mas vão solidificar seu entendimento:
+
+**Para ler/assistir agora:**
+- [Sorting Algorithms Animations](https://www.toptal.com/developers/sorting-algorithms) — visualização interativa de todos os algoritmos
+- [Visualgo Sorting](https://visualgo.net/en/sorting) — animações passo a passo com pseudocódigo
+
+**Para consulta:**
+- **CLRS** capítulos 2, 6, 7, 8 — análise formal com provas de corretude e complexidade
+- **Algorithms** — Sedgewick & Wayne (capítulos sobre sorting)
+
+**Para ir além:**
+- **CLRS** capítulo 8 (Sorting in Linear Time) — Counting Sort, Radix Sort, Bucket Sort
+- [Tim Sort](https://en.wikipedia.org/wiki/Timsort) — o algoritmo usado em Python e Java em produção

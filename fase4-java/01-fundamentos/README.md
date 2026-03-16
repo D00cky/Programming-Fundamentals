@@ -1,5 +1,31 @@
 # 01 — Fundamentos de Java
 
+> *"Write once, run anywhere."* — Sun Microsystems
+
+---
+
+## Antes de começar
+
+Certifique-se de que você já:
+
+- [ ] Implementou classes C++ com herança e polimorfismo (`fase3-cpp/`)
+- [ ] Entende o que é compilação, bytecode e máquina virtual em nível conceitual
+- [ ] Tem JDK 17+ instalado: `java --version` e `javac --version` devem funcionar
+- [ ] Conhece os princípios básicos de OOP: encapsulamento, herança, polimorfismo
+
+---
+
+## O que você vai aprender
+
+Ao final deste módulo você será capaz de:
+
+- Explicar as principais diferenças entre Java e C++ (GC, JVM, sem ponteiros)
+- Usar tipos primitivos, wrappers, autoboxing e `var` corretamente
+- Manipular strings com `String`, `StringBuilder` e `String.format`
+- Criar classes com encapsulamento, herança, interfaces e generics
+- Usar o sistema de exceções checked e unchecked
+- Usar enums poderosos e records (Java 16+)
+
 ---
 
 ## 1. Java vs C++: Diferenças Chave
@@ -209,6 +235,64 @@ p.x(); p.y();  // getters gerados automaticamente
 
 ---
 
+## Knowledge Check
+
+Responda sem consultar o material. Se travar, releia a seção correspondente.
+
+1. Por que `==` não funciona para comparar Strings em Java? O que usar no lugar?
+2. O que é autoboxing e unboxing? Quais problemas de performance podem causar em loops?
+3. Qual a diferença entre classe abstrata e interface em Java?
+4. Quando usar `StringBuilder` em vez de concatenação com `+`?
+5. Qual a diferença entre exceção checked e unchecked? Dê um exemplo de cada.
+6. O que `try-with-resources` garante que `try/finally` manual pode deixar de garantir?
+7. Por que `String` é imutável em Java? Quais vantagens isso traz?
+8. O que um `record` Java gera automaticamente? Quando você o usaria?
+9. Qual a diferença entre `extends` e `implements` em Java?
+10. O que o Garbage Collector faz? Quando um objeto se torna elegível para coleta?
+
+---
+
+## Projeto — Sistema Bancário
+
+Implemente um sistema bancário com as seguintes classes.
+
+**Hierarquia:**
+- `Conta` (abstrata): `depositar`, `sacar`, `getSaldo`, `getExtrato`
+- `ContaCorrente extends Conta`: com limite de cheque especial
+- `ContaPoupanca extends Conta`: com rendimento mensal
+- `Banco`: gerencia lista de contas, realiza transferências
+
+**Funcionalidades:**
+- Criar contas, depositar, sacar, transferir entre contas
+- Extrato com histórico de transações
+- Renderizar relatório de todas as contas ordenado por saldo
+- Exceção customizada `SaldoInsuficienteException`
+
+**Requisitos técnicos:**
+- Usar `List<Conta>` com polimorfismo
+- Usar `record` para representar `Transacao(tipo, valor, data)`
+- Compilar e rodar com `java --enable-preview` se usar features recentes
+- Testes com `assert` ou JUnit 5
+
+**Exemplo de execução:**
+```
+banco> criar corrente João 1000.0
+Conta 001 criada para João
+
+banco> depositar 001 500.0
+Depósito de R$ 500,00. Saldo: R$ 1.500,00
+
+banco> transferir 001 002 300.0
+Transferência realizada.
+
+banco> extrato 001
+[2026-03-16] Depósito    +R$ 500,00
+[2026-03-16] Transferência -R$ 300,00
+Saldo: R$ 1.200,00
+```
+
+---
+
 ## Exercícios
 
 **ex01:** implementar a classe `ContaBancaria` com depósito, saque, transferência e histórico de transações
@@ -219,8 +303,18 @@ p.x(); p.y();  // getters gerados automaticamente
 
 ---
 
-## Referências
+## Recursos Adicionais
 
-- **Effective Java** — capítulos 1-6 (items 1-36)
-- **Java: The Complete Reference** — Herbert Schildt
-- **Oracle Java Tutorials** — docs.oracle.com/javase/tutorial
+Estes recursos são **opcionais** mas vão solidificar seu entendimento:
+
+**Para ler/assistir agora:**
+- [Oracle Java Tutorials](https://docs.oracle.com/javase/tutorial/) — tutorial oficial, cobre este módulo inteiro
+- **Effective Java** — Joshua Bloch, capítulos 1-6 (items 1-36)
+
+**Para consulta:**
+- **Java: The Complete Reference** — Herbert Schildt — referência enciclopédica
+- [Java API Documentation](https://docs.oracle.com/en/java/javase/21/docs/api/) — Javadoc oficial
+
+**Para ir além:**
+- **Effective Java** capítulos 4-5 (generics, enums) — boas práticas avançadas
+- [JEP list](https://openjdk.org/jeps/) — acompanhar novidades de cada versão Java

@@ -1,5 +1,31 @@
 # 02 — Collections & Streams
 
+> *"Data manipulation is the core of enterprise software."*
+
+---
+
+## Antes de começar
+
+Certifique-se de que você já:
+
+- [ ] Criou classes Java com generics e interfaces (`fase4-java/01`)
+- [ ] Entende a diferença entre `ArrayList` e arrays Java tradicionais
+- [ ] Sabe usar lambdas básicas em Java (`() -> expressão`)
+- [ ] Conhece os conceitos de imutabilidade e `Optional`
+
+---
+
+## O que você vai aprender
+
+Ao final deste módulo você será capaz de:
+
+- Escolher o container Java correto (List, Set, Map, Queue) baseado em complexidade
+- Manipular coleções com a Stream API: `filter`, `map`, `collect`, `groupingBy`
+- Evitar `NullPointerException` usando `Optional` corretamente
+- Ordenar objetos com `Comparator.comparing` e `thenComparing`
+- Usar `Map.computeIfAbsent`, `merge` e `getOrDefault` para padrões comuns
+- Criar coleções imutáveis com `List.of`, `Map.of` (Java 9+)
+
 ---
 
 ## 1. Collections Framework
@@ -162,6 +188,61 @@ produtos.stream()
 
 ---
 
+## Knowledge Check
+
+Responda sem consultar o material. Se travar, releia a seção correspondente.
+
+1. Qual a diferença entre `ArrayList` e `LinkedList`? Quando usar cada um?
+2. Por que `HashMap` é O(1) em média mas O(n) no pior caso?
+3. O que significa dizer que Streams são "lazy"? Dê um exemplo onde isso importa.
+4. Qual a diferença entre operação intermediária e terminal em Stream?
+5. O que `Optional.orElseGet` tem de diferente de `Optional.orElse`? Quando importa?
+6. Por que `freq.merge("key", 1, Integer::sum)` é preferível a `getOrDefault + put`?
+7. Qual a diferença entre `HashSet` e `TreeSet`? Quando usar cada um?
+8. O que `Collectors.groupingBy` faz? Dê um exemplo de uso real.
+
+---
+
+## Projeto — Sistema de Análise de Vendas
+
+Implemente um sistema que processa dados de vendas usando Collections e Stream API.
+
+**Dados:**
+```java
+record Venda(String produto, String categoria, double valor, String vendedor, LocalDate data) {}
+```
+
+**Funcionalidades a implementar com Streams:**
+- Top 5 produtos mais vendidos por valor total
+- Total de vendas por categoria
+- Vendedor com maior volume de vendas no mês
+- Média de valor por categoria
+- Produtos vendidos com valor abaixo da média geral
+
+**Requisitos técnicos:**
+- Carregar dados de arquivo CSV (simular com lista estática)
+- Usar `Collectors.groupingBy`, `Collectors.summingDouble`, `Collectors.toMap`
+- Compilar com `javac` e rodar com `java`
+- Sem loops imperativos — apenas Stream API
+
+**Exemplo de execução:**
+```
+=== Top 5 produtos por receita ===
+1. Notebook Pro    R$ 45.230,00
+2. Smartphone X    R$ 38.900,00
+...
+
+=== Vendas por categoria ===
+Eletrônicos:  R$ 89.430,00
+Vestuário:    R$ 12.300,00
+...
+
+=== Melhor vendedor (março/2026) ===
+Ana Silva: R$ 23.400,00
+```
+
+---
+
 ## Exercícios
 
 **ex01:** contar frequência de palavras num texto usando Map; listar top-10 mais frequentes
@@ -172,8 +253,18 @@ produtos.stream()
 
 ---
 
-## Referências
+## Recursos Adicionais
 
-- **Effective Java** — capítulos sobre collections (items 43-49)
-- **Modern Java in Action** — Urma, Fusco, Mycroft
-- **Oracle Collections Tutorial** — docs.oracle.com/javase/tutorial/collections
+Estes recursos são **opcionais** mas vão solidificar seu entendimento:
+
+**Para ler/assistir agora:**
+- **Modern Java in Action** — Urma, Fusco, Mycroft — o melhor livro sobre Stream API
+- [Oracle Collections Tutorial](https://docs.oracle.com/javase/tutorial/collections/) — documentação oficial
+
+**Para consulta:**
+- **Effective Java** — Joshua Bloch, capítulos sobre collections (items 43-49)
+- [Java Stream API Javadoc](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/stream/Stream.html)
+
+**Para ir além:**
+- [Collectors deep dive](https://www.baeldung.com/java-collectors) — todos os Collectors da API
+- Reactive Streams (Project Reactor / RxJava) — streams assíncronos e não-bloqueantes

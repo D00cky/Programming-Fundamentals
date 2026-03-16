@@ -1,5 +1,31 @@
 # 04 — JVM Internals
 
+> *"The JVM is the best virtual machine ever engineered."* — Martin Thompson
+
+---
+
+## Antes de começar
+
+Certifique-se de que você já:
+
+- [ ] Escreveu código Java com herança, generics e concorrência (`fase4-java/01-03`)
+- [ ] Entende o que é compilação e bytecode em nível conceitual
+- [ ] Usou `ExecutorService` e sabe que threads Java mapeiam para threads do SO
+- [ ] Conhece os conceitos de heap e stack de `fase1-c/02`
+
+---
+
+## O que você vai aprender
+
+Ao final deste módulo você será capaz de:
+
+- Explicar as regiões de memória da JVM (Heap, Metaspace, Stack, PC Register)
+- Descrever como o Garbage Collector funciona (Mark & Sweep, gerações)
+- Distinguir os principais GCs (G1GC, ZGC, ParallelGC) e quando usar cada um
+- Entender como o JIT compila bytecode para código nativo (C1/C2, tiered)
+- Usar `jmap`, `jstack`, `jconsole` e `async-profiler` para diagnósticos
+- Ler bytecode com `javap -c`
+
 ---
 
 ## 1. O que é a JVM
@@ -136,6 +162,55 @@ javap -verbose MinhaClasse.class
 
 ---
 
+## Knowledge Check
+
+Responda sem consultar o material. Se travar, releia a seção correspondente.
+
+1. Qual a diferença entre Young Generation e Old Generation no heap da JVM?
+2. O que é Stop-The-World e por que ele afeta latência de aplicações?
+3. Por que ZGC é melhor para aplicações de baixa latência que G1GC?
+4. O que o JIT faz que a interpretação pura não faz? Por que é mais rápido?
+5. O que é o Parent Delegation Model no ClassLoader? Por que é importante?
+6. Como você diagnosticaria um memory leak em uma aplicação Java em produção?
+7. O que `jstack` produz? Como identificar um deadlock na saída?
+8. O que `-Xms` e `-Xmx` controlam? Por que defini-los iguais pode ser uma boa prática?
+
+---
+
+## Projeto — Benchmark de GC
+
+Implemente um programa que mede o impacto de diferentes configurações de GC.
+
+**Funcionalidades:**
+- Alocar e descartar objetos em padrões diferentes (curta vida, longa vida, mix)
+- Medir throughput (operações/segundo) e latência (p99) com cada GC
+- Gerar relatório comparativo: G1GC vs ParallelGC vs ZGC
+- Monitorar com JMX/jconsole durante a execução
+
+**Requisitos técnicos:**
+- Usar `System.nanoTime()` para medições precisas
+- Executar com flags JVM: `-Xms512m -Xmx512m -XX:+UseG1GC`
+- Logging de GC ativo: `-Xlog:gc*:file=gc.log`
+
+**Exemplo de execução:**
+```
+$ java -Xms512m -Xmx512m -XX:+UseG1GC Benchmark
+=== Benchmark de GC — G1GC ===
+Throughput: 892.341 ops/s
+Latência média: 1.2ms
+Latência p99: 8.7ms
+GC pauses: 12 vezes, max=45ms
+
+$ java -Xms512m -Xmx512m -XX:+UseZGC Benchmark
+=== Benchmark de GC — ZGC ===
+Throughput: 756.123 ops/s
+Latência média: 0.9ms
+Latência p99: 1.1ms
+GC pauses: 0 Stop-The-World
+```
+
+---
+
 ## Exercícios
 
 **ex01:** medir impacto do GC: criar e descartar objetos em loop; monitorar com jconsole; forçar GC com System.gc()
@@ -146,9 +221,18 @@ javap -verbose MinhaClasse.class
 
 ---
 
-## Referências
+## Recursos Adicionais
 
-- **Java Performance** — Scott Oaks · O'Reilly
-- **Understanding the JVM** — Zhou Zhiming
-- **JVM Internals** — blog.jamesdbloom.com (série gratuita)
-- OpenJDK source code — github.com/openjdk/jdk
+Estes recursos são **opcionais** mas vão solidificar seu entendimento:
+
+**Para ler/assistir agora:**
+- **Java Performance** — Scott Oaks (O'Reilly) — GC, JIT, profiling em profundidade
+- [JVM Internals](https://blog.jamesdbloom.com/JVMInternals.html) — série de artigos gratuitos
+
+**Para consulta:**
+- [Understanding the JVM Advanced Features and Best Practices](https://www.oracle.com/technical-resources/articles/java/architect-evans-pt1.html)
+- [OpenJDK source code](https://github.com/openjdk/jdk) — código-fonte da JVM
+
+**Para ir além:**
+- **Understanding the JVM** — Zhou Zhiming — análise profunda da implementação da JVM
+- [async-profiler](https://github.com/async-profiler/async-profiler) — profiler de produção com flame graphs

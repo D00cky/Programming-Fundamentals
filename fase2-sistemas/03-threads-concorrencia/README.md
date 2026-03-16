@@ -4,6 +4,30 @@
 
 ---
 
+## Antes de começar
+
+Certifique-se de que você já:
+
+- [ ] Implementou `fork()`, `exec()` e `waitpid()` e entende o ciclo de vida de processos
+- [ ] Usou `pipe()` e `dup2()` para comunicação entre processos
+- [ ] Entende a diferença entre espaço de endereçamento isolado (processos) e compartilhado (threads)
+- [ ] Detectou file descriptor leaks com `/proc/self/fd`
+
+---
+
+## O que você vai aprender
+
+Ao final deste módulo você será capaz de:
+
+- Criar e sincronizar threads com `pthread_create`, `pthread_join`, `pthread_detach`
+- Proteger dados compartilhados com mutex (`pthread_mutex_t`)
+- Implementar produtor-consumidor com semáforos e variáveis de condição
+- Detectar race conditions com ThreadSanitizer (`-fsanitize=thread`)
+- Explicar as 4 condições de Coffman para deadlock
+- Distinguir código thread-safe de reentrante
+
+---
+
 ## 1. Thread vs Processo
 
 | | Processo | Thread |
@@ -181,6 +205,55 @@ free(lock);
 
 ---
 
+## Knowledge Check
+
+Responda sem consultar o material. Se travar, releia a seção correspondente.
+
+1. O que threads de um mesmo processo compartilham? O que é privado por thread?
+2. O que é uma data race? Por que `contador++` não é atômico?
+3. Qual a diferença entre mutex e semáforo?
+4. Quais são as 4 condições de Coffman para que deadlock ocorra?
+5. Por que `volatile` não é suficiente para substituir mutex em `contador++`?
+6. Para que serve uma variável de condição (`pthread_cond_t`)? Quando usar no lugar de semáforo?
+7. Qual a diferença entre código thread-safe e código reentrante?
+8. O que `pthread_join` faz? E `pthread_detach`? Quando usar cada um?
+
+---
+
+## Projeto — Thread Pool
+
+Implemente uma thread pool com N workers e uma fila de tarefas.
+
+**Funcionalidades:**
+- Criar N threads worker na inicialização
+- Fila de tarefas protegida por mutex + variável de condição
+- Workers dormem quando fila está vazia, acordam quando há tarefa
+- `pool_submit(func, arg)` adiciona tarefa à fila (não bloqueia o chamador)
+- Ao receber `SIGINT`, não aceitar novas tarefas e aguardar as em andamento terminarem
+
+**Requisitos técnicos:**
+- Sem busy-waiting: usar `pthread_cond_wait` para dormir
+- Compilar com `gcc -Wall -Wextra -Werror -lpthread`
+- Verificar com ThreadSanitizer: `gcc -fsanitize=thread`
+- Zero memory leaks
+
+**Exemplo de execução:**
+```
+$ ./threadpool 4
+[pool] 4 workers iniciados
+[pool] submetendo 20 tarefas...
+[worker 0] executando tarefa 0
+[worker 1] executando tarefa 1
+[worker 2] executando tarefa 2
+[worker 3] executando tarefa 3
+...
+^C
+[pool] shutdown: aguardando 2 tarefas em andamento...
+[pool] encerrado.
+```
+
+---
+
 ## Exercícios
 
 **ex01-race:** demonstrar race condition; corrigir com mutex; verificar com ThreadSanitizer (`-fsanitize=thread`)
@@ -191,9 +264,18 @@ free(lock);
 
 ---
 
-## Referências
+## Recursos Adicionais
 
+Estes recursos são **opcionais** mas vão solidificar seu entendimento:
+
+**Para ler/assistir agora:**
+- **OSTEP** capítulos 26-32 (Concurrency) — gratuito em ostep.org, excelentes animações
+- **The Little Book of Semaphores** — Allen Downey, gratuito em greenteapress.com
+
+**Para consulta:**
 - `man 7 pthreads` · `man 3 pthread_create` · `man 3 sem_init`
-- **TLPI** capítulos 29-33 (threads)
-- **OSTEP** capítulos 26-32 (concorrência)
-- **The Little Book of Semaphores** — Allen Downey (gratuito: greenteapress.com)
+- **TLPI** capítulos 29-33 (threads) — referência completa com exemplos Linux
+
+**Para ir além:**
+- [ThreadSanitizer documentation](https://clang.llvm.org/docs/ThreadSanitizer.html) — detector de race conditions em runtime
+- Paul McKenney — "Is Parallel Programming Hard?" (gratuito online) — análise profunda de concorrência

@@ -6,6 +6,30 @@ Esse módulo é onde a maioria das pessoas trava. Mas ponteiros não são difíc
 
 ---
 
+## Antes de começar
+
+Certifique-se de que você já:
+
+- [ ] Conhece os tipos primitivos de C e sabe usar `sizeof` (`fase1-c/01-fundamentos/`)
+- [ ] Escreveu e manipulou arrays estáticos e strings com `char[]`
+- [ ] Entende funções com parâmetros e retorno de valor
+- [ ] Sabe distinguir escopo de variáveis (local vs global)
+
+---
+
+## O que você vai aprender
+
+Ao final deste módulo você será capaz de:
+
+- Usar `&` e `*` para criar e derreferenciar ponteiros
+- Fazer aritmética de ponteiros e percorrer arrays com `p++`
+- Distinguir stack (automática) de heap (dinâmica) e saber quando usar cada uma
+- Alocar e liberar memória com `malloc`, `calloc`, `realloc` e `free`
+- Detectar e corrigir memory leaks com Valgrind
+- Usar ponteiros para ponteiros (`**`) para modificar ponteiros dentro de funções
+
+---
+
 ## 1. O Modelo de Memória
 
 ```
@@ -238,6 +262,53 @@ aloca(&arr, 10);   // passa endereço do ponteiro
 
 ---
 
+## Knowledge Check
+
+Responda sem consultar o material. Se travar, releia a seção correspondente.
+
+1. Qual a diferença entre uma variável ponteiro e a variável para a qual ela aponta?
+2. O que `int *p = &x` e `*p = 99` fazem passo a passo na memória?
+3. Por que `sizeof(p) != sizeof(arr)` quando `p` aponta para o primeiro elemento de `arr`?
+4. O que acontece se você usa um ponteiro sem verificar se é `NULL`?
+5. Qual a diferença entre declarar `int arr[5]` na stack e `int *arr = malloc(5 * sizeof(int))` no heap?
+6. Por que é boa prática fazer `arr = NULL` imediatamente após `free(arr)`?
+7. O que é um double free e qual seu efeito no comportamento do programa?
+8. Em que situação você precisaria de `int **pp` (ponteiro para ponteiro)?
+9. O que é um dangling pointer? Dê um exemplo concreto de como ele surge.
+10. Quais categorias de problemas o Valgrind detecta? Cite pelo menos três.
+
+---
+
+## Projeto — Biblioteca de Strings (libstr)
+
+Implemente uma mini-biblioteca de manipulação de strings em C do zero.
+
+**Funções a implementar:**
+- `size_t ft_strlen(const char *s)` — comprimento da string
+- `char  *ft_strcpy(char *dst, const char *src)` — copiar string
+- `char  *ft_strdup(const char *s)` — duplicar string (usa `malloc`)
+- `char  *ft_strjoin(const char *s1, const char *s2)` — concatenar em novo buffer
+- `char **ft_strsplit(const char *s, char delim)` — dividir string em array de strings
+
+**Requisitos técnicos:**
+- Cada função em seu próprio arquivo `.c` com header `libstr.h`
+- Compilar com `gcc -Wall -Wextra -Werror`
+- `main.c` testa todas as funções com asserções
+- Zero memory leaks: `valgrind --leak-check=full ./libstr_test`
+
+**Exemplo de execução:**
+```
+$ ./libstr_test
+ft_strlen("hello")           = 5      ✓
+ft_strcpy:                   "hello"  ✓
+ft_strdup:                   "world"  ✓ (endereço diferente)
+ft_strjoin("hi", " world")   = "hi world" ✓
+ft_strsplit("a,b,c", ',')    = ["a", "b", "c"] ✓
+Valgrind: 0 leaks, 0 errors  ✓
+```
+
+---
+
 ## Exercícios
 
 **→ [`ex01-ponteiros-basico/`](ex01-ponteiros-basico/main.c)** — `&`, `*`, passagem por referência
@@ -248,10 +319,18 @@ aloca(&arr, 10);   // passa endereço do ponteiro
 
 ---
 
-## Referências
+## Recursos Adicionais
 
-- **K&R** capítulo 5 (Pointers and Arrays) — leitura obrigatória
-- **Beej's Guide** capítulo 5 (Pointers)
-- `man 3 malloc` · `man 3 free` · `man 3 memcpy`
-- **Valgrind Quick Start** — valgrind.org/docs/manual/quick-start.html
-- CS50x semana 4 (Memory)
+Estes recursos são **opcionais** mas vão solidificar seu entendimento:
+
+**Para ler/assistir agora:**
+- **K&R** capítulo 5 (Pointers and Arrays) — leitura obrigatória, concisa e densa
+- [CS50x Week 4 (Memory)](https://cs50.harvard.edu/x/) — Harvard, cobre este módulo com animações
+
+**Para consulta:**
+- `man 3 malloc` · `man 3 free` · `man 3 memcpy` — documentação completa no terminal
+- [Valgrind Quick Start](https://valgrind.org/docs/manual/quick-start.html) — guia oficial de uso
+
+**Para ir além:**
+- [Beej's Guide](https://beej.us/guide/bgc/html/split/) capítulo 6 (Pointers) — linguagem acessível
+- CS:APP cap. 3 — representação de ponteiros em nível de assembly

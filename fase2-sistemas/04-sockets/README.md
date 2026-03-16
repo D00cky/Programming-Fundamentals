@@ -1,5 +1,30 @@
 # 04 — Sockets & Redes
 
+> *"The network is the computer."* — John Gage
+
+---
+
+## Antes de começar
+
+Certifique-se de que você já:
+
+- [ ] Implementou `fork()`, `exec()` e `waitpid()` e entende processos filhos
+- [ ] Usou `dup2()` e pipes para redirecionar I/O
+- [ ] Criou threads com pthreads e usou mutex/semáforos (`fase2-sistemas/03`)
+- [ ] Conhece os conceitos de `select()` ou `poll()` em nível conceitual
+
+---
+
+## O que você vai aprender
+
+Ao final deste módulo você será capaz de:
+
+- Implementar um servidor e cliente TCP do zero com as syscalls de socket
+- Suportar múltiplos clientes simultâneos com `fork()` ou `select()`/`poll()`
+- Explicar o modelo cliente-servidor e as camadas da pilha OSI relevantes (L3/L4)
+- Testar servidores com `nc` (netcat) e inspecionar tráfego com Wireshark
+- Usar `htons`/`ntohs` corretamente para conversão de byte order
+
 ---
 
 ## 1. Modelo Cliente-Servidor
@@ -144,6 +169,57 @@ inet_ntoa(addr.sin_addr)  // IP → string (não thread-safe)
 
 ---
 
+## Knowledge Check
+
+Responda sem consultar o material. Se travar, releia a seção correspondente.
+
+1. Qual a diferença entre TCP e UDP? Quando você usaria cada um?
+2. Qual a diferença entre `bind()` e `connect()`? Quem chama cada um?
+3. O que o parâmetro `backlog` de `listen()` representa?
+4. Por que é obrigatório usar `htons()` para a porta, mesmo que o valor seja pequeno?
+5. Qual a diferença entre usar `send()` e `write()` em um socket?
+6. Qual a diferença entre `select()`, `poll()` e `epoll()`?
+7. O que é o estado TIME_WAIT do TCP? Por que `SO_REUSEADDR` é necessário?
+8. Por que `SO_REUSEADDR` pode ser perigoso se não entendido corretamente?
+
+---
+
+## Projeto — Servidor de Chat Multi-cliente
+
+Implemente um servidor de chat TCP onde múltiplos clientes podem enviar mensagens que são retransmitidas para todos os outros.
+
+**Funcionalidades:**
+- Aceitar N clientes simultâneos (sem limite fixo)
+- Broadcast de mensagens: quando um cliente envia, todos recebem
+- Mensagem de entrada/saída ao conectar/desconectar
+- Usar `select()` para multiplexar (sem thread por cliente)
+
+**Requisitos técnicos:**
+- `SO_REUSEADDR` configurado no servidor
+- Compilar com `gcc -Wall -Wextra -Werror`
+- Testar com 3 terminais usando `nc localhost 8080`
+- Tratar desconexão abrupta sem crash
+
+**Exemplo de execução (3 terminais):**
+```
+# Terminal 1: servidor
+$ ./chat_server 8080
+[+] Alice conectou
+[+] Bruno conectou
+[Alice] olá pessoal!
+[-] Bruno desconectou
+
+# Terminal 2: nc localhost 8080
+[+] Bruno conectou
+[Alice] olá pessoal!
+
+# Terminal 3: nc localhost 8080
+olá pessoal!
+[-] Bruno desconectou
+```
+
+---
+
 ## Exercícios
 
 **ex01-tcp-echo:** servidor eco que devolve tudo que recebe; testar com `nc localhost 8080`
@@ -154,8 +230,18 @@ inet_ntoa(addr.sin_addr)  // IP → string (não thread-safe)
 
 ---
 
-## Referências
+## Recursos Adicionais
 
+Estes recursos são **opcionais** mas vão solidificar seu entendimento:
+
+**Para ler/assistir agora:**
+- [Beej's Guide to Network Programming](https://beej.us/guide/bgnet/) — o melhor recurso gratuito sobre sockets em C
+- **OSTEP** não cobre redes, mas os conceitos de I/O do módulo 36 ajudam
+
+**Para consulta:**
 - `man 2 socket` · `man 2 bind` · `man 2 listen` · `man 2 accept` · `man 2 connect`
-- **Beej's Guide to Network Programming** — beej.us/guide/bgnet (o melhor recurso gratuito)
-- **TLPI** capítulos 56-61 (sockets)
+- **TLPI** capítulos 56-61 (sockets) — referência completa
+
+**Para ir além:**
+- [Wireshark](https://www.wireshark.org) — capturar e inspecionar pacotes TCP em tempo real
+- [The C10K Problem](http://www.kegel.com/c10k.html) — artigo clássico sobre servidores de alta performance com epoll

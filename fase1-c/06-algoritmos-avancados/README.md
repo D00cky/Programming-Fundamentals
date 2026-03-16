@@ -4,6 +4,29 @@
 
 ---
 
+## Antes de começar
+
+Certifique-se de que você já:
+
+- [ ] Implementou todas as estruturas de dados do módulo 03 (lista, pilha, fila, hash table)
+- [ ] Usa recursão com confiança e entende o que é a call stack
+- [ ] Implementou BST e heap binário do módulo 05
+- [ ] Conhece BFS e DFS em árvores e entende grafos em nível conceitual
+
+---
+
+## O que você vai aprender
+
+Ao final deste módulo você será capaz de:
+
+- Aplicar o template de backtracking para resolver problemas de busca combinatória
+- Implementar algoritmos divide & conquer e analisar sua complexidade com o Master Theorem
+- Implementar BFS e DFS em grafos representados por lista de adjacência
+- Usar o algoritmo KMP para busca de padrões em strings em O(n + m)
+- Resolver problemas clássicos com programação dinâmica usando memoização e tabulação
+
+---
+
 ## 1. Recursão Avançada
 
 ### Backtracking
@@ -213,6 +236,65 @@ int lcs(char *a, char *b, int m, int n) {
 
 ---
 
+## Knowledge Check
+
+Responda sem consultar o material. Se travar, releia a seção correspondente.
+
+1. Qual a diferença entre backtracking e força bruta? O que é "poda" (pruning)?
+2. Como o Master Theorem se aplica ao Merge Sort? Qual é a recorrência?
+3. Quando usar BFS e quando usar DFS para encontrar um caminho num grafo?
+4. Qual a vantagem do KMP sobre o algoritmo ingênuo? O que a tabela de falha representa?
+5. O que é memoização? Como ela transforma Fibonacci de O(2^n) para O(n)?
+6. Qual a diferença entre memoização (top-down) e tabulação (bottom-up)?
+7. O que são "subproblemas sobrepostos"? Dê um exemplo com Fibonacci.
+8. Em que situação você usaria lista de adjacência vs matriz de adjacência para representar um grafo?
+9. Por que BFS garante o menor caminho em grafos não-ponderados, mas DFS não garante?
+
+---
+
+## Projeto — Solver de Labirinto
+
+Implemente um programa que lê um labirinto de um arquivo e encontra o caminho da entrada até a saída.
+
+**Formato do labirinto (arquivo `.txt`):**
+```
+#########
+#S# #   #
+# # ### #
+#   #   #
+### # ###
+#   #  E#
+#########
+```
+- `#` = parede, ` ` = corredor, `S` = início, `E` = saída
+
+**Funcionalidades:**
+- Ler labirinto de arquivo passado como argumento
+- Resolver com BFS (encontra caminho mais curto)
+- Resolver com DFS (encontra qualquer caminho)
+- Imprimir labirinto com o caminho BFS marcado com `.`
+- Exibir comprimento do caminho e mensagem "Sem solução" se não houver saída
+
+**Requisitos técnicos:**
+- Compilar com `gcc -Wall -Wextra -Werror`
+- Tratar labirinto sem solução sem crash
+- Zero memory leaks
+
+**Exemplo de execução:**
+```
+$ ./maze labirinto.txt
+Solução BFS (8 passos):
+#########
+#S.# #   #
+#.# ### #
+#...#   #
+###.# ###
+#   #..E#
+#########
+```
+
+---
+
 ## Exercícios
 
 **→ [`ex01-backtracking/`](ex01-backtracking/main.c)** — N-Rainhas, labirinto, subconjuntos
@@ -222,9 +304,18 @@ int lcs(char *a, char *b, int m, int n) {
 
 ---
 
-## Referências
+## Recursos Adicionais
 
-- **CLRS** — capítulos 15 (DP), 22 (Graph algorithms), 32 (String matching)
-- **The Algorithm Design Manual** — Steven Skiena
-- **Competitive Programmer's Handbook** — cses.fi/book/book.pdf (gratuito)
-- **Visualgo** — visualgo.net
+Estes recursos são **opcionais** mas vão solidificar seu entendimento:
+
+**Para ler/assistir agora:**
+- **Competitive Programmer's Handbook** — cses.fi/book/book.pdf (gratuito) — capítulos 5-7 (DP, graphs)
+- [Visualgo](https://visualgo.net) — animações de BFS, DFS, backtracking
+
+**Para consulta:**
+- **CLRS** capítulos 15 (DP), 22 (Graph algorithms), 32 (String matching)
+- **The Algorithm Design Manual** — Steven Skiena (abordagem mais intuitiva que CLRS)
+
+**Para ir além:**
+- [Dijkstra's Algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm) — menor caminho em grafos ponderados
+- **LeetCode** categorias DP e Graphs — praticar com feedback imediato
