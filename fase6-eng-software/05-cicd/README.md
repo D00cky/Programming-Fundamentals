@@ -2,6 +2,26 @@
 
 > *"If it hurts, do it more often."* — Jez Humble
 
+## Antes de começar
+
+Certifique-se de que você já:
+
+- [ ] Usa git com branches, commits e pull requests fluentemente (`fase0-fundacao`)
+- [ ] Tem Docker instalado e rodou pelo menos um `docker run` de uma imagem existente
+- [ ] Concluiu `fase6-eng-software/03-testes` — CI sem testes é pouco útil
+
+---
+
+## O que você vai aprender
+
+Ao final deste módulo você será capaz de:
+
+- Configurar um workflow completo no GitHub Actions (build, test, docker build, push)
+- Escrever um Dockerfile multi-stage eficiente para uma aplicação Java
+- Subir um ambiente de desenvolvimento com docker-compose (app + banco + cache)
+- Explicar os conceitos de CI, CD, Continuous Deployment e as diferenças entre eles
+- Interpretar métricas de observabilidade: logs estruturados, métricas, distributed traces
+
 ---
 
 ## 1. Conceitos
@@ -228,6 +248,70 @@ Counter.builder("pedidos.processados")
 
 ---
 
+## Knowledge Check
+
+Responda sem consultar o material. Se travar, releia a seção correspondente.
+
+1. Qual a diferença entre Continuous Delivery e Continuous Deployment?
+2. O que é um multi-stage Dockerfile? Qual benefício ele traz em relação ao tamanho da imagem?
+3. Por que `docker-compose` é útil em desenvolvimento mas não é adequado para produção em escala?
+4. O que acontece se um step do GitHub Actions falha? Como tornar um step opcional?
+5. Qual a diferença entre `ENV` e `ARG` em um Dockerfile?
+6. O que é um health check em Docker? Como ele é útil no `docker-compose`?
+7. O que é observabilidade? Qual a diferença entre logs, métricas e distributed traces?
+8. O que é Error Budget no contexto de SRE? Como ele conecta desenvolvimento e operações?
+
+---
+
+## Projeto — Pipeline CI/CD Completo para Aplicação Java
+
+Configure um pipeline GitHub Actions completo para um projeto Java com Maven:
+
+**Estrutura do projeto alvo:**
+- Aplicação Spring Boot simples com endpoint REST `/health` e `/api/items`
+- JUnit 5 com pelo menos 5 testes
+- JaCoCo para cobertura
+
+**Passo 1 — GitHub Actions (`.github/workflows/ci.yml`):**
+```yaml
+on: [push, pull_request]
+jobs:
+  ci:
+    steps:
+      - checkout
+      - setup JDK 21
+      - mvn compile
+      - mvn test
+      - jacoco:report
+      - falhar se cobertura < 70%
+      - checkstyle
+  docker:
+    needs: ci
+    steps:
+      - docker build
+      - docker run (smoke test: curl /health)
+      - docker push (apenas em push para main)
+```
+
+**Passo 2 — Dockerfile multi-stage:**
+- Stage `builder`: JDK + Maven, compila e empacota
+- Stage `runtime`: JRE-alpine apenas, copia o `.jar`
+- Imagem final < 200MB
+- `HEALTHCHECK` configurado
+
+**Passo 3 — docker-compose.yml:**
+- Serviço `app` (sua imagem)
+- Serviço `db` (PostgreSQL)
+- Variáveis de ambiente via `.env` (nunca hardcoded)
+- `depends_on` com `condition: service_healthy`
+
+**Critérios de aceite:**
+- `git push` na branch feature → CI roda e exibe ✅ ou ❌
+- `git push` em main → imagem publicada no GitHub Container Registry
+- `docker compose up` sobe o ambiente completo em < 30s
+
+---
+
 ## Referências
 
 - **Continuous Delivery** — Jez Humble & David Farley
@@ -235,3 +319,21 @@ Counter.builder("pedidos.processados")
 - **Site Reliability Engineering** — Google · sre.google/books (gratuito online)
 - **Docker Documentation** — docs.docker.com
 - **GitHub Actions Documentation** — docs.github.com/actions
+
+---
+
+## Recursos Adicionais
+
+Estes recursos são **opcionais** mas vão solidificar seu entendimento:
+
+**Para ler/assistir agora:**
+- **The Phoenix Project** — Gene Kim · romance sobre DevOps; leitura leve que constrói intuição sobre por que CI/CD importa antes de qualquer ferramenta
+- **Docker documentation** (docs.docker.com) — tutorial oficial Getting Started; cobre 80% do que você precisará no dia a dia
+
+**Para consulta:**
+- **GitHub Actions documentation** — referência completa de syntax, contexts, expressions e marketplace de actions
+- **Docker Compose reference** — spec completa do `docker-compose.yml` com todos os campos
+
+**Para ir além:**
+- **Continuous Delivery** — Humble & Farley · o livro que definiu a disciplina; capítulos 5-8 são os mais práticos
+- **Site Reliability Engineering** — Google (sre.google/books, gratuito) · como Google opera sistemas em escala com SLOs, error budgets e on-call

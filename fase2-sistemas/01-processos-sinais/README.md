@@ -1,5 +1,31 @@
 # 01 — Processos & Sinais
 
+> *"Unix is not just an operating system, it's a way of thinking."*
+
+---
+
+## Antes de começar
+
+Certifique-se de que você já:
+
+- [ ] Escreve e compila código C com `gcc` e usa ponteiros (`fase1-c/`)
+- [ ] Sabe navegar o terminal e ler páginas `man`
+- [ ] Criou e usou Makefiles com targets `all`, `clean`, `fclean`
+- [ ] Entende entrada/saída padrão e redirecionamento básico no shell
+
+---
+
+## O que você vai aprender
+
+Ao final deste módulo você será capaz de:
+
+- Descrever o ciclo de vida de um processo (criação, execução, término)
+- Explicar os valores de retorno de `fork()` e o que acontece em pai e filho
+- Implementar o padrão fork-exec-waitpid para rodar programas externos
+- Instalar signal handlers robustos com `sigaction`
+- Comunicar processos através de pipes anônimos
+- Explicar o que é um processo zombie e como evitá-lo
+
 ---
 
 ## 1. O que é um Processo?
@@ -163,6 +189,56 @@ execve(prog, args, environ);
 
 ---
 
+## Knowledge Check
+
+Responda sem consultar o material. Se travar, releia a seção correspondente.
+
+1. O que `fork()` retorna no processo pai? E no filho? E em caso de erro?
+2. Qual a diferença entre `fork()` e `exec()`? O que acontece com o PID em cada um?
+3. O que é um processo zombie? Como ele surge e como evitá-lo?
+4. Por que `SIGCHLD` é importante para um servidor que cria muitos filhos?
+5. Por que `printf()` não pode ser usado dentro de um signal handler?
+6. Qual a diferença entre `wait()` e `waitpid()`? Quando você usaria cada um?
+7. O que acontece se `execvp()` falhar (programa não encontrado)?
+8. O que é o "padrão fork-exec"? Por que ele é usado em vez de execvp direto?
+9. Como `kill(0, SIGTERM)` difere de `kill(pid, SIGTERM)`?
+10. O que `WIFEXITED(status)` e `WEXITSTATUS(status)` retornam?
+
+---
+
+## Projeto — Supervisor de Processos
+
+Implemente um supervisor que gerencia N worker processes e os reinicia se morrerem.
+
+**Funcionalidades:**
+- Criar N workers com `fork()` que executam uma tarefa em loop
+- Supervisor monitora workers com `waitpid(WNOHANG)` em loop
+- Se um worker morrer (por qualquer razão), reiniciá-lo automaticamente
+- Ao receber `SIGINT`, enviar `SIGTERM` para todos os workers e aguardar encerramento gracioso
+
+**Requisitos técnicos:**
+- Usar `sigaction` para instalar handlers (não `signal`)
+- Workers encerram limpo ao receber `SIGTERM`
+- Compilar com `gcc -Wall -Wextra -Werror`
+- Sem zombie processes
+
+**Exemplo de execução:**
+```
+$ ./supervisor 3
+[supervisor] Iniciando 3 workers...
+[worker 1234] rodando...
+[worker 1235] rodando...
+[worker 1236] rodando...
+^C
+[supervisor] SIGINT recebido. Encerrando workers...
+[worker 1234] encerrado
+[worker 1235] encerrado
+[worker 1236] encerrado
+[supervisor] Todos os workers encerrados.
+```
+
+---
+
 ## Exercícios
 
 ```bash
@@ -177,8 +253,18 @@ execve(prog, args, environ);
 
 ---
 
-## Referências
+## Recursos Adicionais
 
+Estes recursos são **opcionais** mas vão solidificar seu entendimento:
+
+**Para ler/assistir agora:**
+- **OSTEP** capítulo 5 (Process API) — gratuito em ostep.org, cobre fork/exec com exemplos
+- **TLPI** capítulos 24-26 (processos) — a referência definitiva em Linux
+
+**Para consulta:**
 - `man 2 fork` · `man 2 execve` · `man 2 waitpid` · `man 2 kill` · `man 2 sigaction`
-- **TLPI** capítulos 24-26 (processos), 20-22 (signals)
-- **OSTEP** capítulo 5 (Process API)
+- **TLPI** capítulos 20-22 (signals) — lista completa de sinais e comportamentos
+
+**Para ir além:**
+- **APUE** (Advanced Programming in the Unix Environment) — Stephens & Rago
+- [LWN.net](https://lwn.net) — artigos técnicos sobre syscalls e comportamentos do kernel Linux

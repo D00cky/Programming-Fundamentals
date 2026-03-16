@@ -2,6 +2,25 @@
 
 > SOLID são diretrizes de design, não regras absolutas. O objetivo é criar código mais fácil de manter, estender e testar.
 
+## Antes de começar
+
+Certifique-se de que você já:
+
+- [ ] Escreve código orientado a objetos com classes, interfaces e herança (`fase3-cpp/02-oop` ou `fase4-java/01-fundamentos`)
+- [ ] Entende o que são interfaces e polimorfismo em Java ou C++
+- [ ] Criou pelo menos um projeto com mais de uma classe interagindo entre si
+
+---
+
+## O que você vai aprender
+
+Ao final deste módulo você será capaz de:
+
+- Aplicar cada um dos cinco princípios SOLID com exemplos reais em Java
+- Identificar violações de SOLID em código legado e nomear o princípio violado
+- Refatorar código usando polimorfismo, interfaces e injeção de dependência
+- Explicar quando SOLID é valioso e quando pode ser exagerado
+
 ---
 
 ## S — Single Responsibility Principle
@@ -171,8 +190,65 @@ Os princípios se reforçam mutuamente:
 
 ---
 
+## Knowledge Check
+
+Responda sem consultar o material. Se travar, releia a seção correspondente.
+
+1. SRP diz que uma classe deve ter "um único motivo para mudar". O que conta como um "motivo para mudar"?
+2. Como OCP e Strategy Pattern se relacionam? Desenhe mentalmente o diagrama.
+3. Por que Quadrado herdar de Retângulo viola LSP? Como resolver sem quebrar a hierarquia?
+4. Qual o sintoma mais claro de violação do ISP em código Java?
+5. O que é injeção de dependência? Por que ela é necessária para aplicar DIP?
+6. Se você tem um `switch` com `instanceof` para decidir comportamento por tipo, qual princípio provavelmente está sendo violado?
+7. Como DIP facilita a escrita de testes unitários? Dê um exemplo concreto.
+8. Em que situações aplicar SOLID rigorosamente pode ser contraproducente?
+
+---
+
+## Projeto — Sistema de E-Commerce com SOLID
+
+Implemente um sistema de e-commerce simplificado que demonstre todos os 5 princípios:
+
+**Requisitos de domínio:**
+- Processar pedidos com diferentes métodos de pagamento (cartão, pix, boleto)
+- Calcular descontos por categoria de produto (eletrônicos, roupas, alimentos)
+- Notificar cliente após confirmação (email ou SMS)
+- Persistir pedido (em memória por ora, mas fácil de trocar por banco)
+
+**Mapeamento para SOLID:**
+- **SRP:** `OrderService` orquestra; `PaymentProcessor`, `DiscountCalculator`, `Notifier`, `OrderRepository` separados
+- **OCP:** adicionar novo método de pagamento = nova classe, sem modificar `OrderService`
+- **LSP:** `CreditCardPayment` e `PixPayment` substituíveis via interface `PaymentMethod`
+- **ISP:** `Notifiable` separado de `Auditable`; não forçar todos a implementar tudo
+- **DIP:** `OrderService` recebe interfaces no construtor, nunca instancia dependências concretas
+
+**Requisitos técnicos:**
+- Java com pelo menos 8 classes/interfaces
+- Demonstrar DIP com pelo menos 2 implementações intercambiáveis (ex: `EmailNotifier` e `SmsNotifier`)
+- Incluir um teste JUnit simples que usa `InMemoryOrderRepository`
+
+---
+
 ## Referências
 
 - **Clean Code** — Uncle Bob, capítulos 9-11
 - **Agile Software Development** — Robert C. Martin (onde SOLID foi formalizado)
 - **Refactoring.Guru** — refactoring.guru/solid (exemplos visuais)
+
+---
+
+## Recursos Adicionais
+
+Estes recursos são **opcionais** mas vão solidificar seu entendimento:
+
+**Para ler/assistir agora:**
+- **Refactoring.Guru/SOLID** — explicações visuais com exemplos antes/depois; ponto de entrada ideal
+- **Uncle Bob: The Principles of OOD** (butunclebob.com) — artigos originais onde SOLID foi definido, gratuitos
+
+**Para consulta:**
+- **Agile Software Development** — Robert C. Martin caps. 7-12 · onde SOLID foi formalizado com contexto
+- **Refactoring** — Martin Fowler · catálogo de refactorings que frequentemente implementam SOLID
+
+**Para ir além:**
+- **Growing Object-Oriented Software, Guided by Tests** — Freeman & Pryce · SOLID aplicado com TDD desde o início
+- **Head First Design Patterns** — Freeman · padrões de design que materializam OCP, DIP e ISP

@@ -6,6 +6,29 @@ Os 23 patterns do GoF (Gang of Four) são soluções recorrentes para problemas 
 
 ---
 
+## Antes de começar
+
+Certifique-se de que você já:
+
+- [ ] Usa interfaces, classes abstratas e polimorfismo Java com confiança (`fase4-java/01`)
+- [ ] Entende os princípios SOLID em nível conceitual (`fase6-eng-software/01` se já chegou lá)
+- [ ] Implementou Strategy pattern implicitamente ao passar Comparator como lambda
+- [ ] Conhece `java.util.concurrent` e lambda expressions
+
+---
+
+## O que você vai aprender
+
+Ao final deste módulo você será capaz de:
+
+- Identificar qual pattern aplicar dado um problema de design
+- Implementar os 7 patterns mais usados na prática: Singleton, Builder, Factory, Observer, Strategy, Decorator, Adapter
+- Explicar qual problema cada pattern resolve e quando ele é um exagero
+- Reconhecer patterns em código real (Java I/O, Spring, Stream API)
+- Refatorar código com if/switch longos para polimorfismo com Strategy ou Factory
+
+---
+
 ## Categorias
 
 ```
@@ -191,6 +214,57 @@ abstract class RelatorioGerador {
 
 ---
 
+## Knowledge Check
+
+Responda sem consultar o material. Se travar, releia a seção correspondente.
+
+1. Qual a diferença entre Factory Method e Abstract Factory?
+2. Por que Singleton dificulta testes unitários? Como mitigar?
+3. Quando Decorator é melhor que herança para adicionar comportamento?
+4. Qual pattern a Stream API Java usa quando você chama `.filter().map().collect()`?
+5. Como o Java I/O usa Decorator? Dê dois exemplos concretos.
+6. Qual a diferença entre Observer e Event Bus?
+7. Quando Command é mais útil que uma simples chamada de método?
+8. O que é Template Method e como ele difere de Strategy?
+
+---
+
+## Projeto — Sistema de Notificações
+
+Implemente um sistema de notificações com múltiplos canais usando patterns GoF.
+
+**Arquitetura:**
+- `Notificacao` (Builder): constrói mensagens com `para`, `assunto`, `corpo`, `prioridade`
+- `CanalNotificacao` (Strategy/Observer): `Email`, `SMS`, `PushNotification`
+- `NotificacaoService` (Observer Publisher): envia para todos os canais registrados
+- `NotificacaoLogger` (Decorator): wraps CanalNotificacao, logando cada envio
+- `CanalFactory` (Factory): cria canal dado string `"email"`, `"sms"`, `"push"`
+
+**Funcionalidades:**
+- Registrar/desregistrar canais dinamicamente
+- Enviar notificação para todos os canais registrados
+- Decorar qualquer canal com logging
+- Retry automático em caso de falha (Command + fila)
+
+**Exemplo de execução:**
+```java
+var service = new NotificacaoService();
+service.registrar(new CanalLogger(CanalFactory.criar("email")));
+service.registrar(CanalFactory.criar("sms"));
+
+var notif = new Notificacao.Builder()
+    .para("user@example.com")
+    .assunto("Bem-vindo!")
+    .corpo("Sua conta foi criada.")
+    .build();
+
+service.enviar(notif);
+// [LOG] Email enviado para user@example.com
+// SMS enviado para +55...
+```
+
+---
+
 ## Exercícios
 
 **ex01:** implementar um sistema de notificações com Observer: email, SMS, push notification
@@ -201,8 +275,18 @@ abstract class RelatorioGerador {
 
 ---
 
-## Referências
+## Recursos Adicionais
 
-- **Head First Design Patterns** — Freeman & Freeman · mais didático
-- **Design Patterns: Elements of Reusable Object-Oriented Software** — GoF · o original
-- **Refactoring.Guru** — refactoring.guru/design-patterns (gratuito, com diagramas)
+Estes recursos são **opcionais** mas vão solidificar seu entendimento:
+
+**Para ler/assistir agora:**
+- **Head First Design Patterns** — Freeman & Freeman — o mais didático, com diagramas
+- [Refactoring.Guru Design Patterns](https://refactoring.guru/design-patterns) — gratuito, com diagramas e exemplos Java
+
+**Para consulta:**
+- **Design Patterns: Elements of Reusable Object-Oriented Software** — GoF — o original
+- [SourceMaking Patterns](https://sourcemaking.com/design_patterns) — exemplos em múltiplas linguagens
+
+**Para ir além:**
+- **Patterns of Enterprise Application Architecture** — Martin Fowler — patterns para sistemas grandes
+- [Enterprise Integration Patterns](https://www.enterpriseintegrationpatterns.com) — messaging e integração

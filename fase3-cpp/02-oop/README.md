@@ -1,5 +1,31 @@
 # 02 — OOP: Herança, Polimorfismo & Interfaces
 
+> *"OOP to me means only messaging, local retention and protection, and hiding of state-process."* — Alan Kay
+
+---
+
+## Antes de começar
+
+Certifique-se de que você já:
+
+- [ ] Escreveu classes C++ com construtores, destrutores e RAII (`fase3-cpp/01`)
+- [ ] Entende referências e a diferença entre `const T&` e `T` como parâmetro
+- [ ] Sabe compilar com `g++ -std=c++17` e usar `std::string`
+- [ ] Conhece o conceito de herança de `struct` em C (base para herança em C++)
+
+---
+
+## O que você vai aprender
+
+Ao final deste módulo você será capaz de:
+
+- Usar herança pública e o papel do destrutor virtual em classes base
+- Implementar polimorfismo dinâmico via funções virtuais e vtable
+- Criar classes abstratas com funções virtuais puras (`= 0`)
+- Sobrecarregar operadores para tipos customizados
+- Explicar e aplicar a Regra dos 3/5/0
+- Usar herança múltipla para simular interfaces em C++
+
 ---
 
 ## 1. Herança
@@ -187,6 +213,58 @@ public:
 
 ---
 
+## Knowledge Check
+
+Responda sem consultar o material. Se travar, releia a seção correspondente.
+
+1. Por que o destrutor de uma classe base deve ser `virtual`? O que acontece se não for?
+2. Qual a diferença entre `override` e apenas redeclarar o método na subclasse?
+3. O que é uma função virtual pura? O que torna uma classe abstrata?
+4. Como o compilador implementa polimorfismo dinâmico (vtable)?
+5. Por que `operator<<` para `std::ostream` geralmente precisa ser `friend`?
+6. O que a Regra dos 3 afirma? Dê um exemplo concreto onde violá-la causa bug.
+7. Qual a diferença entre herança pública, protegida e privada?
+8. O que é slicing? Como ele ocorre e como evitá-lo?
+
+---
+
+## Projeto — Sistema de Formas Geométricas
+
+Implemente uma hierarquia de formas com polimorfismo completo.
+
+**Hierarquia:**
+- `Forma` (abstrata): `area()`, `perimetro()`, `nome()`, `operator<<`
+- `Circulo`, `Retangulo`, `Triangulo`: implementações concretas
+- `FormaComposta`: contém vetor de `Forma*`, soma áreas e perímetros
+
+**Funcionalidades:**
+- Criar formas de um arquivo de configuração (formato: `circulo 5.0`, `retangulo 3.0 4.0`)
+- Listar todas as formas com área e perímetro
+- Ordenar por área (usando `std::sort` com lambda)
+- Calcular área total de uma `FormaComposta`
+
+**Requisitos técnicos:**
+- Sem memory leaks: usar `std::vector<std::unique_ptr<Forma>>`
+- Compilar com `g++ -Wall -Wextra -Werror -std=c++17`
+- Destrutor virtual em `Forma`
+
+**Exemplo de execução:**
+```
+$ ./formas formas.txt
+Circulo(r=5)       área=78.54  perímetro=31.42
+Retangulo(3x4)     área=12.00  perímetro=14.00
+Triangulo(3,4,5)   área= 6.00  perímetro=12.00
+
+Ordenado por área (crescente):
+1. Triangulo(3,4,5)  área= 6.00
+2. Retangulo(3x4)    área=12.00
+3. Circulo(r=5)      área=78.54
+
+Área total: 96.54
+```
+
+---
+
 ## Exercícios
 
 **ex01:** hierarquia de formas (Forma → Circulo, Retangulo, Triangulo); calcular área total de um vetor de formas
@@ -195,8 +273,18 @@ public:
 
 ---
 
-## Referências
+## Recursos Adicionais
 
-- **A Tour of C++** capítulo 4 (Classes)
+Estes recursos são **opcionais** mas vão solidificar seu entendimento:
+
+**Para ler/assistir agora:**
+- **A Tour of C++** capítulo 4 (Classes) — herança e polimorfismo em ~30 páginas
 - **Effective C++** — Scott Meyers, itens 32-41 (herança e OOP)
-- cppreference.com: virtual functions, abstract classes
+
+**Para consulta:**
+- [cppreference: virtual functions](https://en.cppreference.com/w/cpp/language/virtual) — semântica completa
+- [cppreference: abstract classes](https://en.cppreference.com/w/cpp/language/abstract_class)
+
+**Para ir além:**
+- **More Effective C++** — Scott Meyers, item 33 (make non-leaf classes abstract)
+- [CppCon "Back to Basics: OOP"](https://www.youtube.com/watch?v=32tDTD9UJCE) — palestra fundamental

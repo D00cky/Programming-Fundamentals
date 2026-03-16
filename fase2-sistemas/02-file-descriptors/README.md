@@ -1,5 +1,30 @@
 # 02 — File Descriptors & I/O
 
+> *"In Unix, everything is a file."*
+
+---
+
+## Antes de começar
+
+Certifique-se de que você já:
+
+- [ ] Implementou `fork()`, `exec()` e `waitpid()` (`fase2-sistemas/01`)
+- [ ] Entende o que são processos zombie e sabe evitá-los
+- [ ] Usou `pipe()` e sabe que fechar as pontas certas é essencial
+- [ ] Diagnosticou file descriptor leaks com `/proc/self/fd`
+
+---
+
+## O que você vai aprender
+
+Ao final deste módulo você será capaz de:
+
+- Usar `open`, `read`, `write`, `close` para I/O sem bufferização
+- Redirecionar stdin/stdout de um processo com `dup2` antes de `execve`
+- Encadear N comandos em pipeline usando `pipe()` + `fork()` + `dup2()`
+- Explicar a tabela de file descriptors por processo e herança em `fork()`
+- Usar `lseek` para navegação em arquivos e inspecionar FDs com `/proc/PID/fd`
+
 ---
 
 ## 1. File Descriptors
@@ -145,6 +170,50 @@ lseek(fd, 0, SEEK_SET);
 
 ---
 
+## Knowledge Check
+
+Responda sem consultar o material. Se travar, releia a seção correspondente.
+
+1. Quais são os FDs 0, 1 e 2 por convenção? O que acontece se você fechar o FD 0?
+2. Qual a diferença entre `open()` da syscall e `fopen()` da libc?
+3. O que `dup2(4, 1)` faz exatamente? O que acontece com o FD 1 original?
+4. Por que é obrigatório fechar as pontas não usadas de um pipe?
+5. Qual a diferença entre `O_TRUNC` e `O_APPEND`?
+6. Você pode usar `lseek()` em um pipe? Por que?
+7. Como você inspeciona os FDs abertos de um processo em execução no Linux?
+8. Quando um processo filho é criado com `fork()`, o que acontece com os FDs do pai?
+
+---
+
+## Projeto — Mini Shell Pipeline
+
+Implemente um mini shell capaz de executar pipelines de N comandos.
+
+**Funcionalidades:**
+- Ler linha do stdin e parsear `cmd1 | cmd2 | cmd3 | ...`
+- Criar N-1 pipes e N processos filhos
+- Conectar stdout de cada processo ao stdin do próximo via `dup2`
+- Aguardar todos os processos terminarem
+- Tratar erros: comando não encontrado, `fork()` falhou, `pipe()` falhou
+
+**Requisitos técnicos:**
+- Fechar todos os FDs não usados em cada processo filho
+- Compilar com `gcc -Wall -Wextra -Werror`
+- Sem file descriptor leaks (verificar com `/proc/self/fd`)
+- Sem zombie processes
+
+**Exemplo de execução:**
+```
+$ ./minishell
+minish> ls -la | grep main | wc -l
+3
+minish> cat /etc/passwd | grep root | cut -d: -f1
+root
+minish> exit
+```
+
+---
+
 ## Exercícios
 
 **ex01-rw:** abrir arquivo, ler conteúdo, imprimir no stdout usando só `read`/`write` (sem printf/fgets)
@@ -155,8 +224,18 @@ lseek(fd, 0, SEEK_SET);
 
 ---
 
-## Referências
+## Recursos Adicionais
 
+Estes recursos são **opcionais** mas vão solidificar seu entendimento:
+
+**Para ler/assistir agora:**
+- **TLPI** capítulos 4-5 (File I/O) — a referência em Linux para `open`/`read`/`write`/`dup2`
+- [Julia Evans' zines](https://wizardzines.com) — explicações visuais de pipes e FDs
+
+**Para consulta:**
 - `man 2 open` · `man 2 read` · `man 2 write` · `man 2 dup2` · `man 2 pipe`
-- **TLPI** capítulos 4-5 (I/O), 44 (pipes), 63 (I/O multiplexing)
-- **APUE** capítulos 3, 8, 15
+- **APUE** capítulos 3, 8, 15 — Advanced Programming in the Unix Environment
+
+**Para ir além:**
+- **TLPI** capítulo 63 (I/O Multiplexing: select, poll, epoll) — para servidores de alta performance
+- [The Art of Unix Programming](http://www.catb.org/esr/writings/taoup/) — filosofia e design de Unix pipes

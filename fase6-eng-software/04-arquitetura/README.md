@@ -2,6 +2,25 @@
 
 > *"Architecture is about the important stuff. Whatever that is."* — Ralph Johnson
 
+## Antes de começar
+
+Certifique-se de que você já:
+
+- [ ] Concluiu `fase6-eng-software/01-solid`, `02-clean-code` e `03-testes`
+- [ ] Entende injeção de dependência e interfaces em Java
+- [ ] Já leu sobre ou implementou uma aplicação MVC (Model-View-Controller)
+
+---
+
+## O que você vai aprender
+
+Ao final deste módulo você será capaz de:
+
+- Diferenciar Layered, Clean Architecture e Hexagonal Architecture e quando usar cada uma
+- Identificar os conceitos essenciais de DDD: Bounded Context, Aggregate, Domain Event
+- Explicar as trocas entre monolito e microsserviços com exemplos concretos
+- Desenhar a arquitetura de um sistema simples em diagrama com justificativa das decisões
+
 ---
 
 ## 1. Layered Architecture (N-Tier)
@@ -154,6 +173,66 @@ class Pedido {  // aggregate root
 
 ---
 
+## Knowledge Check
+
+Responda sem consultar o material. Se travar, releia a seção correspondente.
+
+1. Qual o problema da Layered Architecture com relação a testabilidade? Como Clean Architecture resolve?
+2. O que é a "Regra de Dependência" da Clean Architecture? O que ela proíbe?
+3. Explique Ports & Adapters (Hexagonal) em suas palavras. O que é um Port? O que é um Adapter?
+4. O que é Ubiquitous Language no DDD? Por que ela importa além do código?
+5. O que é um Aggregate Root? Por que você não deve modificar entidades internas diretamente?
+6. Qual a diferença entre Domain Service e Application Use Case?
+7. Quando você escolheria microsserviços sobre um monolito bem modularizado?
+8. O que é CQRS? Qual problema ele resolve e qual complexidade ele introduz?
+
+---
+
+## Projeto — Arquitetura de Sistema de E-Commerce
+
+Desenhe e documente a arquitetura de um sistema de e-commerce simplificado:
+
+**Escopo do sistema:**
+- Catálogo de produtos (listar, buscar, detalhar)
+- Carrinho de compras (adicionar, remover, calcular total com descontos)
+- Checkout (validar estoque, processar pagamento, emitir pedido)
+- Notificações (email de confirmação, SMS de envio)
+
+**Entregáveis:**
+
+**1. Diagrama de Arquitetura** (ASCII art no README ou ferramenta como draw.io):
+- Mostrar camadas/hexágonos com dependências claramente marcadas
+- Identificar quais componentes são Domain, Application, Infra
+
+**2. Mapeamento DDD:**
+- Identificar os Aggregates (ex: Pedido, Produto, Carrinho)
+- Listar pelo menos 3 Domain Events (ex: `PedidoCriado`, `PagamentoConfirmado`)
+- Definir os Bounded Contexts e onde estão os limites
+
+**3. Decisões Arquiteturais (ADR simplificado):**
+- Por que Clean Architecture (ou Hexagonal) neste contexto?
+- Monolito ou microsserviços? Justifique.
+- Como o domínio de Pagamento se comunica com o de Pedido?
+
+**Exemplo de estrutura de pacotes:**
+```
+com.loja/
+  domain/
+    pedido/          ← Aggregate Pedido
+    produto/         ← Aggregate Produto
+    pagamento/       ← Domain Service
+  application/
+    checkout/        ← Use Case
+    catalogo/        ← Use Case
+  infrastructure/
+    persistence/     ← JPA Repositories
+    messaging/       ← Email/SMS adapters
+  interfaces/
+    rest/            ← Controllers
+```
+
+---
+
 ## Referências
 
 - **Clean Architecture** — Robert C. Martin
@@ -161,3 +240,21 @@ class Pedido {  // aggregate root
 - **Implementing DDD** — Vaughn Vernon (livro vermelho, mais prático)
 - **Designing Data-Intensive Applications** — Martin Kleppmann (sistemas distribuídos)
 - **Building Microservices** — Sam Newman
+
+---
+
+## Recursos Adicionais
+
+Estes recursos são **opcionais** mas vão solidificar seu entendimento:
+
+**Para ler/assistir agora:**
+- **Implementing DDD** — Vaughn Vernon · mais prático que o livro azul do Evans; começa com exemplos concretos em Java
+- **Clean Architecture** — Uncle Bob · curto e direto, explica a Regra de Dependência com clareza
+
+**Para consulta:**
+- **Martin Fowler's bliki** (martinfowler.com) — artigos sobre Microservices, EventSourcing, CQRS, DDD com exemplos curtos
+- **Architecture Decision Records (ADR)** — template de Michael Nygard para documentar decisões arquiteturais
+
+**Para ir além:**
+- **Designing Data-Intensive Applications** — Kleppmann · sistemas distribuídos, consistência eventual, Kafka; a leitura mais importante para sistemas em escala
+- **Domain-Driven Design** — Eric Evans · o livro azul original, denso mas fundamental para entender os conceitos em profundidade

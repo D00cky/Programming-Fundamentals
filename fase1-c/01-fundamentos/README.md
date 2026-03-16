@@ -4,6 +4,29 @@
 
 ---
 
+## Antes de começar
+
+Certifique-se de que você já:
+
+- [ ] Sabe usar o terminal básico: navegar diretórios, criar arquivos (`fase0-fundacao/04-terminal-linux`)
+- [ ] Entende o que é compilação: pré-processador → compilador → linker (`fase0-fundacao/06-compilacao`)
+- [ ] Tem `gcc` instalado: `gcc --version` deve retornar algo
+
+---
+
+## O que você vai aprender
+
+Ao final deste módulo você será capaz de:
+
+- Escrever, compilar e executar um programa C do zero
+- Usar os tipos primitivos corretos para cada situação
+- Controlar o fluxo do programa com if, for, while, switch
+- Escrever funções com parâmetros e retorno, incluindo recursão
+- Manipular arrays e strings sem bibliotecas externas
+- Ler e escrever dados com `printf`, `scanf`, `fgets`, `getchar`
+
+---
+
 ## 1. Estrutura de um Programa C
 
 Todo programa C começa com `main`. O sistema operacional chama `main` quando você executa o programa.
@@ -125,7 +148,7 @@ a >> n  // shift right (divide por 2^n)
 
 ```c
 // Exemplo prático: verificar se número é par
-if (n & 1 == 0)   // bit menos significativo é 0 → par
+if ((n & 1) == 0)   // bit menos significativo é 0 → par
 ```
 
 ### Atribuição
@@ -136,8 +159,8 @@ a -= 3;   // a = a - 3
 a *= 2;   // a = a * 2
 a /= 2;   // a = a / 2
 a %= 3;   // a = a % 3
-a++;      // a = a + 1 (pós-incremento)
-++a;      // a = a + 1 (pré-incremento)
+a++;      // pós-incremento
+++a;      // pré-incremento
 ```
 
 **→ Exercício:** [`ex03-operadores/`](ex03-operadores/main.c)
@@ -253,16 +276,6 @@ int main(void)
 
 Para modificar o original, precisa de ponteiro (módulo 02).
 
-### void
-
-```c
-void imprime_separador(void)
-{
-    printf("---\n");
-    // sem return (ou return; sem valor)
-}
-```
-
 ### Recursão
 
 Uma função que chama a si mesma. Precisa de:
@@ -292,9 +305,9 @@ int fatorial(int n)
 Array = bloco contíguo de memória com elementos do mesmo tipo.
 
 ```c
-int notas[5];                    // declara array de 5 ints (não inicializado!)
+int notas[5];                      // declara array de 5 ints (não inicializado!)
 int primos[5] = {2, 3, 5, 7, 11}; // declara e inicializa
-int zeros[10] = {0};             // inicializa tudo com 0
+int zeros[10] = {0};               // inicializa tudo com 0
 
 primos[0];   // 2 (índices começam em 0)
 primos[4];   // 11 (último elemento: tamanho - 1)
@@ -313,13 +326,12 @@ for (int i = 0; i < tamanho; i++) {
 ```c
 int matriz[3][4];  // 3 linhas, 4 colunas
 
-// Preencher com zeros
 for (int i = 0; i < 3; i++)
     for (int j = 0; j < 4; j++)
         matriz[i][j] = 0;
 ```
 
-> C não verifica limites de array. Acessar `arr[n]` quando `n >= tamanho` é **undefined behavior** — pode crashar, pode corromper memória, pode não fazer nada aparente. Isso é como se criam vulnerabilidades de buffer overflow.
+> C não verifica limites de array. Acessar `arr[n]` quando `n >= tamanho` é **undefined behavior** — pode crashar, pode corromper memória, pode não fazer nada aparente. É assim que surgem vulnerabilidades de buffer overflow.
 
 **→ Exercício:** [`ex06-arrays/`](ex06-arrays/main.c)
 
@@ -347,13 +359,13 @@ O `'\0'` tem valor inteiro 0. É ele que marca o fim da string.
 ```c
 #include <string.h>
 
-strlen(s)           // comprimento (sem contar o '\0')
-strcpy(dest, src)   // copia src para dest (dest deve ter espaço!)
+strlen(s)             // comprimento (sem contar o '\0')
+strcpy(dest, src)     // copia src para dest (dest deve ter espaço!)
 strncpy(dest, src, n) // copia no máximo n chars (mais seguro)
-strcmp(s1, s2)      // 0 se iguais, <0 se s1<s2, >0 se s1>s2
-strcat(dest, src)   // concatena src ao final de dest
-strchr(s, c)        // ponteiro para primeira ocorrência de c em s
-strstr(s, sub)      // ponteiro para primeira ocorrência de sub em s
+strcmp(s1, s2)        // 0 se iguais, <0 se s1<s2, >0 se s1>s2
+strcat(dest, src)     // concatena src ao final de dest
+strchr(s, c)          // ponteiro para primeira ocorrência de c em s
+strstr(s, sub)        // ponteiro para primeira ocorrência de sub em s
 ```
 
 > ⚠️ `strcmp` não retorna bool. Strings iguais → retorna **0** (falso em C!).
@@ -385,12 +397,10 @@ while (s[i] != '\0') {
 | `%ld` | long |
 | `%f` | float/double |
 | `%.2f` | double com 2 casas decimais |
-| `%e` | notação científica |
 | `%c` | char |
 | `%s` | string (char*) |
 | `%p` | ponteiro (endereço em hex) |
 | `%x` | inteiro em hexadecimal |
-| `%o` | inteiro em octal |
 | `%zu` | size_t (sizeof) |
 | `%%` | o caractere `%` |
 
@@ -408,9 +418,9 @@ int n;
 double x;
 char nome[50];
 
-scanf("%d", &n);      // & = endereço de n (passagem por referência)
+scanf("%d", &n);      // & = endereço de n
 scanf("%lf", &x);     // %lf para double (não %f!)
-scanf("%49s", nome);  // lê palavra (para no espaço); %49s evita overflow
+scanf("%49s", nome);  // lê palavra; %49s evita overflow
 ```
 
 > `scanf` com `%s` não lê strings com espaços. Para isso: `fgets(nome, sizeof(nome), stdin)`.
@@ -429,6 +439,79 @@ while ((c = getchar()) != '\n')  // consome até o enter
 
 ---
 
+## Knowledge Check
+
+Responda sem consultar o material. Se travar, releia a seção correspondente.
+
+1. Por que `main` retorna `int` e não `void`? O que o valor de retorno representa?
+2. Qual a diferença entre `int` e `unsigned int`? Quando você usaria cada um?
+3. O que acontece em `int x = 17 / 5;`? Como obter `3.4` ao invés de `3`?
+4. Por que `strcmp(s1, s2) == 0` e não apenas `strcmp(s1, s2)`?
+5. Qual a diferença entre pré-incremento (`++i`) e pós-incremento (`i++`) dentro de uma expressão?
+6. O que é o `'\0'` e por que ele é obrigatório em strings C?
+7. O que acontece se você acessar `arr[10]` num array de tamanho 10?
+8. Por que a função `dobra(int x)` não modifica o valor original fora dela?
+9. Qual a diferença entre `while` e `do-while`? Dê um exemplo onde `do-while` é mais natural.
+10. O que `-Wall -Wextra -Werror` fazem no gcc? Por que são importantes?
+
+---
+
+## Projeto — Calculadora de Terminal
+
+Implemente uma calculadora interativa em C com os seguintes requisitos:
+
+**Funcionalidades:**
+- Loop principal que lê expressões do tipo `<número> <operador> <número>` até o usuário digitar `q`
+- Operadores suportados: `+`, `-`, `*`, `/`, `%`
+- Divisão por zero deve exibir mensagem de erro e continuar (não crashar)
+- Divisão entre inteiros mostra resultado inteiro **e** o resto separados
+- Histórico: ao digitar `h`, exibe as últimas 10 operações com resultados
+
+**Requisitos técnicos:**
+- Compilar sem warnings com `gcc -Wall -Wextra -Werror`
+- Cada operação em uma função separada (`soma`, `subtrai`, `multiplica`, `divide`)
+- Função `exibir_historico` separada
+- Sem variáveis globais — passe o histórico por parâmetro
+
+**Exemplo de execução:**
+```
+calc> 17 / 5
+17 / 5 = 3 (resto: 2)
+
+calc> 3.14 * 2
+Erro: use apenas inteiros.
+
+calc> 100 % 7
+100 % 7 = 2
+
+calc> h
+[1] 17 / 5 = 3
+[2] 100 % 7 = 2
+
+calc> q
+Até logo.
+```
+
+---
+
+## Recursos Adicionais
+
+Estes recursos são **opcionais** mas vão solidificar seu entendimento:
+
+**Para ler/assistir agora:**
+- [Beej's Guide to C — cap. 1–5](https://beej.us/guide/bgc/html/split/) — referência online gratuita, linguagem acessível
+- [CS50x Week 1](https://cs50.harvard.edu/x/) — Harvard, em inglês, cobre exatamente este módulo com exercícios
+
+**Para consulta:**
+- `man 3 printf` · `man 3 scanf` · `man 3 string` — documentação completa no seu terminal
+- [cdecl.org](https://cdecl.org) — traduz declarações C complexas para inglês
+
+**Para ir além:**
+- K&R capítulos 1–4 — o livro original de C, conciso e denso
+- [CS:APP cap. 2](https://csapp.cs.cmu.edu/) — representação de dados em nível de bits (gratuito online)
+
+---
+
 ## Mapa de Progressão
 
 ```
@@ -440,13 +523,5 @@ ex05-funcoes     → modularização, recursão (fib, fatorial)
 ex06-arrays      → ordenação básica, pesquisa linear
 ex07-strings     → manipulação sem string.h, depois com
 ex08-io          → leitura de input, validação
+projeto          → calculadora interativa com histórico
 ```
-
----
-
-## Referências
-
-- **K&R** capítulos 1–4 (The C Programming Language)
-- **CS50x** semanas 1 e 2
-- **Beej's Guide to C** — capítulos 1–8 (beej.us/guide/bgc)
-- `man 3 printf` · `man 3 scanf` · `man 3 string`
