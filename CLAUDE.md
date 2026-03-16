@@ -23,10 +23,41 @@ fase1-c/                 # Fundamentos C, ponteiros, estruturas de dados, algori
 fase2-sistemas/          # Processos, signals, threads, sockets
   └── projetos/          # philosophers, minishell
 fase3-cpp/               # OOP, templates, STL, Modern C++
+  ├── 01-transicao/
+  ├── 02-oop/
+  ├── 03-stl/
+  └── 04-modern-cpp/
 fase4-java/              # OOP empresarial, JVM, design patterns
-fase5-teoria-cs/         # Grafos, DP, complexidade computacional
-fase6-eng-software/      # SOLID, Clean Code, testes, arquitetura
+  ├── 01-fundamentos/
+  ├── 02-collections-streams/
+  ├── 03-concorrencia/
+  ├── 04-jvm/
+  └── 05-design-patterns/
+fase5-teoria-cs/         # Complexidade, paradigmas, grafos, compiladores, criptografia
+  ├── 01-complexidade/
+  ├── 02-paradigmas/
+  ├── 03-grafos/
+  ├── 04-compiladores/
+  └── 05-criptografia/
+fase6-eng-software/      # SOLID, Clean Code, testes, arquitetura, CI/CD
+  ├── 01-solid/
+  ├── 02-clean-code/
+  ├── 03-testes/
+  ├── 04-arquitetura/
+  └── 05-cicd/
 ```
+
+## Estrutura dos READMEs (Odin Project-style)
+
+Todos os READMEs de módulo seguem este padrão com 5 seções obrigatórias:
+
+1. **`## Antes de começar`** — pré-requisitos com checkboxes `- [ ]` (topo, antes do conteúdo)
+2. **`## O que você vai aprender`** — learning outcomes em lista (logo após prerequisites)
+3. **`## Knowledge Check`** — 8–10 perguntas sem resposta (antes de Referências)
+4. **`## Projeto`** — projeto integrador com requisitos e exemplo de execução (antes de Referências)
+5. **`## Recursos Adicionais`** — links divididos em: *Para ler/assistir agora* · *Para consulta* · *Para ir além* (após Referências)
+
+Ao adicionar novos módulos ou editar READMEs existentes, manter este padrão.
 
 ## Convenções
 
@@ -34,3 +65,4 @@ fase6-eng-software/      # SOLID, Clean Code, testes, arquitetura
 - Projetos da Fase 1 devem ter Makefile com targets: `all`, `clean`, `fclean`, `re`
 - Sem memory leaks: testar com `valgrind --leak-check=full`
 - Cada subpasta de exercício deve ter seu próprio `main.c` para testar
+- Código Java: usar JUnit 5 + Mockito para testes; JaCoCo para cobertura
