@@ -1011,9 +1011,9 @@ function renderNode(n) {
   labelLines.forEach((line,i)=>{
     grp.append('text')
       .attr('class','node-label')
-      .attr('x', n.ring<=1 ? 0 : lrx)
-      .attr('y', n.ring<=1 ? n.size+13+i*10 : lry+i*10+3)
-      .attr('text-anchor', n.ring<=1 ? 'middle' : anchor)
+      .attr('x', n.ring===0 ? 0 : lrx)
+      .attr('y', n.ring===0 ? n.size+13+i*10 : lry+i*10+3)
+      .attr('text-anchor', n.ring===0 ? 'middle' : anchor)
       .text(line);
   });
 
