@@ -36,3 +36,5 @@ flowchart LR
 | [🏗️ Fase 6](fase6-eng-software/README.md) | **Engenharia de Software** — SOLID, Clean Code, testes, arquitetura | — |
 
 Para o mapa visual completo com todos os tópicos de cada fase: [roadmap.md](roadmap.md)
+
+**Mapa interativo estilo Holy Graph:** abra [`galaxy.html`](galaxy.html) direto no browser (`xdg-open galaxy.html`) ou hospede no GitHub Pages.

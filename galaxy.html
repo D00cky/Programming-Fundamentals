@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galaxy Roadmap — Programming Fundamentals</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #050810;
+  color: #e0e8ff;
+  font-family: 'Courier New', monospace;
+  overflow: hidden;
+  height: 100vh; width: 100vw;
+}
+
+#starfield { position: fixed; top:0; left:0; width:100%; height:100%; z-index:0; }
+#galaxy-container { position:fixed; top:0; left:0; width:100%; height:100%; z-index:1; }
+
+/* ── Nodes ─────────────────────────────────────── */
+.node { cursor: pointer; }
+.node circle { transition: r 0.15s, filter 0.2s, opacity 0.2s; }
+
+.node circle.status-done {
+  filter: drop-shadow(0 0 8px currentColor) drop-shadow(0 0 16px currentColor);
+}
+.node circle.status-active {
+  filter: drop-shadow(0 0 6px currentColor);
+  animation: pulse 2s ease-in-out infinite;
+}
+.node circle.status-todo { opacity: 0.3; }
+.node circle.status-start {
+  filter: drop-shadow(0 0 12px #fff) drop-shadow(0 0 28px #aaccff);
+}
+.node circle.selected {
+  filter: drop-shadow(0 0 16px currentColor) drop-shadow(0 0 32px currentColor) !important;
+  opacity: 1 !important; animation: none !important;
+  stroke-width: 2.5 !important;
+}
+.node:hover circle { opacity: 1 !important; animation: none !important;
+  filter: drop-shadow(0 0 14px currentColor) drop-shadow(0 0 28px currentColor) !important;
+}
+
+@keyframes pulse {
+  0%,100% { filter: drop-shadow(0 0 4px currentColor); opacity: 0.55; }
+  50%      { filter: drop-shadow(0 0 12px currentColor) drop-shadow(0 0 22px currentColor); opacity: 1; }
+}
+
+.node-label {
+  font-size: 9px; fill: #8a9dc0; pointer-events: none;
+  font-family: 'Courier New', monospace; opacity: 0;
+  transition: opacity 0.15s;
+}
+.node:hover .node-label { opacity: 1; }
+.node.always-show .node-label { opacity: 1; }
+
+.ring-label { font-size: 10px; fill: #2a3550; text-anchor:middle;
+  pointer-events:none; letter-spacing:2px; font-family:'Courier New',monospace; }
+
+/* ── Tooltip ───────────────────────────────────── */
+#tooltip {
+  position: fixed; background: rgba(8,12,28,0.97);
+  border: 1px solid #1e2e4a; border-radius: 7px;
+  padding: 8px 12px; pointer-events: none; opacity: 0;
+  transition: opacity 0.12s; max-width: 220px; z-index: 50;
+  box-shadow: 0 0 16px rgba(80,120,255,0.15);
+}
+#tooltip.visible { opacity: 1; }
+#tooltip .tt-name { font-size:12px; font-weight:bold; margin-bottom:3px; }
+#tooltip .tt-hint { font-size:10px; color:#3a5080; letter-spacing:1px; }
+
+/* ── Side Panel ────────────────────────────────── */
+#panel {
+  position: fixed; top: 0; right: 0; width: 380px; height: 100vh;
+  background: rgba(6, 10, 22, 0.97);
+  border-left: 1px solid #1a2840;
+  box-shadow: -8px 0 32px rgba(0,0,0,0.6);
+  z-index: 20; display: flex; flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+#panel.open { transform: translateX(0); }
+
+#panel-header {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid #0f1a2e;
+  flex-shrink: 0;
+}
+#panel-phase-badge {
+  font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+  margin-bottom: 6px; opacity: 0.6;
+}
+#panel-title {
+  font-size: 18px; color: #c8d8ff; line-height: 1.3;
+  padding-right: 28px;
+}
+#panel-close {
+  position: absolute; top: 16px; right: 16px;
+  background: none; border: 1px solid #1e2e48; color: #4a6080;
+  width: 28px; height: 28px; border-radius: 50%; cursor: pointer;
+  font-size: 13px; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+#panel-close:hover { border-color: #4a6080; color: #c0d0ff; }
+
+#panel-body {
+  flex: 1; overflow-y: auto; padding: 16px 20px 20px;
+}
+#panel-body::-webkit-scrollbar { width: 4px; }
+#panel-body::-webkit-scrollbar-track { background: transparent; }
+#panel-body::-webkit-scrollbar-thumb { background: #1a2840; border-radius: 2px; }
+
+#panel-desc {
+  font-size: 12px; color: #7090b0; line-height: 1.65;
+  margin-bottom: 18px;
+}
+
+/* Status controls */
+#panel-status-row {
+  display: flex; gap: 6px; margin-bottom: 20px;
+}
+.status-btn {
+  flex: 1; padding: 7px 4px; font-size: 10px; letter-spacing: 0.5px;
+  border-radius: 6px; cursor: pointer; font-family: 'Courier New', monospace;
+  border: 1px solid transparent; transition: all 0.15s; text-transform: uppercase;
+}
+.status-btn[data-s="todo"]   { background: #0d1420; border-color: #1a2840; color: #3a5070; }
+.status-btn[data-s="active"] { background: #0d1e3a; border-color: #1e3a6a; color: #4a7aaa; }
+.status-btn[data-s="done"]   { background: #0d2218; border-color: #1a4030; color: #3a7050; }
+
+.status-btn.active-btn[data-s="todo"]   { background: #1a2030; border-color: #3a5070; color: #8090a0; }
+.status-btn.active-btn[data-s="active"] { background: #0f2a55; border-color: #4f93f7; color: #4f93f7;
+  box-shadow: 0 0 8px rgba(79,147,247,0.3); }
+.status-btn.active-btn[data-s="done"]   { background: #0c2518; border-color: #4fc347; color: #4fc347;
+  box-shadow: 0 0 8px rgba(79,195,71,0.3); }
+
+/* Criteria */
+#panel-criteria h3 {
+  font-size: 10px; letter-spacing: 2px; color: #2a4060;
+  text-transform: uppercase; margin-bottom: 12px;
+}
+.criterion {
+  display: flex; align-items: flex-start; gap: 10px;
+  margin-bottom: 10px; cursor: pointer; padding: 8px 10px;
+  border-radius: 6px; border: 1px solid transparent;
+  transition: all 0.15s;
+}
+.criterion:hover { background: rgba(30,50,80,0.4); border-color: #1a2840; }
+.criterion.checked { border-color: rgba(79,195,71,0.15); background: rgba(79,195,71,0.05); }
+
+.criterion input[type="checkbox"] { display: none; }
+.crit-box {
+  width: 16px; height: 16px; border-radius: 4px; flex-shrink: 0;
+  border: 1px solid #1e3050; background: #080f1c; margin-top: 1px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; font-size: 10px;
+}
+.criterion.checked .crit-box { background: #0f2518; border-color: #4fc347; color: #4fc347; }
+.crit-text { font-size: 11px; color: #5070a0; line-height: 1.5; }
+.criterion.checked .crit-text { color: #7aaa80; }
+
+/* Progress bar */
+#criteria-progress {
+  margin: 14px 0;
+}
+#criteria-bar-bg {
+  height: 4px; background: #0d1525; border-radius: 2px; overflow: hidden;
+  margin-bottom: 6px;
+}
+#criteria-bar-fill {
+  height: 100%; border-radius: 2px; background: #4fc347;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 6px #4fc347;
+}
+#criteria-count { font-size: 10px; color: #3a5070; letter-spacing: 1px; }
+
+/* Completion message */
+#panel-completion {
+  display: none; padding: 10px 12px; margin: 12px 0;
+  background: rgba(79,195,71,0.08); border: 1px solid rgba(79,195,71,0.25);
+  border-radius: 7px; font-size: 11px; color: #4fc347; line-height: 1.5;
+}
+#panel-completion.visible { display: block; }
+
+/* Material link */
+#panel-material-link {
+  display: block; margin-top: 16px; padding: 10px 14px;
+  background: rgba(30,50,80,0.4); border: 1px solid #1e3050;
+  border-radius: 7px; color: #4a7aaa; font-size: 11px;
+  text-decoration: none; letter-spacing: 0.5px;
+  transition: all 0.15s; text-align: center;
+}
+#panel-material-link:hover { border-color: #4a7aaa; color: #88b8f8;
+  background: rgba(40,70,120,0.4); }
+
+/* ── Legend ────────────────────────────────────── */
+#legend {
+  position: fixed; bottom: 20px; left: 20px; z-index: 10;
+  background: rgba(5,8,16,0.85); border: 1px solid #0f1a2e;
+  border-radius: 10px; padding: 12px 16px; font-size: 10px;
+}
+#legend h3 { font-size: 9px; letter-spacing:2px; color:#2a3550;
+  margin-bottom:8px; text-transform:uppercase; }
+.leg-item { display:flex; align-items:center; gap:7px; margin-bottom:5px; color:#4a6080; }
+.leg-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+.leg-sep { height:1px; background:#0f1a2e; margin:8px 0; }
+.leg-status { display:flex; gap:12px; }
+.leg-s { display:flex; align-items:center; gap:5px; color:#3a5070; font-size:9px; }
+.leg-s-dot { width:8px; height:8px; border-radius:50%; }
+
+/* ── Title ─────────────────────────────────────── */
+#title {
+  position:fixed; top:20px; left:50%; transform:translateX(-50%);
+  text-align:center; z-index:10; pointer-events:none;
+  transition: left 0.28s, transform 0.28s;
+}
+#title h1 { font-size:16px; letter-spacing:4px; color:#c0ccff;
+  text-shadow:0 0 20px rgba(150,170,255,0.4); text-transform:uppercase; }
+#title p { font-size:9px; color:#2a3a5a; letter-spacing:3px; margin-top:3px; }
+
+#hint { position:fixed; bottom:20px; right:20px; z-index:10;
+  font-size:9px; color:#1a2a3a; letter-spacing:1px; text-align:right; }
+
+/* ── Progress summary ──────────────────────────── */
+#progress-bar {
+  position: fixed; top: 0; left: 0; height: 2px;
+  background: linear-gradient(90deg, #7c83fd, #4fc3f7, #4fc347);
+  z-index: 30; transition: width 0.5s;
+  box-shadow: 0 0 8px rgba(124,131,253,0.5);
+}
+</style>
+</head>
+<body>
+
+<canvas id="starfield"></canvas>
+<div id="progress-bar" style="width:0%"></div>
+
+<div id="galaxy-container">
+  <svg id="galaxy-svg" width="100%" height="100%"></svg>
+</div>
+
+<!-- Side Panel -->
+<div id="panel">
+  <div id="panel-header" style="position:relative;">
+    <div id="panel-phase-badge"></div>
+    <h2 id="panel-title"></h2>
+    <button id="panel-close" onclick="closePanel()">✕</button>
+  </div>
+  <div id="panel-body">
+    <p id="panel-desc"></p>
+
+    <div id="panel-status-row">
+      <button class="status-btn" data-s="todo"   onclick="setNodeStatus('todo')">⬜ Bloqueado</button>
+      <button class="status-btn" data-s="active" onclick="setNodeStatus('active')">🔵 Andamento</button>
+      <button class="status-btn" data-s="done"   onclick="setNodeStatus('done')">✅ Concluído</button>
+    </div>
+
+    <div id="panel-criteria">
+      <h3>Critérios de conclusão</h3>
+      <div id="criteria-list"></div>
+      <div id="criteria-progress">
+        <div id="criteria-bar-bg"><div id="criteria-bar-fill" style="width:0%"></div></div>
+        <span id="criteria-count">0 / 0 concluídos</span>
+      </div>
+      <div id="panel-completion">
+        🎉 Todos os critérios concluídos! Marque como <strong>Concluído</strong> quando se sentir confiante.
+      </div>
+    </div>
+
+    <a id="panel-material-link" href="#" target="_blank">📖 Abrir material de estudo</a>
+  </div>
+</div>
+
+<!-- Tooltip -->
+<div id="tooltip">
+  <div class="tt-name"></div>
+  <div class="tt-hint">clique para detalhes</div>
+</div>
+
+<!-- Title -->
+<div id="title">
+  <h1>Galaxy Roadmap</h1>
+  <p>C → C++ → Java · clique em qualquer nó</p>
+</div>
+
+<!-- Legend -->
+<div id="legend">
+  <h3>Fases</h3>
+  <div class="leg-item"><div class="leg-dot" style="background:#7c83fd"></div>Fase 0 — Fundação</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#4fc3f7"></div>Fase 1 — C</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#4db6ac"></div>Fase 2 — Sistemas</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#ffd54f"></div>Fase 3 — C++</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#ff8a65"></div>Fase 4 — Java</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#ce93d8"></div>Fase 5 — Teoria CS</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#a5d6a7"></div>Fase 6 — Eng. Software</div>
+  <div class="leg-sep"></div>
+  <div class="leg-status">
+    <div class="leg-s"><div class="leg-s-dot" style="background:#4fc347;box-shadow:0 0 5px #4fc347"></div>Feito</div>
+    <div class="leg-s"><div class="leg-s-dot" style="background:#4f93f7;box-shadow:0 0 5px #4f93f7"></div>Em curso</div>
+    <div class="leg-s"><div class="leg-s-dot" style="background:#111;border:1px solid #2a3a50"></div>Pendente</div>
+  </div>
+</div>
+
+<div id="hint">scroll: zoom · drag: pan · clique: detalhe</div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+// ─── CONSTANTS ───────────────────────────────────────────────────────────────
+
+const PHASE_COLORS = {
+  '-1':'#ffffff', '0':'#7c83fd', '1':'#4fc3f7', '2':'#4db6ac',
+   '3':'#ffd54f',  '4':'#ff8a65', '5':'#ce93d8', '6':'#a5d6a7'
+};
+const PHASE_NAMES = {
+  '-1':'', '0':'FASE 0 · FUNDAÇÃO', '1':'FASE 1 · C',
+   '2':'FASE 2 · SISTEMAS', '3':'FASE 3 · C++', '4':'FASE 4 · JAVA',
+   '5':'FASE 5 · TEORIA CS', '6':'FASE 6 · ENG. SOFTWARE'
+};
+const NODE_PATHS = {
+  f0_cpu:'fase0-fundacao/01-como-computador-funciona/README.md',
+  f0_num:'fase0-fundacao/02-sistemas-numericos/README.md',
+  f0_so:'fase0-fundacao/03-sistema-operacional/README.md',
+  f0_term:'fase0-fundacao/04-terminal-linux/README.md',
+  f0_git:'fase0-fundacao/05-git/README.md',
+  f0_comp:'fase0-fundacao/06-compilacao/README.md',
+  f1_fund:'fase1-c/01-fundamentos/README.md',
+  f1_ptr:'fase1-c/02-ponteiros-memoria/README.md',
+  f1_ds:'fase1-c/03-estruturas-dados/README.md',
+  f1_sort:'fase1-c/04-algoritmos-ordenacao/README.md',
+  f1_trees:'fase1-c/05-arvores/README.md',
+  f1_adv:'fase1-c/06-algoritmos-avancados/README.md',
+  f1_tools:'fase1-c/README.md',
+  p_libft:'fase1-c/projetos/libft/',
+  p_ftprintf:'fase1-c/projetos/ft_printf/',
+  p_gnl:'fase1-c/projetos/get_next_line/',
+  p_pushswap:'fase1-c/projetos/push_swap/',
+  p_minitalk:'fase1-c/projetos/minitalk/',
+  p_pipex:'fase1-c/projetos/pipex/',
+  f2_proc:'fase2-sistemas/01-processos-sinais/README.md',
+  f2_fd:'fase2-sistemas/02-file-descriptors/README.md',
+  f2_threads:'fase2-sistemas/03-threads-concorrencia/README.md',
+  f2_sockets:'fase2-sistemas/04-sockets/README.md',
+  p_philo:'fase2-sistemas/projetos/philosophers/',
+  p_minishell:'fase2-sistemas/projetos/minishell/',
+  f3_trans:'fase3-cpp/01-transicao/README.md',
+  f3_oop:'fase3-cpp/02-oop/README.md',
+  f3_stl:'fase3-cpp/03-stl/README.md',
+  f3_modern:'fase3-cpp/04-modern-cpp/README.md',
+  p_cpp_modules:'fase3-cpp/projetos/cpp_modules/',
+  p_cpp_containers:'fase3-cpp/projetos/cpp_containers/',
+  f4_fund:'fase4-java/01-fundamentos/README.md',
+  f4_coll:'fase4-java/02-collections-streams/README.md',
+  f4_conc:'fase4-java/03-concorrencia/README.md',
+  f4_jvm:'fase4-java/04-jvm/README.md',
+  f4_patterns:'fase4-java/05-design-patterns/README.md',
+  p_java_ds:'fase4-java/projetos/java_ds/',
+  p_java_crud:'fase4-java/projetos/java_crud/',
+  p_java_conc:'fase4-java/projetos/java_conc/',
+  f5_complex:'fase5-teoria-cs/01-complexidade/README.md',
+  f5_paradigms:'fase5-teoria-cs/02-paradigmas/README.md',
+  f5_graphs:'fase5-teoria-cs/03-grafos/README.md',
+  f5_compilers:'fase5-teoria-cs/04-compiladores/README.md',
+  f5_crypto:'fase5-teoria-cs/05-criptografia/README.md',
+  f6_solid:'fase6-eng-software/01-solid/README.md',
+  f6_clean:'fase6-eng-software/02-clean-code/README.md',
+  f6_tests:'fase6-eng-software/03-testes/README.md',
+  f6_arch:'fase6-eng-software/04-arquitetura/README.md',
+  f6_cicd:'fase6-eng-software/05-cicd/README.md',
+};
+
+// ─── NODE DATA ────────────────────────────────────────────────────────────────
+
+const nodes = [
+  { id:'start', label:'START', phase:-1, ring:0, size:18,
+    desc:'Ponto de partida. Clique em qualquer nó para ver os critérios de conclusão e acompanhar seu progresso.',
+    criteria:[] },
+
+  // ── Fase 0
+  { id:'f0_cpu', label:'CPU & Memória', phase:0, ring:1, size:10,
+    desc:'Fetch-decode-execute, registradores, hierarquia de memória (L1/L2/RAM/disco), arquitetura Von Neumann.',
+    criteria:[
+      'Consigo explicar o ciclo fetch-decode-execute sem consultar material',
+      'Entendo a diferença entre registradores, cache L1/L2, RAM e disco',
+      'Sei o que é memória virtual e por que ela existe',
+      'Leio e entendo um diagrama básico de arquitetura Von Neumann',
+    ]},
+  { id:'f0_num', label:'Representação Numérica', phase:0, ring:1, size:10,
+    desc:'Binário, hexadecimal, complemento de dois, IEEE 754, ASCII/Unicode.',
+    criteria:[
+      'Converto manualmente entre binário, octal, decimal e hexadecimal',
+      'Entendo complemento de 2 e sei representar inteiros negativos',
+      'Sei o que é IEEE 754 e como float/double são armazenados',
+      'Entendo quando e por que overflow de inteiro ocorre',
+    ]},
+  { id:'f0_so', label:'Intro ao SO', phase:0, ring:1, size:10,
+    desc:'Kernel, processos, memória virtual, syscalls, filesystem — visão geral.',
+    criteria:[
+      'Sei o que é kernel e a diferença entre user space e kernel space',
+      'Entendo o que é uma syscall e como programas a invocam',
+      'Consigo listar processos e entender o conteúdo de /proc',
+      'Entendo o conceito de paginação e proteção de memória',
+    ]},
+  { id:'f0_term', label:'Terminal & Shell', phase:0, ring:1, size:10,
+    desc:'bash/zsh, pipes, redirecionamento, variáveis de ambiente, scripting básico.',
+    criteria:[
+      'Navego pelo filesystem sem GUI: cd, ls, find, pwd, tree',
+      'Uso pipes e redirecionamentos: |, >, >>, 2>, &>',
+      'Escrevo scripts bash com variáveis, loops e condicionais',
+      'Uso grep, awk, sed para processar texto em pipeline',
+    ]},
+  { id:'f0_git', label:'Git', phase:0, ring:1, size:10,
+    desc:'init, add, commit, branch, merge, rebase, resolução de conflitos, GitHub.',
+    criteria:[
+      'Tenho repositório com ≥10 commits com mensagens descritivas',
+      'Crio e faço merge de branches; resolvo conflitos manualmente',
+      'Entendo a diferença entre git merge e git rebase',
+      'Uso git log, git diff, git stash, git reset, git blame',
+    ]},
+  { id:'f0_comp', label:'Compilação', phase:0, ring:1, size:10,
+    desc:'Pré-processador → compilador → assembler → linker. gcc flags, Make.',
+    criteria:[
+      'Sei as 4 etapas da compilação e o que cada uma produz',
+      'Compilo com -Wall -Wextra -Werror e corrijo todos os warnings',
+      'Entendo a diferença entre biblioteca estática (.a) e dinâmica (.so)',
+      'Tenho Makefile funcional com targets: all, clean, fclean, re',
+    ]},
+
+  // ── Fase 1 módulos
+  { id:'f1_fund', label:'Fundamentos C', phase:1, ring:2, size:11,
+    desc:'Tipos, operadores, controle de fluxo, funções, arrays, strings, I/O.',
+    criteria:[
+      'Completei e entendo todos os exercícios ex01 a ex08 de 01-fundamentos',
+      'Implemento FizzBuzz, Fibonacci e primos de cabeça',
+      'Entendo overflow, casting e divisão inteira vs. ponto flutuante',
+      'Manipulo strings em C sem string.h (strlen, strcpy, strcmp, atoi)',
+    ]},
+  { id:'f1_ptr', label:'Ponteiros & Memória', phase:1, ring:2, size:11,
+    desc:'Aritmética de ponteiros, stack vs heap, malloc/free, buffer overflow.',
+    criteria:[
+      'Sei a diferença entre variável, valor e endereço de memória',
+      'Implemento swap() e outras funções modificando variáveis via ponteiro',
+      'Uso malloc/calloc/realloc/free sem leaks — Valgrind: 0 errors',
+      'Entendo aritmética de ponteiros e a relação ponteiro–array',
+      'Implemento memcpy, memset e strlen do zero',
+    ]},
+  { id:'f1_ds', label:'Estruturas de Dados', phase:1, ring:2, size:11,
+    desc:'Listas ligadas, pilhas, filas, hash tables — implementação em C.',
+    criteria:[
+      'Implemento lista ligada simples: push, pop, insert, delete, free, reverse',
+      'Implemento pilha e fila sobre lista ligada ou array dinâmico',
+      'Implemento hash table com chaining (lista por bucket)',
+      'Entendo e explico a complexidade de cada operação de cada estrutura',
+    ]},
+  { id:'f1_sort', label:'Algoritmos de Ordenação', phase:1, ring:2, size:11,
+    desc:'Bubble, selection, insertion, merge, quick, heap sort. Análise de complexidade.',
+    criteria:[
+      'Implemento bubble, selection e insertion sort do zero',
+      'Implemento merge sort e quick sort recursivos',
+      'Analiso complexidade de tempo e espaço de cada algoritmo',
+      'Implemento busca binária iterativa e recursiva em array ordenado',
+      'Sei quando usar cada algoritmo e seus trade-offs',
+    ]},
+  { id:'f1_trees', label:'Árvores', phase:1, ring:2, size:11,
+    desc:'BST, AVL, heap, traversals (in-order, pre-order, post-order, BFS).',
+    criteria:[
+      'Implemento BST com insert, search, delete e todos os 3 traversals recursivos',
+      'Implemento heap binário como array com sift_up e sift_down',
+      'Verifico se uma árvore binária é uma BST válida',
+      'Entendo quando BST degenera em O(n) e por que AVL resolve isso',
+    ]},
+  { id:'f1_adv', label:'Algoritmos Avançados', phase:1, ring:2, size:11,
+    desc:'String matching (KMP), backtracking, grafos BFS/DFS, DP introdução.',
+    criteria:[
+      'Implemento N-Rainhas com backtracking + poda',
+      'Implemento BFS e DFS em grafo como lista de adjacência',
+      'Implemento Fibonacci com memoização; entendo O(2^n) → O(n)',
+      'Implemento KMP para busca de string em O(n+m)',
+    ]},
+  { id:'f1_tools', label:'Dev Tools', phase:1, ring:2, size:10,
+    desc:'GDB, Valgrind, AddressSanitizer, Makefile avançado.',
+    criteria:[
+      'Uso gdb: breakpoints, next/step, print, backtrace, watch',
+      'Uso valgrind --leak-check=full e interpreto o output',
+      'Meu Makefile recompila apenas .o modificados (dependências corretas)',
+      'Uso -fsanitize=address e corrijo os erros reportados',
+    ]},
+
+  // ── Fase 1 projetos
+  { id:'p_libft', label:'libft', phase:1, ring:2.5, size:9,
+    desc:'Reimplementar a libc do zero: funções de string, memória, lista ligada.',
+    criteria:[
+      'Implementei todas as funções obrigatórias (is*, to*, str*, mem*, lst*)',
+      'Makefile com all, clean, fclean, re gera libft.a corretamente',
+      'Valgrind: 0 leaks em todas as funções',
+      'Passei em pelo menos um tester público (francinette ou libftTester)',
+    ]},
+  { id:'p_ftprintf', label:'ft_printf', phase:1, ring:2.5, size:9,
+    desc:'Implementar printf com variadic functions e formatadores.',
+    criteria:[
+      'ft_printf suporta %c, %s, %p, %d, %i, %u, %x, %X, %%',
+      'Output idêntico ao printf padrão para todos os formatos suportados',
+      'Sem memory leaks',
+      'Linka corretamente com libft',
+    ]},
+  { id:'p_gnl', label:'get_next_line', phase:1, ring:2.5, size:9,
+    desc:'Leitura linha-a-linha de fd com buffer estático.',
+    criteria:[
+      'get_next_line lê linha por linha de qualquer fd',
+      'Funciona com qualquer BUFFER_SIZE (1, 42, 1024...)',
+      'Funciona com múltiplos fds simultâneos (bonus)',
+      'Sem leaks — Valgrind: 0 errors com qualquer arquivo de entrada',
+    ]},
+  { id:'p_pushswap', label:'push_swap', phase:1, ring:2.5, size:9,
+    desc:'Ordenação com duas pilhas e conjunto mínimo de operações.',
+    criteria:[
+      'Ordena qualquer lista de inteiros sem duplicatas usando pa/pb/sa/sb/ra/rb/rra/rrb/ss/rr/rrr',
+      '5 números: ≤12 operações; 100 números: ≤700; 500 números: ≤5500',
+      'Checker detecta erros e sequências inválidas corretamente',
+      'Sem memory leaks',
+    ]},
+  { id:'p_minitalk', label:'minitalk', phase:1, ring:2.5, size:9,
+    desc:'Comunicação entre processos via SIGUSR1/SIGUSR2, bit-a-bit.',
+    criteria:[
+      'Cliente envia string ao servidor via sinais bit-a-bit',
+      'Servidor recebe e imprime a string corretamente',
+      'Funciona com strings longas (>1000 chars) e Unicode',
+      'Acknowledgement implementado (cliente sabe que servidor recebeu)',
+    ]},
+  { id:'p_pipex', label:'pipex', phase:1, ring:2.5, size:9,
+    desc:'Recriar o comportamento de pipe no shell: fork + dup2 + execve.',
+    criteria:[
+      'Replica: ./pipex infile cmd1 cmd2 outfile  →  cmd1 < infile | cmd2 > outfile',
+      'Usa fork(), pipe(), dup2() e execve() — sem popen/system',
+      'Todos os file descriptors fechados corretamente (sem leaks de fd)',
+      'Trata erros: arquivo não encontrado, comando inválido, permissão negada',
+    ]},
+
+  // ── Fase 2
+  { id:'f2_proc', label:'Processos & Sinais', phase:2, ring:3, size:11,
+    desc:'fork, exec, wait, signals, waitpid, pipe — fundamentos do POSIX.',
+    criteria:[
+      'Implemento fork-exec para rodar comandos externos com argumentos',
+      'Uso waitpid() corretamente — sem processos zombie',
+      'Instalo signal handlers robustos com sigaction() (não signal())',
+      'Entendo por que printf não é async-signal-safe',
+    ]},
+  { id:'f2_fd', label:'I/O & Descr. de Arquivo', phase:2, ring:3, size:11,
+    desc:'open/read/write/close, redirecionamento, dup2, pipe.',
+    criteria:[
+      'Implemento redirecionamento de stdout para arquivo com dup2()',
+      'Implemento "cmd1 | cmd2" do zero com fork + pipe + dup2 + exec',
+      'Entendo quando fechar cada extremidade do pipe e por que é crítico',
+      'Implemento cat usando apenas read() e write() (sem stdio)',
+    ]},
+  { id:'f2_threads', label:'Threads & Concorrência', phase:2, ring:3, size:11,
+    desc:'pthreads, mutex, semáforos, race conditions, deadlock, dining philosophers.',
+    criteria:[
+      'Demonstro race condition com contador compartilhado e corrijo com mutex',
+      'Implemento produtor-consumidor com semáforos (sem busy-wait)',
+      'ThreadSanitizer (-fsanitize=thread) não reporta races no meu código',
+      'Identifico as 4 condições de Coffman que causam deadlock',
+    ]},
+  { id:'f2_sockets', label:'Sockets & Redes', phase:2, ring:3, size:11,
+    desc:'TCP/IP, socket(), bind(), listen(), accept(), send/recv — cliente/servidor.',
+    criteria:[
+      'Implemento servidor TCP simples que aceita conexões e responde',
+      'Implemento cliente TCP que conecta, envia e recebe dados',
+      'Testo comunicação com nc (netcat) como cliente ou servidor',
+      'Entendo htons/ntohs e por que byte order importa em redes',
+    ]},
+
+  // ── Fase 2 projetos
+  { id:'p_philo', label:'philosophers', phase:2, ring:3.5, size:9,
+    desc:'Jantar dos filósofos: threads, mutexes, evitar deadlock e starvation.',
+    criteria:[
+      'N filósofos funcionam com qualquer combinação de tempo_morrer/comer/dormir',
+      'Nenhum filósofo morre quando a simulação deve ser infinita',
+      'ThreadSanitizer não reporta data races',
+      'Timestamps e ações impressos dentro de ≤10ms do evento real',
+    ]},
+  { id:'p_minishell', label:'minishell', phase:2, ring:3.5, size:9,
+    desc:'Mini shell POSIX: parsing, exec, pipes, redirections, builtins, signals.',
+    criteria:[
+      'Executa comandos simples com argumentos via execve()',
+      'Pipes funcionam: cmd1 | cmd2 | cmd3',
+      'Redirecionamentos: <, >, >> funcionam corretamente',
+      'Builtins: echo, cd, pwd, export, unset, env, exit implementados',
+      'Ctrl+C, Ctrl+D, Ctrl+\\ funcionam como no bash',
+    ]},
+
+  // ── Fase 3
+  { id:'f3_trans', label:'C → C++', phase:3, ring:4, size:11,
+    desc:'Namespaces, referências, RAII, streams, classes básicas, construtores.',
+    criteria:[
+      'Implemento classe com RAII (recurso adquirido no ctor, liberado no dtor)',
+      'Uso referências corretamente — sem ponteiros onde refs bastam',
+      'Uso std::string, std::cout, streams em vez de char* e printf',
+      'Entendo quando o destrutor é chamado e por que é superior a free()',
+    ]},
+  { id:'f3_oop', label:'OOP', phase:3, ring:4, size:11,
+    desc:'Herança, polimorfismo, funções virtuais, interfaces, operator overloading.',
+    criteria:[
+      'Implemento hierarquia com virtual dispatch funcionando corretamente',
+      'Entendo vtable e como polimorfismo funciona em runtime',
+      'Implemento operator overloading: +, ==, << para uma classe',
+      'Aplico Regra dos 3 (dtor, copy ctor, copy assignment) corretamente',
+    ]},
+  { id:'f3_stl', label:'STL', phase:3, ring:4, size:11,
+    desc:'vector, map, set, list, deque, iterators, algorithms (sort, find, etc).',
+    criteria:[
+      'Uso vector, map, set, unordered_map com iteradores',
+      'Uso std::sort, find, count, transform com lambdas e function objects',
+      'Implemento template de função e template de classe genérica',
+      'Entendo complexidade de cada container e escolho o correto',
+    ]},
+  { id:'f3_modern', label:'Modern C++', phase:3, ring:4, size:11,
+    desc:'C++11/14/17/20: smart pointers, lambdas, move semantics, auto, constexpr.',
+    criteria:[
+      'Substituo todos new/delete por unique_ptr/shared_ptr',
+      'Escrevo lambdas com captura por valor e por referência',
+      'Entendo move semantics e uso std::move corretamente',
+      'Uso auto, structured bindings (C++17) e if constexpr',
+    ]},
+
+  // ── Fase 3 projetos
+  { id:'p_cpp_modules', label:'CPP Modules', phase:3, ring:4.5, size:9,
+    desc:'Módulos 00–09 da 42: OOP progressivo, herança múltipla, templates.',
+    criteria:[
+      'Módulos 00-04 concluídos (OOP básico, herança, polimorfismo)',
+      'Módulos 05-09 concluídos (exceções, casts, templates)',
+      'Nenhum memory leak em nenhum módulo',
+      'Compila sem warnings com -Wall -Wextra -Werror -std=c++98',
+    ]},
+  { id:'p_cpp_containers', label:'CPP Containers', phase:3, ring:4.5, size:9,
+    desc:'Reimplementar vector, map, stack, set da STL com iterators.',
+    criteria:[
+      'ft::vector implementado com iteradores e todas as operações da STL',
+      'ft::map implementado com árvore balanceada (ex: RB-tree)',
+      'ft::stack e ft::set implementados',
+      'Comportamento idêntico à STL verificado com tester',
+    ]},
+
+  // ── Fase 4
+  { id:'f4_fund', label:'Java Fundamentos', phase:4, ring:5, size:11,
+    desc:'Tipos, OOP, interfaces, generics, exceções, enums, lambdas (Java 8+).',
+    criteria:[
+      'Implemento hierarquia de classes com herança e interfaces',
+      'Uso generics em classes e métodos (com bounded wildcards)',
+      'Trato exceções checked e unchecked com try-with-resources',
+      'Entendo autoboxing/unboxing e quando usar wrapper vs primitivo',
+    ]},
+  { id:'f4_coll', label:'Collections & Streams', phase:4, ring:5, size:11,
+    desc:'ArrayList, HashMap, TreeMap, HashSet. Stream API, Optional.',
+    criteria:[
+      'Escolho o container correto para cada caso de uso',
+      'Escrevo pipelines com filter, map, flatMap, collect, groupingBy',
+      'Uso Optional para evitar NPE em vez de checar null',
+      'Processo dataset complexo com streams (ex: top-10 mais frequentes)',
+    ]},
+  { id:'f4_conc', label:'Concorrência Java', phase:4, ring:5, size:11,
+    desc:'Thread, Executor, CompletableFuture, synchronized, locks, AtomicXxx.',
+    criteria:[
+      'Implemento produtor-consumidor com BlockingQueue',
+      'Uso CompletableFuture para composição assíncrona',
+      'Identifico e corrijo race condition com synchronized ou AtomicInteger',
+      'Entendo a diferença entre volatile e synchronized',
+    ]},
+  { id:'f4_jvm', label:'JVM Internals', phase:4, ring:5, size:11,
+    desc:'Bytecode, ClassLoader, GC (G1, ZGC), JIT, profiling, heap tuning.',
+    criteria:[
+      'Entendo as regiões de memória da JVM (Eden, Survivor, Old, Metaspace)',
+      'Analiso um GC log e identifico Full GC vs Minor GC',
+      'Uso jvisualvm ou async-profiler para identificar hotspot de CPU',
+      'Entendo o que JIT faz e como tiered compilation funciona',
+    ]},
+  { id:'f4_patterns', label:'Design Patterns', phase:4, ring:5, size:11,
+    desc:'GoF 23 patterns: Singleton, Factory, Observer, Strategy, Decorator…',
+    criteria:[
+      'Implemento Singleton, Factory Method, Builder corretamente',
+      'Implemento Observer e Strategy com exemplo real',
+      'Refatoro código com switch-por-tipo para usar polimorfismo',
+      'Sei identificar qual pattern resolver um dado problema de design',
+    ]},
+
+  // ── Fase 4 projetos
+  { id:'p_java_ds', label:'Java DS', phase:4, ring:5.5, size:9,
+    desc:'Reimplementar estruturas de dados clássicas em Java com generics.',
+    criteria:[
+      'ArrayList<T>, LinkedList<T>, Stack<T>, Queue<T> implementados com generics',
+      'HashMap<K,V> com chaining implementado',
+      'Testes JUnit para todos os métodos principais',
+      'Complexidade de cada operação documentada e verificada',
+    ]},
+  { id:'p_java_crud', label:'Java CRUD', phase:4, ring:5.5, size:9,
+    desc:'API REST com Spring Boot, JPA/Hibernate, banco de dados.',
+    criteria:[
+      'API REST funcional com GET, POST, PUT, DELETE',
+      'Camadas separadas: Controller, Service, Repository',
+      'Testes de integração com banco de dados H2/PostgreSQL',
+      'Aplica pelo menos 3 design patterns (ex: Repository, Builder, Factory)',
+    ]},
+  { id:'p_java_conc', label:'Java Concurrent', phase:4, ring:5.5, size:9,
+    desc:'Produtor-consumidor, thread pool, fork-join framework.',
+    criteria:[
+      'Produtor-consumidor com N produtores e M consumidores sem race conditions',
+      'Thread pool com tamanho configurável e fila de trabalho',
+      'Fork-Join para processamento paralelo de dataset grande',
+      'Benchmark: comparar versão sequencial vs. paralela com JMH',
+    ]},
+
+  // ── Fase 5
+  { id:'f5_complex', label:'Complexidade', phase:5, ring:6, size:11,
+    desc:'P, NP, NP-completo, reduções, Big-O rigoroso, Master Theorem.',
+    criteria:[
+      'Analiso Big-O de qualquer algoritmo com loops e recursão',
+      'Aplico o Master Theorem a recorrências de D&C',
+      'Explico P, NP e NP-completo com exemplos de cada classe',
+      'Entendo análise amortizada com o exemplo do vetor dinâmico',
+    ]},
+  { id:'f5_paradigms', label:'Paradigmas', phase:5, ring:6, size:11,
+    desc:'Divide & Conquer, DP, Greedy, Backtracking — prova de correção.',
+    criteria:[
+      'Implemento Knapsack 0/1 e LCS com DP (top-down e bottom-up)',
+      'Sei quando Greedy funciona e quando falha — com exemplo de cada',
+      'Provo que o algoritmo de Interval Scheduling Greedy é ótimo',
+      'Resolvo ≥10 problemas de DP no LeetCode/CSES',
+    ]},
+  { id:'f5_graphs', label:'Grafos', phase:5, ring:6, size:11,
+    desc:'Dijkstra, Bellman-Ford, Floyd-Warshall, MST (Kruskal/Prim), SCC.',
+    criteria:[
+      'Implemento Dijkstra com priority_queue',
+      'Implemento Kruskal com Union-Find para MST',
+      'Implemento ordenação topológica (Kahn e DFS)',
+      'Implemento detecção de ciclo em grafos dirigidos e não-dirigidos',
+    ]},
+  { id:'f5_compilers', label:'Compiladores', phase:5, ring:6, size:11,
+    desc:'Léxico, parser (LL/LR), AST, geração de código, otimizações básicas.',
+    criteria:[
+      'Implemento lexer que tokeniza expressões aritméticas',
+      'Implemento parser recursivo descendente que constrói AST',
+      'Percorro a AST para avaliar expressões e/ou gerar código',
+      'Leio Crafting Interpreters até o cap. de parsing (craftinginterpreters.com)',
+    ]},
+  { id:'f5_crypto', label:'Criptografia', phase:5, ring:6, size:11,
+    desc:'Simétrica (AES), assimétrica (RSA/EC), hashes, TLS, certificados.',
+    criteria:[
+      'Explico por que MD5/SHA-1 não são seguros para senhas',
+      'Explico o funcionamento de RSA (geração de chaves, cifrar, decifrar)',
+      'Descrevo o TLS handshake passo-a-passo sem consultar material',
+      'Completo ≥5 desafios do Cryptopals (cryptopals.com)',
+    ]},
+
+  // ── Fase 6
+  { id:'f6_solid', label:'SOLID', phase:6, ring:7, size:11,
+    desc:'Single Responsibility, Open/Closed, Liskov, Interface Segregation, DI.',
+    criteria:[
+      'Identifico e corrijo violações de cada um dos 5 princípios em código real',
+      'Implemento DIP com injeção de dependência manual (sem framework)',
+      'Refatoro uma classe que viola SRP em 3+ classes com responsabilidades claras',
+      'Sei quando SOLID é over-engineering e quando é necessário',
+    ]},
+  { id:'f6_clean', label:'Clean Code', phase:6, ring:7, size:11,
+    desc:'Naming, funções pequenas, comentários, refactoring, code smells.',
+    criteria:[
+      'Apliquei ≥8 refactorings do catálogo Fowler em código real',
+      'Identifico pelo menos 6 code smells diferentes em projetos open source',
+      'Meu código passa em code review sem comentários sobre naming/estrutura',
+      'Sei a diferença entre comentar o "quê" (ruim) e o "porquê" (bom)',
+    ]},
+  { id:'f6_tests', label:'Testes', phase:6, ring:7, size:11,
+    desc:'TDD, unit/integration/e2e, mocks, cobertura, JUnit, GoogleTest.',
+    criteria:[
+      'Implementei uma feature do zero com TDD (Red→Green→Refactor)',
+      'Suíte de testes com ≥80% de branch coverage verificado com JaCoCo',
+      'Uso mocks para isolar unidades — sei distinguir stub, mock e spy',
+      'Testes são F.I.R.S.T.: fast, independent, repeatable, self-validating, timely',
+    ]},
+  { id:'f6_arch', label:'Arquitetura', phase:6, ring:7, size:11,
+    desc:'Clean Architecture, Hexagonal, DDD, microservices vs monolith.',
+    criteria:[
+      'Implemento CRUD com Clean Architecture (domain sem dependências externas)',
+      'Defino bounded contexts e aggregates para um domínio simples',
+      'Explico as diferenças entre layered, hexagonal e clean architecture',
+      'Apresento trade-offs de microservices vs. monolith com exemplos',
+    ]},
+  { id:'f6_cicd', label:'CI/CD', phase:6, ring:7, size:11,
+    desc:'GitHub Actions, Docker, containers, deploy automatizado, SRE basics.',
+    criteria:[
+      'Pipeline CI roda testes automaticamente em cada push e falha corretamente',
+      'Aplicação containerizada com Dockerfile multi-stage',
+      'docker-compose sobe app + banco + cache em um comando',
+      'Pipeline falha se cobertura de testes cai abaixo de threshold',
+    ]},
+];
+
+// ─── LAYOUT ───────────────────────────────────────────────────────────────────
+
+const RING_RADIUS = {
+  0:0, 1:110, 2:200, 2.5:268, 3:338, 3.5:398,
+  4:462, 4.5:518, 5:582, 5.5:638, 6:700, 7:762
+};
+
+const SECTOR = {
+  0:  { start:0,             span:Math.PI*2     },
+  1:  { start:0,             span:Math.PI*2     },
+  2:  { start:-Math.PI*0.9,  span:Math.PI*1.8   },
+  2.5:{ start:-Math.PI*0.7,  span:Math.PI*1.4   },
+  3:  { start:-Math.PI*0.6,  span:Math.PI*1.2   },
+  3.5:{ start:-Math.PI*0.3,  span:Math.PI*0.6   },
+  4:  { start: Math.PI*0.1,  span:Math.PI*1.1   },
+  4.5:{ start: Math.PI*0.25, span:Math.PI*0.6   },
+  5:  { start: Math.PI*0.4,  span:Math.PI*1.3   },
+  5.5:{ start: Math.PI*0.65, span:Math.PI*0.6   },
+  6:  { start: Math.PI*0.7,  span:Math.PI*1.5   },
+  7:  { start: Math.PI*0.9,  span:Math.PI*1.8   },
+};
+
+// Assign positions
+const byRing = {};
+nodes.forEach(n => { if (!byRing[n.ring]) byRing[n.ring]=[]; byRing[n.ring].push(n); });
+nodes.forEach(n => {
+  if (n.ring === 0) { n.ax=0; n.ay=0; return; }
+  const grp = byRing[n.ring];
+  const idx = grp.indexOf(n), count = grp.length;
+  const sec = SECTOR[n.ring];
+  const angle = count===1 ? sec.start+sec.span/2 : sec.start+(idx/(count-1))*sec.span;
+  const r = RING_RADIUS[n.ring];
+  n.ax = Math.cos(angle)*r;
+  n.ay = Math.sin(angle)*r;
+  n._angle = angle;
+});
+
+const nodeMap = {};
+nodes.forEach(n => nodeMap[n.id]=n);
+
+// ─── LINKS ───────────────────────────────────────────────────────────────────
+
+const links = [
+  {s:'start',t:'f0_cpu'},{s:'start',t:'f0_num'},{s:'start',t:'f0_so'},
+  {s:'start',t:'f0_term'},{s:'start',t:'f0_git'},{s:'start',t:'f0_comp'},
+  {s:'f0_cpu',t:'f1_fund'},{s:'f0_num',t:'f1_fund'},{s:'f0_so',t:'f1_fund'},
+  {s:'f0_comp',t:'f1_fund'},{s:'f0_git',t:'f1_tools'},{s:'f0_term',t:'f1_tools'},
+  {s:'f1_fund',t:'f1_ptr'},{s:'f1_ptr',t:'f1_ds'},{s:'f1_ds',t:'f1_sort'},
+  {s:'f1_ds',t:'f1_trees'},{s:'f1_trees',t:'f1_adv'},{s:'f1_sort',t:'f1_adv'},
+  {s:'f1_tools',t:'f1_fund'},
+  {s:'f1_fund',t:'p_libft'},{s:'f1_fund',t:'p_gnl'},{s:'p_libft',t:'p_ftprintf'},
+  {s:'f1_ptr',t:'p_gnl'},{s:'f1_ds',t:'p_pushswap'},
+  {s:'f0_so',t:'p_minitalk'},{s:'f0_so',t:'p_pipex'},{s:'p_gnl',t:'p_pipex'},
+  {s:'p_pipex',t:'f2_proc'},{s:'p_minitalk',t:'f2_proc'},{s:'f1_adv',t:'f2_proc'},
+  {s:'f1_adv',t:'f2_fd'},{s:'f2_proc',t:'f2_fd'},{s:'f2_proc',t:'f2_threads'},
+  {s:'f2_fd',t:'f2_threads'},{s:'f2_threads',t:'f2_sockets'},
+  {s:'f2_threads',t:'p_philo'},{s:'f2_proc',t:'p_minishell'},{s:'f2_fd',t:'p_minishell'},
+  {s:'p_minishell',t:'f3_trans'},{s:'f2_threads',t:'f3_trans'},{s:'f1_adv',t:'f3_trans'},
+  {s:'f3_trans',t:'f3_oop'},{s:'f3_oop',t:'f3_stl'},{s:'f3_stl',t:'f3_modern'},
+  {s:'f3_oop',t:'p_cpp_modules'},{s:'f3_stl',t:'p_cpp_containers'},
+  {s:'f3_oop',t:'f4_fund'},{s:'f3_modern',t:'f4_fund'},
+  {s:'f4_fund',t:'f4_coll'},{s:'f4_coll',t:'f4_conc'},{s:'f4_coll',t:'f4_patterns'},
+  {s:'f4_conc',t:'f4_jvm'},{s:'f4_fund',t:'p_java_ds'},{s:'f4_coll',t:'p_java_crud'},
+  {s:'f4_conc',t:'p_java_conc'},
+  {s:'f4_patterns',t:'f5_complex'},{s:'f1_adv',t:'f5_complex'},
+  {s:'f1_adv',t:'f5_paradigms'},{s:'f5_complex',t:'f5_paradigms'},
+  {s:'f5_paradigms',t:'f5_graphs'},{s:'f5_complex',t:'f5_compilers'},
+  {s:'f5_complex',t:'f5_crypto'},
+  {s:'f5_complex',t:'f6_arch'},{s:'f4_patterns',t:'f6_solid'},
+  {s:'f6_solid',t:'f6_clean'},{s:'f6_clean',t:'f6_tests'},
+  {s:'f6_tests',t:'f6_arch'},{s:'f6_arch',t:'f6_cicd'},
+];
+
+// ─── STORAGE ─────────────────────────────────────────────────────────────────
+
+const STORAGE_KEY = 'pgf-galaxy-v2';
+function loadState() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}'); } catch(e){ return {}; } }
+function saveState(s) { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }
+
+function getNodeState(id) {
+  const s = loadState();
+  return s[id] || { status: id==='start'?'done':'todo', checked:[] };
+}
+
+function setNodeStateStatus(id, status) {
+  const s = loadState(); s[id] = s[id]||{status:'todo',checked:[]};
+  s[id].status = status; saveState(s);
+}
+
+function toggleCriterion(id, idx) {
+  const s = loadState(); s[id] = s[id]||{status:'todo',checked:[]};
+  const pos = s[id].checked.indexOf(idx);
+  if (pos>=0) s[id].checked.splice(pos,1); else s[id].checked.push(idx);
+  saveState(s);
+  return s[id].checked;
+}
+
+// ─── STARFIELD ───────────────────────────────────────────────────────────────
+
+(function initStars(){
+  const canvas = document.getElementById('starfield');
+  const ctx = canvas.getContext('2d');
+  let stars=[], W, H;
+  function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+  function make(n){
+    stars=[];
+    for(let i=0;i<n;i++) stars.push({
+      x:Math.random()*W, y:Math.random()*H,
+      r:Math.random()*1.3+0.1,
+      a:Math.random(), da:(Math.random()-0.5)*0.003,
+      drift:(Math.random()-0.5)*0.015,
+    });
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    for(const s of stars){
+      s.a+=s.da; if(s.a<=0||s.a>=1) s.da=-s.da;
+      s.x+=s.drift; if(s.x<0) s.x=W; if(s.x>W) s.x=0;
+      ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(200,210,255,${s.a*0.65})`; ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  resize(); make(360); draw();
+  window.addEventListener('resize',()=>{resize();make(360);});
+})();
+
+// ─── SVG RENDER ──────────────────────────────────────────────────────────────
+
+const svg = d3.select('#galaxy-svg');
+const W0 = window.innerWidth, H0 = window.innerHeight;
+const g   = svg.append('g').attr('transform',`translate(${W0/2},${H0/2})`);
+
+const zoom = d3.zoom().scaleExtent([0.25,3.5]).on('zoom',(ev)=>{
+  g.attr('transform',`translate(${ev.transform.x},${ev.transform.y}) scale(${ev.transform.k})`);
+});
+svg.call(zoom);
+svg.call(zoom.translateTo, W0/2, H0/2);
+
+// orbit rings
+const orbitLayer = g.append('g');
+Object.entries(RING_RADIUS).forEach(([r,px])=>{
+  if(px===0) return;
+  orbitLayer.append('circle').attr('cx',0).attr('cy',0).attr('r',px)
+    .attr('fill','none').attr('stroke','#08111f').attr('stroke-width',1);
+});
+
+// ring labels
+const lblLayer = g.append('g');
+[[1,'FASE 0'],[2,'FASE 1'],[3,'FASE 2'],[4,'FASE 3'],[5,'FASE 4'],[6,'FASE 5'],[7,'FASE 6']]
+  .forEach(([r,l])=>{
+    lblLayer.append('text')
+      .attr('x',0).attr('y',-RING_RADIUS[r]-5)
+      .attr('class','ring-label').text(l);
+  });
+
+// links
+const linkLayer = g.append('g');
+links.forEach(l=>{
+  const s=nodeMap[l.s], t=nodeMap[l.t];
+  if(!s||!t) return;
+  const col = PHASE_COLORS[String(s.phase)]||'#4466aa';
+  linkLayer.append('line')
+    .attr('x1',s.ax).attr('y1',s.ay).attr('x2',t.ax).attr('y2',t.ay)
+    .attr('stroke',col).attr('stroke-width',0.5).attr('stroke-opacity',0.15);
+});
+
+// node groups
+const nodeLayer = g.append('g');
+
+function getStatusFromState(id) {
+  if(id==='start') return 'done';
+  return getNodeState(id).status;
+}
+
+let selectedId = null;
+
+function renderNode(n) {
+  const color = PHASE_COLORS[String(n.phase)]||'#fff';
+  const status = getStatusFromState(n.id);
+
+  // ring glow
+  if(status==='done'||status==='active') {
+    n._glowEl?.remove();
+    n._glowEl = nodeLayer.insert('circle','g.node')
+      .attr('cx',n.ax).attr('cy',n.ay)
+      .attr('r',n.size+5).attr('fill','none')
+      .attr('stroke',color).attr('stroke-width',0.8)
+      .attr('stroke-opacity',0.12).node();
+  }
+
+  const grp = nodeLayer.append('g')
+    .attr('class','node')
+    .attr('transform',`translate(${n.ax},${n.ay})`)
+    .attr('id',`node-${n.id}`);
+
+  if(n.ring<=1) grp.classed('always-show',true);
+
+  const circ = grp.append('circle')
+    .attr('r',n.size)
+    .attr('fill', status==='todo' ? '#090f1c' : color)
+    .attr('stroke', color)
+    .attr('stroke-width', status==='todo'?0.8:1.4)
+    .attr('class',`status-${n.id==='start'?'start':status}`)
+    .style('color', color);
+
+  // label — positioned radially outward
+  const angle = n._angle??0;
+  const lrx = Math.cos(angle)*(n.size+14);
+  const lry = Math.sin(angle)*(n.size+14);
+  const anchor = Math.cos(angle)>0.3?'start': Math.cos(angle)<-0.3?'end':'middle';
+
+  const labelLines = n.label.split('\n');
+  labelLines.forEach((line,i)=>{
+    grp.append('text')
+      .attr('class','node-label')
+      .attr('x', n.ring===0 ? 0 : lrx)
+      .attr('y', n.ring===0 ? n.size+13+i*10 : lry+i*10+3)
+      .attr('text-anchor', n.ring===0 ? 'middle' : anchor)
+      .text(line);
+  });
+
+  // events
+  const tooltip = document.getElementById('tooltip');
+  grp
+    .on('mouseover', function(ev){
+      tooltip.querySelector('.tt-name').textContent = n.label.replace('\n',' ');
+      tooltip.querySelector('.tt-name').style.color = color;
+      tooltip.classList.add('visible');
+      posTooltip(ev);
+    })
+    .on('mousemove', posTooltip)
+    .on('mouseleave', ()=> tooltip.classList.remove('visible'))
+    .on('click', function(ev){
+      ev.stopPropagation();
+      tooltip.classList.remove('visible');
+      openPanel(n.id);
+    });
+
+  n._grp = grp;
+}
+
+function posTooltip(ev) {
+  const t = document.getElementById('tooltip');
+  const tw = t.offsetWidth||200, th = t.offsetHeight||50;
+  let x = ev.clientX+14, y = ev.clientY-10;
+  if(x+tw>window.innerWidth-10) x=ev.clientX-tw-14;
+  if(y+th>window.innerHeight-10) y=window.innerHeight-th-10;
+  t.style.left=x+'px'; t.style.top=y+'px';
+}
+
+nodes.forEach(renderNode);
+
+// click background = close panel
+svg.on('click', ()=>{ closePanel(); });
+
+// ─── PANEL ───────────────────────────────────────────────────────────────────
+
+function openPanel(id) {
+  const n = nodeMap[id];
+  if(!n) return;
+
+  // deselect previous
+  if(selectedId && selectedId!==id) {
+    const prev = document.getElementById(`node-${selectedId}`);
+    if(prev) prev.querySelector('circle').classList.remove('selected');
+  }
+  selectedId = id;
+  const grpEl = document.getElementById(`node-${id}`);
+  if(grpEl) grpEl.querySelector('circle').classList.add('selected');
+
+  const color = PHASE_COLORS[String(n.phase)]||'#fff';
+  const state = getNodeState(id);
+
+  // header
+  document.getElementById('panel-phase-badge').textContent = PHASE_NAMES[String(n.phase)]||'';
+  document.getElementById('panel-phase-badge').style.color = color;
+  document.getElementById('panel-title').textContent = n.label.replace('\n',' ');
+  document.getElementById('panel-title').style.color = color;
+
+  // desc
+  document.getElementById('panel-desc').textContent = n.desc;
+
+  // status buttons
+  document.querySelectorAll('.status-btn').forEach(btn=>{
+    btn.classList.remove('active-btn');
+    if(btn.dataset.s===state.status) btn.classList.add('active-btn');
+  });
+
+  // criteria
+  const list = document.getElementById('criteria-list');
+  list.innerHTML = '';
+
+  if(n.criteria.length===0) {
+    list.innerHTML = '<p style="font-size:11px;color:#2a4060;">Nó central — explore os nós ao redor para começar.</p>';
+    document.getElementById('criteria-progress').style.display='none';
+    document.getElementById('panel-completion').classList.remove('visible');
+  } else {
+    document.getElementById('criteria-progress').style.display='block';
+    n.criteria.forEach((text, i)=>{
+      const checked = state.checked.includes(i);
+      const div = document.createElement('div');
+      div.className = 'criterion' + (checked?' checked':'');
+      div.innerHTML = `
+        <div class="crit-box">${checked?'✓':''}</div>
+        <span class="crit-text">${text}</span>`;
+      div.addEventListener('click', ()=> criterionClick(id, i));
+      list.appendChild(div);
+    });
+    updateProgress(id);
+  }
+
+  // material link
+  const path = NODE_PATHS[id];
+  const link = document.getElementById('panel-material-link');
+  if(path) {
+    link.href = path;
+    link.style.display = 'block';
+  } else {
+    link.style.display = 'none';
+  }
+
+  document.getElementById('panel').classList.add('open');
+  updateTitlePosition(true);
+}
+
+function closePanel() {
+  if(selectedId) {
+    const prev = document.getElementById(`node-${selectedId}`);
+    if(prev) prev.querySelector('circle').classList.remove('selected');
+    selectedId = null;
+  }
+  document.getElementById('panel').classList.remove('open');
+  updateTitlePosition(false);
+}
+
+function updateTitlePosition(panelOpen) {
+  const title = document.getElementById('title');
+  if(panelOpen) {
+    title.style.left = `calc(50% - 190px)`;
+    title.style.transform = 'translateX(-50%)';
+  } else {
+    title.style.left = '50%';
+    title.style.transform = 'translateX(-50%)';
+  }
+}
+
+function setNodeStatus(status) {
+  if(!selectedId) return;
+  setNodeStateStatus(selectedId, status);
+  // update button highlight
+  document.querySelectorAll('.status-btn').forEach(btn=>{
+    btn.classList.remove('active-btn');
+    if(btn.dataset.s===status) btn.classList.add('active-btn');
+  });
+  // update node visual
+  refreshNodeVisual(selectedId);
+  updateGlobalProgress();
+}
+
+function criterionClick(id, idx) {
+  const checked = toggleCriterion(id, idx);
+  const n = nodeMap[id];
+
+  // update UI
+  const items = document.querySelectorAll('.criterion');
+  items.forEach((el, i)=>{
+    const isChecked = checked.includes(i);
+    el.classList.toggle('checked', isChecked);
+    el.querySelector('.crit-box').textContent = isChecked ? '✓' : '';
+  });
+
+  updateProgress(id);
+
+  // auto-suggest done when all checked
+  if(n.criteria && checked.length===n.criteria.length) {
+    document.getElementById('panel-completion').classList.add('visible');
+  } else {
+    document.getElementById('panel-completion').classList.remove('visible');
+  }
+}
+
+function updateProgress(id) {
+  const n = nodeMap[id];
+  if(!n||!n.criteria||n.criteria.length===0) return;
+  const state = getNodeState(id);
+  const done = state.checked.length;
+  const total = n.criteria.length;
+  const pct = Math.round(done/total*100);
+  document.getElementById('criteria-bar-fill').style.width = pct+'%';
+  document.getElementById('criteria-count').textContent = `${done} / ${total} concluídos`;
+}
+
+function refreshNodeVisual(id) {
+  const n = nodeMap[id];
+  if(!n) return;
+  const status = getStatusFromState(id);
+  const color = PHASE_COLORS[String(n.phase)]||'#fff';
+  const grpEl = document.getElementById(`node-${id}`);
+  if(!grpEl) return;
+  const circ = grpEl.querySelector('circle');
+  // remove all status classes
+  circ.className.baseVal = circ.className.baseVal
+    .replace(/status-\w+/,'')
+    .replace(/selected/,'').trim();
+  circ.classList.add(`status-${status}`);
+  if(id===selectedId) circ.classList.add('selected');
+  circ.setAttribute('fill', status==='todo'?'#090f1c':color);
+}
+
+// ─── GLOBAL PROGRESS ─────────────────────────────────────────────────────────
+
+function updateGlobalProgress() {
+  const countable = nodes.filter(n=>n.id!=='start');
+  const state = loadState();
+  const done = countable.filter(n=>(state[n.id]?.status||'todo')==='done').length;
+  const pct = Math.round(done/countable.length*100);
+  document.getElementById('progress-bar').style.width = pct+'%';
+}
+
+// Initial render of node visuals from saved state
+function applyStoredState() {
+  const state = loadState();
+  nodes.forEach(n => {
+    if(n.id==='start') return;
+    const ns = state[n.id];
+    if(ns?.status && ns.status!=='todo') refreshNodeVisual(n.id);
+  });
+  updateGlobalProgress();
+}
+applyStoredState();
+
+</script>
+</body>
+</html>
