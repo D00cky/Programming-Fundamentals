@@ -1,6 +1,9 @@
 # Programming Fundamentals
 
-Roadmap de estudo focado em construir uma base sólida de Engenharia de Software, com progressão **C → C++ → Java**. Inspirado na metodologia da 42SP, filosofia do Akita e currículo da IME-USP.
+Repositório de estudo de fundamentos de programação com progressão **C → C++ → Java**.
+Inspirado na metodologia da 42SP, filosofia do Akita e currículo da IME-USP.
+
+Cada módulo segue a estrutura [Odin Project](https://www.theodinproject.com/): pré-requisitos, objetivos de aprendizado, conteúdo, knowledge check, projeto integrador e recursos adicionais.
 
 ---
 
@@ -16,25 +19,23 @@ flowchart LR
 
     F0 --> F1 --> F2 --> F3 --> F4 --> F5 --> F6
 
-    classDef done  fill:#2d6a4f,color:#fff,stroke:#1b4332
+    classDef done   fill:#2d6a4f,color:#fff,stroke:#1b4332
     classDef active fill:#2d6a9f,color:#fff,stroke:#1a3a5c
-    classDef todo  fill:#3a3a3a,color:#aaa,stroke:#555
+    classDef todo   fill:#3a3a3a,color:#aaa,stroke:#555
 ```
 
 ---
 
-## Índice
+## Fases
 
-| Fase | Descrição | Conteúdo |
-|------|-----------|----------|
-| [⚙️ Fase 0](fase0-fundacao/README.md) | **Fundação da Máquina** — Como tudo funciona antes de escrever uma linha de C | CPU, memória, binário, terminal, git, compilação |
-| [💻 Fase 1](fase1-c/README.md) | **C: A Linguagem da Máquina** — Ponteiros, memória, estruturas de dados, algoritmos | libft, ft_printf, push_swap, pipex |
-| [🔩 Fase 2](fase2-sistemas/README.md) | **Sistemas** — Processos, threads, sockets no nível do SO | Philosophers, Minishell |
-| [🟡 Fase 3](fase3-cpp/README.md) | **C++** — OOP, templates, STL, Modern C++ | Módulos 42, CPP Containers |
-| [☕ Fase 4](fase4-java/README.md) | **Java** — OOP empresarial, JVM, design patterns | CRUD, projetos concorrentes |
-| [🧠 Fase 5](fase5-teoria-cs/README.md) | **Teoria CS** — Grafos, DP, complexidade computacional | — |
-| [🏗️ Fase 6](fase6-eng-software/README.md) | **Engenharia de Software** — SOLID, Clean Code, testes, arquitetura | — |
+| Fase | Descrição | Módulos | Projetos |
+|------|-----------|---------|----------|
+| [⚙️ Fase 0](fase0-fundacao/README.md) | **Fundação** — Como a máquina funciona antes de escrever C | CPU, binário, SO, terminal, git, compilação | — |
+| [💻 Fase 1](fase1-c/README.md) | **C** — A linguagem da máquina | Fundamentos, ponteiros, estruturas de dados, algoritmos | libft · ft_printf · get_next_line · push_swap · minitalk · pipex |
+| [🔩 Fase 2](fase2-sistemas/README.md) | **Sistemas** — O que o SO oferece ao programador | Processos, file descriptors, threads, sockets | Philosophers · Minishell |
+| [🟡 Fase 3](fase3-cpp/README.md) | **C++** — OOP, templates e a STL | Transição, OOP, STL, Modern C++ | Módulos 00–09 · CPP Containers |
+| [☕ Fase 4](fase4-java/README.md) | **Java** — OOP empresarial e a JVM | Fundamentos, collections, concorrência, JVM, patterns | CRUD · Projeto concorrente |
+| [🧠 Fase 5](fase5-teoria-cs/README.md) | **Teoria CS** — Algoritmos e teoria por trás do código | Complexidade, paradigmas, grafos, compiladores, criptografia | — |
+| [🏗️ Fase 6](fase6-eng-software/README.md) | **Engenharia de Software** — Código que dura | SOLID, clean code, testes, arquitetura, CI/CD | — |
 
-Para o mapa visual completo com todos os tópicos de cada fase: [roadmap.md](roadmap.md)
-
-**Mapa interativo estilo Holy Graph:** abra [`galaxy.html`](galaxy.html) direto no browser (`xdg-open galaxy.html`) ou hospede no GitHub Pages.
+Para o mapa visual completo com todos os tópicos: [roadmap.md](roadmap.md)
