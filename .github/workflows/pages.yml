@@ -27,6 +27,13 @@ jobs:
       - name: Install MkDocs Material
         run: pip install mkdocs-material==9.5.30
 
+      - name: Prepare docs directory
+        run: |
+          mkdir -p content
+          for item in README.md docs fase0-fundacao fase1-c fase2-sistemas fase3-cpp fase4-java fase5-teoria-cs fase6-eng-software; do
+            [ -e "$item" ] && ln -sf "$(pwd)/$item" "content/$item" || true
+          done
+
       - name: Build site
         run: mkdocs build --strict
 

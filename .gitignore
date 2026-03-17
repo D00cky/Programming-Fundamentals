@@ -1,4 +1,5 @@
 site/
+content/
 __pycache__/
 *.pyc
 *.o

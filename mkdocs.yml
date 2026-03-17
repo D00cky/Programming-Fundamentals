@@ -3,15 +3,8 @@ site_description: C → C++ → Java — fundamentos de programação do jeito c
 site_author: d00cky
 site_url: https://d00cky.github.io/Programming-Fundamentals/
 
-docs_dir: '.'
+docs_dir: content
 site_dir: site
-
-exclude_docs: |
-  site/
-  .git/
-  .github/
-  .ai-jail
-  node_modules/
 
 theme:
   name: material
