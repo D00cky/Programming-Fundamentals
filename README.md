@@ -24,6 +24,17 @@ flowchart LR
     classDef todo   fill:#3a3a3a,color:#aaa,stroke:#555
 ```
 
+## Mapa Interativo
+
+O arquivo [`galaxy.html`](galaxy.html) é um mapa visual estilo "Holy Graph" (42SP) com todas as fases e módulos do currículo.
+
+**Abrir localmente (Linux):**
+```bash
+xdg-open galaxy.html
+```
+
+**Hospedar via GitHub Pages:** Settings → Pages → Source: branch `main`, pasta `/ (root)` → o mapa ficará disponível em `https://<seu-usuario>.github.io/<repo>/galaxy.html`
+
 ---
 
 ## Fases
