@@ -6,6 +6,10 @@ site_url: https://d00cky.github.io/Programming-Fundamentals/
 docs_dir: content
 site_dir: site
 
+validation:
+  links:
+    unrecognized_links: ignore
+
 theme:
   name: material
   palette:
