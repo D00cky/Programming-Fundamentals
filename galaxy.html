@@ -223,6 +223,19 @@ body {
 #hint { position:fixed; bottom:20px; right:20px; z-index:10;
   font-size:9px; color:#1a2a3a; letter-spacing:1px; text-align:right; }
 
+#portal-btn {
+  position: fixed; top: 16px; right: 20px; z-index: 30;
+  padding: 8px 16px; background: transparent;
+  border: 1px solid #ffb300; border-radius: 6px;
+  color: #ffb300; font-family: 'Courier New', monospace;
+  font-size: 11px; letter-spacing: 1px; cursor: pointer;
+  text-decoration: none; transition: all 0.2s;
+}
+#portal-btn:hover {
+  background: rgba(255,179,0,0.12);
+  box-shadow: 0 0 12px rgba(255,179,0,0.3);
+}
+
 /* ── Progress summary ──────────────────────────── */
 #progress-bar {
   position: fixed; top: 0; left: 0; height: 2px;
@@ -236,6 +249,7 @@ body {
 
 <canvas id="starfield"></canvas>
 <div id="progress-bar" style="width:0%"></div>
+<a id="portal-btn" href="study/" target="_blank">▸ Portal de Estudos</a>
 
 <div id="galaxy-container">
   <svg id="galaxy-svg" width="100%" height="100%"></svg>
@@ -319,55 +333,42 @@ const PHASE_NAMES = {
    '5':'FASE 5 · TEORIA CS', '6':'FASE 6 · ENG. SOFTWARE'
 };
 const NODE_PATHS = {
-  f0_cpu:'fase0-fundacao/01-como-computador-funciona/README.md',
-  f0_num:'fase0-fundacao/02-sistemas-numericos/README.md',
-  f0_so:'fase0-fundacao/03-sistema-operacional/README.md',
-  f0_term:'fase0-fundacao/04-terminal-linux/README.md',
-  f0_git:'fase0-fundacao/05-git/README.md',
-  f0_comp:'fase0-fundacao/06-compilacao/README.md',
-  f1_fund:'fase1-c/01-fundamentos/README.md',
-  f1_ptr:'fase1-c/02-ponteiros-memoria/README.md',
-  f1_ds:'fase1-c/03-estruturas-dados/README.md',
-  f1_sort:'fase1-c/04-algoritmos-ordenacao/README.md',
-  f1_trees:'fase1-c/05-arvores/README.md',
-  f1_adv:'fase1-c/06-algoritmos-avancados/README.md',
-  f1_tools:'fase1-c/README.md',
-  p_libft:'fase1-c/projetos/libft/',
-  p_ftprintf:'fase1-c/projetos/ft_printf/',
-  p_gnl:'fase1-c/projetos/get_next_line/',
-  p_pushswap:'fase1-c/projetos/push_swap/',
-  p_minitalk:'fase1-c/projetos/minitalk/',
-  p_pipex:'fase1-c/projetos/pipex/',
-  f2_proc:'fase2-sistemas/01-processos-sinais/README.md',
-  f2_fd:'fase2-sistemas/02-file-descriptors/README.md',
-  f2_threads:'fase2-sistemas/03-threads-concorrencia/README.md',
-  f2_sockets:'fase2-sistemas/04-sockets/README.md',
-  p_philo:'fase2-sistemas/projetos/philosophers/',
-  p_minishell:'fase2-sistemas/projetos/minishell/',
-  f3_trans:'fase3-cpp/01-transicao/README.md',
-  f3_oop:'fase3-cpp/02-oop/README.md',
-  f3_stl:'fase3-cpp/03-stl/README.md',
-  f3_modern:'fase3-cpp/04-modern-cpp/README.md',
-  p_cpp_modules:'fase3-cpp/projetos/cpp_modules/',
-  p_cpp_containers:'fase3-cpp/projetos/cpp_containers/',
-  f4_fund:'fase4-java/01-fundamentos/README.md',
-  f4_coll:'fase4-java/02-collections-streams/README.md',
-  f4_conc:'fase4-java/03-concorrencia/README.md',
-  f4_jvm:'fase4-java/04-jvm/README.md',
-  f4_patterns:'fase4-java/05-design-patterns/README.md',
-  p_java_ds:'fase4-java/projetos/java_ds/',
-  p_java_crud:'fase4-java/projetos/java_crud/',
-  p_java_conc:'fase4-java/projetos/java_conc/',
-  f5_complex:'fase5-teoria-cs/01-complexidade/README.md',
-  f5_paradigms:'fase5-teoria-cs/02-paradigmas/README.md',
-  f5_graphs:'fase5-teoria-cs/03-grafos/README.md',
-  f5_compilers:'fase5-teoria-cs/04-compiladores/README.md',
-  f5_crypto:'fase5-teoria-cs/05-criptografia/README.md',
-  f6_solid:'fase6-eng-software/01-solid/README.md',
-  f6_clean:'fase6-eng-software/02-clean-code/README.md',
-  f6_tests:'fase6-eng-software/03-testes/README.md',
-  f6_arch:'fase6-eng-software/04-arquitetura/README.md',
-  f6_cicd:'fase6-eng-software/05-cicd/README.md',
+  f0_cpu:'study/fase0-fundacao/01-como-computador-funciona/',
+  f0_num:'study/fase0-fundacao/02-sistemas-numericos/',
+  f0_so:'study/fase0-fundacao/03-sistema-operacional/',
+  f0_term:'study/fase0-fundacao/04-terminal-linux/',
+  f0_git:'study/fase0-fundacao/05-git/',
+  f0_comp:'study/fase0-fundacao/06-compilacao/',
+  f1_fund:'study/fase1-c/01-fundamentos/',
+  f1_ptr:'study/fase1-c/02-ponteiros-memoria/',
+  f1_ds:'study/fase1-c/03-estruturas-dados/',
+  f1_sort:'study/fase1-c/04-algoritmos-ordenacao/',
+  f1_trees:'study/fase1-c/05-arvores/',
+  f1_adv:'study/fase1-c/06-algoritmos-avancados/',
+  f1_tools:'study/fase1-c/',
+  f2_proc:'study/fase2-sistemas/01-processos-sinais/',
+  f2_fd:'study/fase2-sistemas/02-file-descriptors/',
+  f2_threads:'study/fase2-sistemas/03-threads-concorrencia/',
+  f2_sockets:'study/fase2-sistemas/04-sockets/',
+  f3_trans:'study/fase3-cpp/01-transicao/',
+  f3_oop:'study/fase3-cpp/02-oop/',
+  f3_stl:'study/fase3-cpp/03-stl/',
+  f3_modern:'study/fase3-cpp/04-modern-cpp/',
+  f4_fund:'study/fase4-java/01-fundamentos/',
+  f4_coll:'study/fase4-java/02-collections-streams/',
+  f4_conc:'study/fase4-java/03-concorrencia/',
+  f4_jvm:'study/fase4-java/04-jvm/',
+  f4_patterns:'study/fase4-java/05-design-patterns/',
+  f5_complex:'study/fase5-teoria-cs/01-complexidade/',
+  f5_paradigms:'study/fase5-teoria-cs/02-paradigmas/',
+  f5_graphs:'study/fase5-teoria-cs/03-grafos/',
+  f5_compilers:'study/fase5-teoria-cs/04-compiladores/',
+  f5_crypto:'study/fase5-teoria-cs/05-criptografia/',
+  f6_solid:'study/fase6-eng-software/01-solid/',
+  f6_clean:'study/fase6-eng-software/02-clean-code/',
+  f6_tests:'study/fase6-eng-software/03-testes/',
+  f6_arch:'study/fase6-eng-software/04-arquitetura/',
+  f6_cicd:'study/fase6-eng-software/05-cicd/',
 };
 
 // ─── NODE DATA ────────────────────────────────────────────────────────────────

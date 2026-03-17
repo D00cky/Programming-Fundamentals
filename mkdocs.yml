@@ -1,10 +1,10 @@
 site_name: Programming Fundamentals
 site_description: C → C++ → Java — fundamentos de programação do jeito certo
 site_author: d00cky
-site_url: https://d00cky.github.io/Programming-Fundamentals/
+site_url: https://d00cky.github.io/Programming-Fundamentals/study/
 
 docs_dir: content
-site_dir: site
+site_dir: site/study
 
 validation:
   links:
