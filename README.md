@@ -33,7 +33,7 @@ O arquivo [`galaxy.html`](galaxy.html) é um mapa visual estilo "Holy Graph" (42
 xdg-open galaxy.html
 ```
 
-**Hospedar via GitHub Pages:** Settings → Pages → Source: branch `main`, pasta `/ (root)` → o mapa ficará disponível em `https://<seu-usuario>.github.io/<repo>/galaxy.html`
+**Online:** https://d00cky.github.io/Programming-Fundamentals/galaxy.html
 
 ---
 
