@@ -48,12 +48,9 @@ body {
 }
 
 .node-label {
-  font-size: 9px; fill: #8a9dc0; pointer-events: none;
-  font-family: 'Courier New', monospace; opacity: 0;
-  transition: opacity 0.15s;
+  fill: rgba(255,255,255,0.82); pointer-events: none;
+  font-family: 'Courier New', monospace; opacity: 1;
 }
-.node:hover .node-label { opacity: 1; }
-.node.always-show .node-label { opacity: 1; }
 
 .ring-label { font-size: 10px; fill: #2a3550; text-anchor:middle;
   pointer-events:none; letter-spacing:2px; font-family:'Courier New',monospace; }
@@ -976,13 +973,15 @@ let selectedId = null;
 function renderNode(n) {
   const color = PHASE_COLORS[String(n.phase)]||'#fff';
   const status = getStatusFromState(n.id);
+  const vr = n.ring === 0 ? 44 : Math.round(n.size * 3.2);
+  n._vr = vr;
 
   // ring glow
   if(status==='done'||status==='active') {
     n._glowEl?.remove();
     n._glowEl = nodeLayer.insert('circle','g.node')
       .attr('cx',n.ax).attr('cy',n.ay)
-      .attr('r',n.size+5).attr('fill','none')
+      .attr('r',vr+6).attr('fill','none')
       .attr('stroke',color).attr('stroke-width',0.8)
       .attr('stroke-opacity',0.12).node();
   }
@@ -995,26 +994,29 @@ function renderNode(n) {
   if(n.ring<=1) grp.classed('always-show',true);
 
   const circ = grp.append('circle')
-    .attr('r',n.size)
+    .attr('r', vr)
     .attr('fill', status==='todo' ? '#090f1c' : color)
     .attr('stroke', color)
     .attr('stroke-width', status==='todo'?0.8:1.4)
     .attr('class',`status-${n.id==='start'?'start':status}`)
     .style('color', color);
 
-  // label — positioned radially outward
-  const angle = n._angle??0;
-  const lrx = Math.cos(angle)*(n.size+14);
-  const lry = Math.sin(angle)*(n.size+14);
-  const anchor = Math.cos(angle)>0.3?'start': Math.cos(angle)<-0.3?'end':'middle';
-
-  const labelLines = n.label.split('\n');
-  labelLines.forEach((line,i)=>{
+  // label — centered inside circle
+  const raw = n.label.replace(/\n/g, ' ');
+  const mid = Math.floor(raw.length / 2);
+  const splitAt = raw.indexOf(' ', mid);
+  const lines = splitAt > 0 ? [raw.slice(0, splitAt), raw.slice(splitAt + 1)] : [raw];
+  const fs = n.ring === 0 ? 8 : n.ring <= 2 ? 7 : 6.5;
+  const lineH = fs + 2;
+  const totalH = (lines.length - 1) * lineH;
+  lines.forEach((line, i) => {
     grp.append('text')
-      .attr('class','node-label')
-      .attr('x', n.ring===0 ? 0 : lrx)
-      .attr('y', n.ring===0 ? n.size+13+i*10 : lry+i*10+3)
-      .attr('text-anchor', n.ring===0 ? 'middle' : anchor)
+      .attr('class', 'node-label')
+      .attr('x', 0)
+      .attr('y', -totalH / 2 + i * lineH)
+      .attr('text-anchor', 'middle')
+      .attr('dominant-baseline', 'middle')
+      .style('font-size', fs + 'px')
       .text(line);
   });
 
