@@ -1,0 +1,136 @@
+/* Akita-style overrides for Material slate */
+
+:root {
+  --md-default-bg-color: #0f0f0f;
+  --md-default-fg-color: #d8d8d8;
+  --md-default-fg-color--light: #a0a0a0;
+  --md-default-fg-color--lighter: #6a6a6a;
+  --md-primary-fg-color: #000000;
+  --md-primary-bg-color: #d8d8d8;
+  --md-accent-fg-color: #ffb300;
+  --md-code-bg-color: #111111;
+  --md-code-fg-color: #d8d8d8;
+}
+
+/* Flat black header */
+.md-header {
+  background-color: #000000;
+  box-shadow: none;
+  border-bottom: 1px solid #1e1e1e;
+}
+
+/* Navigation sidebar */
+.md-nav__title {
+  color: #ffb300;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.md-nav__item--active > .md-nav__link {
+  color: #ffb300;
+}
+
+/* Code blocks with amber left border */
+.highlight pre,
+.md-typeset pre {
+  background-color: #111111 !important;
+  border-left: 3px solid #ffb300;
+  border-radius: 0;
+  padding: 1em 1.2em;
+}
+
+/* Inline code */
+.md-typeset code {
+  background-color: #1a1a1a;
+  color: #ffb300;
+  padding: 0.1em 0.3em;
+  border-radius: 2px;
+}
+
+/* Links: amber, no underline until hover */
+.md-typeset a {
+  color: #ffb300;
+  text-decoration: none;
+}
+
+.md-typeset a:hover {
+  color: #ffd54f;
+  text-decoration: underline;
+}
+
+/* Minimal tables */
+.md-typeset table:not([class]) {
+  border: none;
+  border-collapse: collapse;
+}
+
+.md-typeset table:not([class]) th {
+  background-color: #1a1a1a;
+  border-bottom: 1px solid #333333;
+  color: #ffb300;
+  font-weight: 600;
+}
+
+.md-typeset table:not([class]) td {
+  border-bottom: 1px solid #1e1e1e;
+}
+
+.md-typeset table:not([class]) tr:hover {
+  background-color: #151515;
+}
+
+/* Dense typography */
+.md-typeset {
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.md-typeset h1 {
+  color: #ffffff;
+  font-weight: 700;
+  border-bottom: 1px solid #ffb300;
+  padding-bottom: 0.3em;
+}
+
+.md-typeset h2 {
+  color: #e0e0e0;
+  font-weight: 600;
+  border-bottom: 1px solid #1e1e1e;
+  padding-bottom: 0.2em;
+}
+
+.md-typeset h3 {
+  color: #c8c8c8;
+}
+
+/* Content area background */
+.md-main {
+  background-color: #0f0f0f;
+}
+
+.md-content {
+  background-color: #0f0f0f;
+}
+
+/* Sidebar background */
+.md-sidebar {
+  background-color: #0a0a0a;
+}
+
+/* Footer */
+.md-footer {
+  background-color: #000000;
+  border-top: 1px solid #1e1e1e;
+}
+
+/* Admonitions */
+.md-typeset .admonition,
+.md-typeset details {
+  border-left: 3px solid #ffb300;
+  background-color: #111111;
+}
+
+/* Search */
+.md-search__form {
+  background-color: #1a1a1a;
+}

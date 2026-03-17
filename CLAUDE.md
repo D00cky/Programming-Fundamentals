@@ -26,25 +26,29 @@ fase3-cpp/               # OOP, templates, STL, Modern C++
   ├── 01-transicao/
   ├── 02-oop/
   ├── 03-stl/
-  └── 04-modern-cpp/
+  ├── 04-modern-cpp/
+  └── projetos/          # cpp_modules, cpp_containers
 fase4-java/              # OOP empresarial, JVM, design patterns
   ├── 01-fundamentos/
   ├── 02-collections-streams/
   ├── 03-concorrencia/
   ├── 04-jvm/
-  └── 05-design-patterns/
+  ├── 05-design-patterns/
+  └── projetos/          # java_crud, java_ds, java_conc
 fase5-teoria-cs/         # Complexidade, paradigmas, grafos, compiladores, criptografia
   ├── 01-complexidade/
   ├── 02-paradigmas/
   ├── 03-grafos/
   ├── 04-compiladores/
-  └── 05-criptografia/
+  ├── 05-criptografia/
+  └── projetos/          # algo_benchmark, graph_cities, mini_parser, crypto_tool
 fase6-eng-software/      # SOLID, Clean Code, testes, arquitetura, CI/CD
   ├── 01-solid/
   ├── 02-clean-code/
   ├── 03-testes/
   ├── 04-arquitetura/
-  └── 05-cicd/
+  ├── 05-cicd/
+  └── projetos/          # ecommerce_solid, refactor_legacy, pipeline_java
 ```
 
 ## Estrutura dos READMEs (Odin Project-style)
@@ -58,6 +62,23 @@ Todos os READMEs de módulo seguem este padrão com 5 seções obrigatórias:
 5. **`## Recursos Adicionais`** — links divididos em: *Para ler/assistir agora* · *Para consulta* · *Para ir além* (após Referências)
 
 Ao adicionar novos módulos ou editar READMEs existentes, manter este padrão.
+
+## Site (MkDocs + Material)
+
+O repositório serve como site estático via GitHub Pages usando MkDocs Material.
+
+- **Config:** `mkdocs.yml` na raiz — `docs_dir: '.'` (sem mover arquivos)
+- **Tema:** Material slate, primary black, accent deep orange, font JetBrains Mono
+- **CSS custom:** `docs/css/extra.css` — visual Akita (fundo `#0f0f0f`, acentos amber `#ffb300`)
+- **Build:** `mkdocs build --strict` — `--strict` pega links quebrados antes do deploy
+- **CI/CD:** `.github/workflows/pages.yml` — jobs separados `build` + `deploy`
+- **URL prod:** `https://d00cky.github.io/Programming-Fundamentals/`
+- **Local:** `pip install mkdocs-material==9.5.30 && mkdocs serve`
+- **Mermaid:** funciona nativamente (client-side) com `pymdownx.superfences`
+- **galaxy.html:** copiado para `site/` automaticamente, acessível via URL direta
+- **Push pendente:** requer `gh auth login` antes do primeiro push
+
+Não mover READMEs de lugar — o nav do `mkdocs.yml` aponta para os paths existentes.
 
 ## Convenções
 

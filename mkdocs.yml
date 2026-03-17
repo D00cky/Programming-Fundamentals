@@ -1,0 +1,112 @@
+site_name: Programming Fundamentals
+site_description: C → C++ → Java — fundamentos de programação do jeito certo
+site_author: d00cky
+site_url: https://d00cky.github.io/Programming-Fundamentals/
+
+docs_dir: '.'
+site_dir: site
+
+exclude_docs: |
+  site/
+  .git/
+  .github/
+  .ai-jail
+  node_modules/
+
+theme:
+  name: material
+  palette:
+    scheme: slate
+    primary: black
+    accent: deep orange
+  font:
+    text: JetBrains Mono
+    code: JetBrains Mono
+  features:
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - toc.integrate
+    - content.code.copy
+    - search.highlight
+    - search.suggest
+  icon:
+    logo: material/code-braces
+
+extra_css:
+  - docs/css/extra.css
+
+markdown_extensions:
+  - admonition
+  - tables
+  - attr_list
+  - def_list
+  - footnotes
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tabbed:
+      alternate_style: true
+
+nav:
+  - Home: README.md
+  - 'Fase 0 — Fundação':
+    - Visão Geral: fase0-fundacao/README.md
+    - Como o Computador Funciona: fase0-fundacao/01-como-computador-funciona/README.md
+    - Sistemas Numéricos: fase0-fundacao/02-sistemas-numericos/README.md
+    - Sistema Operacional: fase0-fundacao/03-sistema-operacional/README.md
+    - Terminal Linux: fase0-fundacao/04-terminal-linux/README.md
+    - Git: fase0-fundacao/05-git/README.md
+    - Compilação: fase0-fundacao/06-compilacao/README.md
+  - 'Fase 1 — C':
+    - Visão Geral: fase1-c/README.md
+    - Fundamentos: fase1-c/01-fundamentos/README.md
+    - Ponteiros e Memória: fase1-c/02-ponteiros-memoria/README.md
+    - Estruturas de Dados: fase1-c/03-estruturas-dados/README.md
+    - Algoritmos de Ordenação: fase1-c/04-algoritmos-ordenacao/README.md
+    - Árvores: fase1-c/05-arvores/README.md
+    - Algoritmos Avançados: fase1-c/06-algoritmos-avancados/README.md
+  - 'Fase 2 — Sistemas':
+    - Visão Geral: fase2-sistemas/README.md
+    - Processos e Sinais: fase2-sistemas/01-processos-sinais/README.md
+    - File Descriptors: fase2-sistemas/02-file-descriptors/README.md
+    - Threads e Concorrência: fase2-sistemas/03-threads-concorrencia/README.md
+    - Sockets: fase2-sistemas/04-sockets/README.md
+  - 'Fase 3 — C++':
+    - Visão Geral: fase3-cpp/README.md
+    - Transição C→C++: fase3-cpp/01-transicao/README.md
+    - OOP: fase3-cpp/02-oop/README.md
+    - STL: fase3-cpp/03-stl/README.md
+    - Modern C++: fase3-cpp/04-modern-cpp/README.md
+  - 'Fase 4 — Java':
+    - Visão Geral: fase4-java/README.md
+    - Fundamentos: fase4-java/01-fundamentos/README.md
+    - Collections e Streams: fase4-java/02-collections-streams/README.md
+    - Concorrência: fase4-java/03-concorrencia/README.md
+    - JVM: fase4-java/04-jvm/README.md
+    - Design Patterns: fase4-java/05-design-patterns/README.md
+  - 'Fase 5 — Teoria CS':
+    - Visão Geral: fase5-teoria-cs/README.md
+    - Complexidade: fase5-teoria-cs/01-complexidade/README.md
+    - Paradigmas: fase5-teoria-cs/02-paradigmas/README.md
+    - Grafos: fase5-teoria-cs/03-grafos/README.md
+    - Compiladores: fase5-teoria-cs/04-compiladores/README.md
+    - Criptografia: fase5-teoria-cs/05-criptografia/README.md
+  - 'Fase 6 — Eng. Software':
+    - Visão Geral: fase6-eng-software/README.md
+    - SOLID: fase6-eng-software/01-solid/README.md
+    - Clean Code: fase6-eng-software/02-clean-code/README.md
+    - Testes: fase6-eng-software/03-testes/README.md
+    - Arquitetura: fase6-eng-software/04-arquitetura/README.md
+    - CI/CD: fase6-eng-software/05-cicd/README.md
