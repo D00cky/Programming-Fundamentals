@@ -5,18 +5,139 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Galaxy Roadmap — Programming Fundamentals</title>
 <style>
+/* ── Theme variables ────────────────────────────── */
+:root {
+  --bg:               #050810;
+  --text:             #e0e8ff;
+  --starfield-op:     1;
+  --node-label-fill:  rgba(255,255,255,0.82);
+  --orbit-stroke:     #08111f;
+
+  --panel-bg:         rgba(6,10,22,0.97);
+  --panel-border:     #1a2840;
+  --panel-shadow:     rgba(0,0,0,0.6);
+  --panel-hdr-bdr:    #0f1a2e;
+  --scrollbar-thumb:  #1a2840;
+  --desc-color:       #7090b0;
+  --close-border:     #1e2e48;
+  --close-color:      #4a6080;
+
+  --btn-todo-bg:      #0d1420; --btn-todo-bdr:  #1a2840; --btn-todo-clr:  #3a5070;
+  --btn-act-bg:       #0d1e3a; --btn-act-bdr:   #1e3a6a; --btn-act-clr:   #4a7aaa;
+  --btn-done-bg:      #0d2218; --btn-done-bdr:  #1a4030; --btn-done-clr:  #3a7050;
+  --abtn-todo-bg:     #1a2030; --abtn-todo-bdr: #3a5070; --abtn-todo-clr: #8090a0;
+  --abtn-act-bg:      #0f2a55; --abtn-act-bdr:  #4f93f7; --abtn-act-clr:  #4f93f7;
+  --abtn-done-bg:     #0c2518; --abtn-done-bdr: #4fc347; --abtn-done-clr: #4fc347;
+
+  --crit-h3-color:    #2a4060;
+  --crit-box-bdr:     #1e3050;
+  --crit-box-bg:      #080f1c;
+  --crit-text-color:  #5070a0;
+  --crit-bar-bg:      #0d1525;
+  --crit-count-color: #3a5070;
+
+  --material-bg:      rgba(30,50,80,0.4);
+  --material-border:  #1e3050;
+  --material-color:   #4a7aaa;
+
+  --legend-bg:        rgba(5,8,16,0.85);
+  --legend-border:    #0f1a2e;
+  --legend-h3-color:  #2a3550;
+  --legend-item:      #4a6080;
+  --legend-sep:       #0f1a2e;
+  --legend-s:         #3a5070;
+
+  --title-h1-color:   #c0ccff;
+  --title-h1-shadow:  0 0 20px rgba(150,170,255,0.4);
+  --title-p-color:    #2a3a5a;
+  --hint-color:       #1a2a3a;
+
+  --portal-border:    #ffb300;
+  --portal-color:     #ffb300;
+  --portal-hover-bg:  rgba(255,179,0,0.12);
+  --portal-hover-sh:  0 0 12px rgba(255,179,0,0.3);
+  --theme-border:     #2a3a5a;
+  --theme-color:      #4a6080;
+
+  --tooltip-bg:       rgba(8,12,28,0.97);
+  --tooltip-border:   #1e2e4a;
+  --tooltip-hint:     #3a5080;
+}
+
+body.light {
+  --bg:               #e8eef8;
+  --text:             #1a2030;
+  --starfield-op:     0;
+  --node-label-fill:  #1a2030;
+  --orbit-stroke:     #b0bcd0;
+
+  --panel-bg:         rgba(240,244,252,0.98);
+  --panel-border:     #b0bcd0;
+  --panel-shadow:     rgba(0,0,0,0.15);
+  --panel-hdr-bdr:    #c8d4e4;
+  --scrollbar-thumb:  #b0bcd0;
+  --desc-color:       #4a5a70;
+  --close-border:     #b0bcd0;
+  --close-color:      #7090b0;
+
+  --btn-todo-bg:      #dde4f0; --btn-todo-bdr:  #b0bcd0; --btn-todo-clr:  #6a7a90;
+  --btn-act-bg:       #d0dcf0; --btn-act-bdr:   #8aaad0; --btn-act-clr:   #3a6a9a;
+  --btn-done-bg:      #d0ead8; --btn-done-bdr:  #80b890; --btn-done-clr:  #2a6a3a;
+  --abtn-todo-bg:     #c8d4e4; --abtn-todo-bdr: #6a7a90; --abtn-todo-clr: #2a3a50;
+  --abtn-act-bg:      #b8ccec; --abtn-act-bdr:  #4f93f7; --abtn-act-clr:  #1a4a8a;
+  --abtn-done-bg:     #b8e0c0; --abtn-done-bdr: #4fc347; --abtn-done-clr: #1a5a2a;
+
+  --crit-h3-color:    #6a7a90;
+  --crit-box-bdr:     #8aaad0;
+  --crit-box-bg:      #e8eef8;
+  --crit-text-color:  #3a5070;
+  --crit-bar-bg:      #c8d4e4;
+  --crit-count-color: #6a7a90;
+
+  --material-bg:      rgba(180,200,230,0.3);
+  --material-border:  #8aaad0;
+  --material-color:   #2a5a8a;
+
+  --legend-bg:        rgba(240,244,252,0.92);
+  --legend-border:    #b0bcd0;
+  --legend-h3-color:  #6a7a90;
+  --legend-item:      #4a5a70;
+  --legend-sep:       #b0bcd0;
+  --legend-s:         #5a6a80;
+
+  --title-h1-color:   #1a2a4a;
+  --title-h1-shadow:  none;
+  --title-p-color:    #6a7a90;
+  --hint-color:       #8a9ab0;
+
+  --portal-border:    #c07a00;
+  --portal-color:     #c07a00;
+  --portal-hover-bg:  rgba(192,122,0,0.1);
+  --portal-hover-sh:  0 0 12px rgba(192,122,0,0.2);
+  --theme-border:     #8a9ab0;
+  --theme-color:      #4a5a70;
+
+  --tooltip-bg:       rgba(240,244,252,0.97);
+  --tooltip-border:   #b0bcd0;
+  --tooltip-hint:     #6a7a90;
+}
+
+/* ── Base ───────────────────────────────────────── */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  background: #050810;
-  color: #e0e8ff;
+  background: var(--bg);
+  color: var(--text);
   font-family: 'Courier New', monospace;
   overflow: hidden;
   height: 100vh; width: 100vw;
 }
 
-#starfield { position: fixed; top:0; left:0; width:100%; height:100%; z-index:0; }
-#galaxy-container { position:fixed; top:0; left:0; width:100%; height:100%; z-index:1; }
+#starfield {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;
+  opacity: var(--starfield-op); transition: opacity 0.3s;
+}
+#galaxy-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
 
 /* ── Nodes ─────────────────────────────────────── */
 .node { cursor: pointer; }
@@ -38,7 +159,8 @@ body {
   opacity: 1 !important; animation: none !important;
   stroke-width: 2.5 !important;
 }
-.node:hover circle { opacity: 1 !important; animation: none !important;
+.node:hover circle {
+  opacity: 1 !important; animation: none !important;
   filter: drop-shadow(0 0 14px currentColor) drop-shadow(0 0 28px currentColor) !important;
 }
 
@@ -48,31 +170,36 @@ body {
 }
 
 .node-label {
-  fill: rgba(255,255,255,0.82); pointer-events: none;
-  font-family: 'Courier New', monospace; opacity: 1;
+  fill: var(--node-label-fill);
+  pointer-events: none;
+  font-family: 'Courier New', monospace;
 }
 
-.ring-label { font-size: 10px; fill: #2a3550; text-anchor:middle;
-  pointer-events:none; letter-spacing:2px; font-family:'Courier New',monospace; }
+.orbit-ring { fill: none; stroke: var(--orbit-stroke); stroke-width: 1; }
+
+.ring-label {
+  font-size: 10px; fill: #2a3550; text-anchor: middle;
+  pointer-events: none; letter-spacing: 2px; font-family: 'Courier New', monospace;
+}
 
 /* ── Tooltip ───────────────────────────────────── */
 #tooltip {
-  position: fixed; background: rgba(8,12,28,0.97);
-  border: 1px solid #1e2e4a; border-radius: 7px;
+  position: fixed; background: var(--tooltip-bg);
+  border: 1px solid var(--tooltip-border); border-radius: 7px;
   padding: 8px 12px; pointer-events: none; opacity: 0;
   transition: opacity 0.12s; max-width: 220px; z-index: 50;
   box-shadow: 0 0 16px rgba(80,120,255,0.15);
 }
 #tooltip.visible { opacity: 1; }
-#tooltip .tt-name { font-size:12px; font-weight:bold; margin-bottom:3px; }
-#tooltip .tt-hint { font-size:10px; color:#3a5080; letter-spacing:1px; }
+#tooltip .tt-name { font-size: 12px; font-weight: bold; margin-bottom: 3px; }
+#tooltip .tt-hint { font-size: 10px; color: var(--tooltip-hint); letter-spacing: 1px; }
 
 /* ── Side Panel ────────────────────────────────── */
 #panel {
   position: fixed; top: 0; right: 0; width: 380px; height: 100vh;
-  background: rgba(6, 10, 22, 0.97);
-  border-left: 1px solid #1a2840;
-  box-shadow: -8px 0 32px rgba(0,0,0,0.6);
+  background: var(--panel-bg);
+  border-left: 1px solid var(--panel-border);
+  box-shadow: -8px 0 32px var(--panel-shadow);
   z-index: 20; display: flex; flex-direction: column;
   transform: translateX(100%);
   transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
@@ -81,8 +208,9 @@ body {
 #panel.open { transform: translateX(0); }
 
 #panel-header {
+  position: relative;
   padding: 20px 20px 16px;
-  border-bottom: 1px solid #0f1a2e;
+  border-bottom: 1px solid var(--panel-hdr-bdr);
   flex-shrink: 0;
 }
 #panel-phase-badge {
@@ -95,83 +223,71 @@ body {
 }
 #panel-close {
   position: absolute; top: 16px; right: 16px;
-  background: none; border: 1px solid #1e2e48; color: #4a6080;
+  background: none; border: 1px solid var(--close-border); color: var(--close-color);
   width: 28px; height: 28px; border-radius: 50%; cursor: pointer;
   font-size: 13px; display: flex; align-items: center; justify-content: center;
   transition: all 0.15s;
 }
 #panel-close:hover { border-color: #4a6080; color: #c0d0ff; }
 
-#panel-body {
-  flex: 1; overflow-y: auto; padding: 16px 20px 20px;
-}
+#panel-body { flex: 1; overflow-y: auto; padding: 16px 20px 20px; }
 #panel-body::-webkit-scrollbar { width: 4px; }
 #panel-body::-webkit-scrollbar-track { background: transparent; }
-#panel-body::-webkit-scrollbar-thumb { background: #1a2840; border-radius: 2px; }
+#panel-body::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 2px; }
 
-#panel-desc {
-  font-size: 12px; color: #7090b0; line-height: 1.65;
-  margin-bottom: 18px;
-}
+#panel-desc { font-size: 12px; color: var(--desc-color); line-height: 1.65; margin-bottom: 18px; }
 
 /* Status controls */
-#panel-status-row {
-  display: flex; gap: 6px; margin-bottom: 20px;
-}
+#panel-status-row { display: flex; gap: 6px; margin-bottom: 20px; }
 .status-btn {
   flex: 1; padding: 7px 4px; font-size: 10px; letter-spacing: 0.5px;
   border-radius: 6px; cursor: pointer; font-family: 'Courier New', monospace;
   border: 1px solid transparent; transition: all 0.15s; text-transform: uppercase;
 }
-.status-btn[data-s="todo"]   { background: #0d1420; border-color: #1a2840; color: #3a5070; }
-.status-btn[data-s="active"] { background: #0d1e3a; border-color: #1e3a6a; color: #4a7aaa; }
-.status-btn[data-s="done"]   { background: #0d2218; border-color: #1a4030; color: #3a7050; }
+.status-btn[data-s="todo"]   { background: var(--btn-todo-bg);  border-color: var(--btn-todo-bdr);  color: var(--btn-todo-clr); }
+.status-btn[data-s="active"] { background: var(--btn-act-bg);   border-color: var(--btn-act-bdr);   color: var(--btn-act-clr); }
+.status-btn[data-s="done"]   { background: var(--btn-done-bg);  border-color: var(--btn-done-bdr);  color: var(--btn-done-clr); }
 
-.status-btn.active-btn[data-s="todo"]   { background: #1a2030; border-color: #3a5070; color: #8090a0; }
-.status-btn.active-btn[data-s="active"] { background: #0f2a55; border-color: #4f93f7; color: #4f93f7;
-  box-shadow: 0 0 8px rgba(79,147,247,0.3); }
-.status-btn.active-btn[data-s="done"]   { background: #0c2518; border-color: #4fc347; color: #4fc347;
-  box-shadow: 0 0 8px rgba(79,195,71,0.3); }
+.status-btn.active-btn[data-s="todo"]   { background: var(--abtn-todo-bg); border-color: var(--abtn-todo-bdr); color: var(--abtn-todo-clr); }
+.status-btn.active-btn[data-s="active"] { background: var(--abtn-act-bg);  border-color: var(--abtn-act-bdr);  color: var(--abtn-act-clr);  box-shadow: 0 0 8px rgba(79,147,247,0.3); }
+.status-btn.active-btn[data-s="done"]   { background: var(--abtn-done-bg); border-color: var(--abtn-done-bdr); color: var(--abtn-done-clr); box-shadow: 0 0 8px rgba(79,195,71,0.3); }
 
 /* Criteria */
 #panel-criteria h3 {
-  font-size: 10px; letter-spacing: 2px; color: #2a4060;
+  font-size: 10px; letter-spacing: 2px; color: var(--crit-h3-color);
   text-transform: uppercase; margin-bottom: 12px;
 }
 .criterion {
   display: flex; align-items: flex-start; gap: 10px;
   margin-bottom: 10px; cursor: pointer; padding: 8px 10px;
-  border-radius: 6px; border: 1px solid transparent;
-  transition: all 0.15s;
+  border-radius: 6px; border: 1px solid transparent; transition: all 0.15s;
 }
 .criterion:hover { background: rgba(30,50,80,0.4); border-color: #1a2840; }
 .criterion.checked { border-color: rgba(79,195,71,0.15); background: rgba(79,195,71,0.05); }
 
-.criterion input[type="checkbox"] { display: none; }
 .crit-box {
   width: 16px; height: 16px; border-radius: 4px; flex-shrink: 0;
-  border: 1px solid #1e3050; background: #080f1c; margin-top: 1px;
+  border: 1px solid var(--crit-box-bdr); background: var(--crit-box-bg); margin-top: 1px;
   display: flex; align-items: center; justify-content: center;
   transition: all 0.15s; font-size: 10px;
 }
 .criterion.checked .crit-box { background: #0f2518; border-color: #4fc347; color: #4fc347; }
-.crit-text { font-size: 11px; color: #5070a0; line-height: 1.5; }
+.crit-text { font-size: 11px; color: var(--crit-text-color); line-height: 1.5; }
 .criterion.checked .crit-text { color: #7aaa80; }
+.no-criteria { font-size: 11px; color: #2a4060; }
 
-/* Progress bar */
-#criteria-progress {
-  margin: 14px 0;
-}
+/* Criteria progress */
+#criteria-progress { margin: 14px 0; }
 #criteria-bar-bg {
-  height: 4px; background: #0d1525; border-radius: 2px; overflow: hidden;
+  height: 4px; background: var(--crit-bar-bg); border-radius: 2px; overflow: hidden;
   margin-bottom: 6px;
 }
 #criteria-bar-fill {
-  height: 100%; border-radius: 2px; background: #4fc347;
+  height: 100%; width: 0; border-radius: 2px; background: #4fc347;
   transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 0 6px #4fc347;
 }
-#criteria-count { font-size: 10px; color: #3a5070; letter-spacing: 1px; }
+#criteria-count { font-size: 10px; color: var(--crit-count-color); letter-spacing: 1px; }
 
 /* Completion message */
 #panel-completion {
@@ -184,58 +300,64 @@ body {
 /* Material link */
 #panel-material-link {
   display: block; margin-top: 16px; padding: 10px 14px;
-  background: rgba(30,50,80,0.4); border: 1px solid #1e3050;
-  border-radius: 7px; color: #4a7aaa; font-size: 11px;
-  text-decoration: none; letter-spacing: 0.5px;
-  transition: all 0.15s; text-align: center;
+  background: var(--material-bg); border: 1px solid var(--material-border);
+  border-radius: 7px; color: var(--material-color); font-size: 11px;
+  text-decoration: none; letter-spacing: 0.5px; transition: all 0.15s; text-align: center;
 }
-#panel-material-link:hover { border-color: #4a7aaa; color: #88b8f8;
-  background: rgba(40,70,120,0.4); }
+#panel-material-link:hover { border-color: #4a7aaa; color: #88b8f8; background: rgba(40,70,120,0.4); }
 
 /* ── Legend ────────────────────────────────────── */
 #legend {
   position: fixed; bottom: 20px; left: 20px; z-index: 10;
-  background: rgba(5,8,16,0.85); border: 1px solid #0f1a2e;
+  background: var(--legend-bg); border: 1px solid var(--legend-border);
   border-radius: 10px; padding: 12px 16px; font-size: 10px;
 }
-#legend h3 { font-size: 9px; letter-spacing:2px; color:#2a3550;
-  margin-bottom:8px; text-transform:uppercase; }
-.leg-item { display:flex; align-items:center; gap:7px; margin-bottom:5px; color:#4a6080; }
-.leg-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
-.leg-sep { height:1px; background:#0f1a2e; margin:8px 0; }
-.leg-status { display:flex; gap:12px; }
-.leg-s { display:flex; align-items:center; gap:5px; color:#3a5070; font-size:9px; }
-.leg-s-dot { width:8px; height:8px; border-radius:50%; }
+#legend h3 { font-size: 9px; letter-spacing: 2px; color: var(--legend-h3-color); margin-bottom: 8px; text-transform: uppercase; }
+.leg-item { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; color: var(--legend-item); }
+.leg-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.leg-sep { height: 1px; background: var(--legend-sep); margin: 8px 0; }
+.leg-status { display: flex; gap: 12px; }
+.leg-s { display: flex; align-items: center; gap: 5px; color: var(--legend-s); font-size: 9px; }
+.leg-s-dot { width: 8px; height: 8px; border-radius: 50%; }
 
 /* ── Title ─────────────────────────────────────── */
 #title {
-  position:fixed; top:20px; left:50%; transform:translateX(-50%);
-  text-align:center; z-index:10; pointer-events:none;
-  transition: left 0.28s, transform 0.28s;
+  position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+  text-align: center; z-index: 10; pointer-events: none;
+  transition: left 0.28s;
 }
-#title h1 { font-size:16px; letter-spacing:4px; color:#c0ccff;
-  text-shadow:0 0 20px rgba(150,170,255,0.4); text-transform:uppercase; }
-#title p { font-size:9px; color:#2a3a5a; letter-spacing:3px; margin-top:3px; }
+#title h1 { font-size: 16px; letter-spacing: 4px; color: var(--title-h1-color); text-shadow: var(--title-h1-shadow); text-transform: uppercase; }
+#title p { font-size: 9px; color: var(--title-p-color); letter-spacing: 3px; margin-top: 3px; }
 
-#hint { position:fixed; bottom:20px; right:20px; z-index:10;
-  font-size:9px; color:#1a2a3a; letter-spacing:1px; text-align:right; }
+#hint { position: fixed; bottom: 20px; right: 20px; z-index: 10; font-size: 9px; color: var(--hint-color); letter-spacing: 1px; text-align: right; }
 
+/* ── Buttons ───────────────────────────────────── */
 #portal-btn {
   position: fixed; top: 16px; right: 20px; z-index: 30;
   padding: 8px 16px; background: transparent;
-  border: 1px solid #ffb300; border-radius: 6px;
-  color: #ffb300; font-family: 'Courier New', monospace;
+  border: 1px solid var(--portal-border); border-radius: 6px;
+  color: var(--portal-color); font-family: 'Courier New', monospace;
   font-size: 11px; letter-spacing: 1px; cursor: pointer;
-  text-decoration: none; transition: all 0.2s;
+  text-decoration: none; transition: opacity 0.2s, background 0.2s, box-shadow 0.2s;
 }
-#portal-btn:hover {
-  background: rgba(255,179,0,0.12);
-  box-shadow: 0 0 12px rgba(255,179,0,0.3);
-}
+#portal-btn:hover { background: var(--portal-hover-bg); box-shadow: var(--portal-hover-sh); }
 
-/* ── Progress summary ──────────────────────────── */
+#theme-btn {
+  position: fixed; top: 16px; right: 172px; z-index: 30;
+  padding: 8px 12px; background: transparent;
+  border: 1px solid var(--theme-border); border-radius: 6px;
+  color: var(--theme-color); font-family: 'Courier New', monospace;
+  font-size: 14px; cursor: pointer;
+  transition: opacity 0.2s, border-color 0.2s, color 0.2s;
+}
+#theme-btn:hover { border-color: #4a6080; color: #c0d0ff; }
+
+/* Light theme SVG override */
+body.light .node circle.status-todo { opacity: 0.5; fill: #c8d4e4 !important; }
+
+/* ── Global progress bar ───────────────────────── */
 #progress-bar {
-  position: fixed; top: 0; left: 0; height: 2px;
+  position: fixed; top: 0; left: 0; width: 0; height: 2px;
   background: linear-gradient(90deg, #7c83fd, #4fc3f7, #4fc347);
   z-index: 30; transition: width 0.5s;
   box-shadow: 0 0 8px rgba(124,131,253,0.5);
@@ -245,7 +367,8 @@ body {
 <body>
 
 <canvas id="starfield"></canvas>
-<div id="progress-bar" style="width:0%"></div>
+<div id="progress-bar"></div>
+<button id="theme-btn" title="Alternar tema">☀</button>
 <a id="portal-btn" href="study/" target="_blank">▸ Portal de Estudos</a>
 
 <div id="galaxy-container">
@@ -254,25 +377,25 @@ body {
 
 <!-- Side Panel -->
 <div id="panel">
-  <div id="panel-header" style="position:relative;">
+  <div id="panel-header">
     <div id="panel-phase-badge"></div>
     <h2 id="panel-title"></h2>
-    <button id="panel-close" onclick="closePanel()">✕</button>
+    <button id="panel-close">✕</button>
   </div>
   <div id="panel-body">
     <p id="panel-desc"></p>
 
     <div id="panel-status-row">
-      <button class="status-btn" data-s="todo"   onclick="setNodeStatus('todo')">⬜ Bloqueado</button>
-      <button class="status-btn" data-s="active" onclick="setNodeStatus('active')">🔵 Andamento</button>
-      <button class="status-btn" data-s="done"   onclick="setNodeStatus('done')">✅ Concluído</button>
+      <button class="status-btn" data-s="todo">⬜ Bloqueado</button>
+      <button class="status-btn" data-s="active">🔵 Andamento</button>
+      <button class="status-btn" data-s="done">✅ Concluído</button>
     </div>
 
     <div id="panel-criteria">
       <h3>Critérios de conclusão</h3>
       <div id="criteria-list"></div>
       <div id="criteria-progress">
-        <div id="criteria-bar-bg"><div id="criteria-bar-fill" style="width:0%"></div></div>
+        <div id="criteria-bar-bg"><div id="criteria-bar-fill"></div></div>
         <span id="criteria-count">0 / 0 concluídos</span>
       </div>
       <div id="panel-completion">
@@ -319,6 +442,10 @@ body {
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
 // ─── CONSTANTS ───────────────────────────────────────────────────────────────
+
+const STATUS      = { TODO: 'todo', ACTIVE: 'active', DONE: 'done' };
+const STORAGE_KEY = 'pgf-galaxy-v2';
+const THEME_KEY   = 'pgf-theme';
 
 const PHASE_COLORS = {
   '-1':'#ffffff', '0':'#7c83fd', '1':'#4fc3f7', '2':'#4db6ac',
@@ -868,367 +995,416 @@ const links = [
 
 // ─── STORAGE ─────────────────────────────────────────────────────────────────
 
-const STORAGE_KEY = 'pgf-galaxy-v2';
-function loadState() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}'); } catch(e){ return {}; } }
-function saveState(s) { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }
+function loadState() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; }
+}
+function saveState(state) { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
 
 function getNodeState(id) {
-  const s = loadState();
-  return s[id] || { status: id==='start'?'done':'todo', checked:[] };
+  const state = loadState();
+  return state[id] || { status: id === 'start' ? STATUS.DONE : STATUS.TODO, checked: [] };
 }
 
 function setNodeStateStatus(id, status) {
-  const s = loadState(); s[id] = s[id]||{status:'todo',checked:[]};
-  s[id].status = status; saveState(s);
+  const state = loadState();
+  state[id] = state[id] || { status: STATUS.TODO, checked: [] };
+  state[id].status = status;
+  saveState(state);
 }
 
 function toggleCriterion(id, idx) {
-  const s = loadState(); s[id] = s[id]||{status:'todo',checked:[]};
-  const pos = s[id].checked.indexOf(idx);
-  if (pos>=0) s[id].checked.splice(pos,1); else s[id].checked.push(idx);
-  saveState(s);
-  return s[id].checked;
+  const state = loadState();
+  state[id] = state[id] || { status: STATUS.TODO, checked: [] };
+  const pos = state[id].checked.indexOf(idx);
+  if (pos >= 0) state[id].checked.splice(pos, 1); else state[id].checked.push(idx);
+  saveState(state);
+  return state[id].checked;
 }
 
 // ─── STARFIELD ───────────────────────────────────────────────────────────────
 
-(function initStars(){
+(function initStars() {
   const canvas = document.getElementById('starfield');
-  const ctx = canvas.getContext('2d');
-  let stars=[], W, H;
-  function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
-  function make(n){
-    stars=[];
-    for(let i=0;i<n;i++) stars.push({
-      x:Math.random()*W, y:Math.random()*H,
-      r:Math.random()*1.3+0.1,
-      a:Math.random(), da:(Math.random()-0.5)*0.003,
-      drift:(Math.random()-0.5)*0.015,
-    });
+  const ctx    = canvas.getContext('2d');
+  let stars = [], W, H;
+
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+
+  function makeStar() {
+    return {
+      x: Math.random() * W,  y: Math.random() * H,
+      r: Math.random() * 1.3 + 0.1,
+      a: Math.random(),       da: (Math.random() - 0.5) * 0.003,
+      drift: (Math.random() - 0.5) * 0.015,
+    };
   }
-  function draw(){
-    ctx.clearRect(0,0,W,H);
-    for(const s of stars){
-      s.a+=s.da; if(s.a<=0||s.a>=1) s.da=-s.da;
-      s.x+=s.drift; if(s.x<0) s.x=W; if(s.x>W) s.x=0;
-      ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-      ctx.fillStyle=`rgba(200,210,255,${s.a*0.65})`; ctx.fill();
-    }
-    requestAnimationFrame(draw);
+
+  function tickStar(s) {
+    s.a += s.da; if (s.a <= 0 || s.a >= 1) s.da = -s.da;
+    s.x += s.drift; if (s.x < 0) s.x = W; if (s.x > W) s.x = 0;
+    ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(200,210,255,${s.a * 0.65})`; ctx.fill();
   }
-  resize(); make(360); draw();
-  window.addEventListener('resize',()=>{resize();make(360);});
+
+  function draw() { ctx.clearRect(0, 0, W, H); stars.forEach(tickStar); requestAnimationFrame(draw); }
+
+  function reset() { resize(); stars = Array.from({ length: 360 }, makeStar); }
+
+  reset(); draw();
+  window.addEventListener('resize', reset);
 })();
 
-// ─── SVG RENDER ──────────────────────────────────────────────────────────────
+// ─── SVG INIT ────────────────────────────────────────────────────────────────
 
 const svg = d3.select('#galaxy-svg');
-const W0 = window.innerWidth, H0 = window.innerHeight;
-const g   = svg.append('g').attr('transform',`translate(${W0/2},${H0/2})`);
+const W0  = window.innerWidth;
+const H0  = window.innerHeight;
+const g   = svg.append('g').attr('transform', `translate(${W0 / 2},${H0 / 2})`);
 
-const zoom = d3.zoom().scaleExtent([0.25,3.5]).on('zoom',(ev)=>{
-  g.attr('transform',`translate(${ev.transform.x},${ev.transform.y}) scale(${ev.transform.k})`);
+const zoom = d3.zoom().scaleExtent([0.25, 3.5]).on('zoom', ev => {
+  g.attr('transform', `translate(${ev.transform.x},${ev.transform.y}) scale(${ev.transform.k})`);
 });
 svg.call(zoom);
-svg.call(zoom.translateTo, W0/2, H0/2);
+svg.call(zoom.translateTo, W0 / 2, H0 / 2);
 
-// orbit rings
+// Orbit rings — stroke/fill handled by .orbit-ring CSS class
 const orbitLayer = g.append('g');
-Object.entries(RING_RADIUS).forEach(([r,px])=>{
-  if(px===0) return;
-  orbitLayer.append('circle').attr('cx',0).attr('cy',0).attr('r',px)
-    .attr('fill','none').attr('stroke','#08111f').attr('stroke-width',1);
-});
+Object.values(RING_RADIUS)
+  .filter(px => px > 0)
+  .forEach(px => orbitLayer.append('circle').attr('cx', 0).attr('cy', 0).attr('r', px).attr('class', 'orbit-ring'));
 
-// ring labels
+// Ring labels
+const RING_LABELS = [[1,'FASE 0'],[2,'FASE 1'],[3,'FASE 2'],[4,'FASE 3'],[5,'FASE 4'],[6,'FASE 5'],[7,'FASE 6']];
 const lblLayer = g.append('g');
-[[1,'FASE 0'],[2,'FASE 1'],[3,'FASE 2'],[4,'FASE 3'],[5,'FASE 4'],[6,'FASE 5'],[7,'FASE 6']]
-  .forEach(([r,l])=>{
-    lblLayer.append('text')
-      .attr('x',0).attr('y',-RING_RADIUS[r]-5)
-      .attr('class','ring-label').text(l);
-  });
-
-// links
-const linkLayer = g.append('g');
-links.forEach(l=>{
-  const s=nodeMap[l.s], t=nodeMap[l.t];
-  if(!s||!t) return;
-  const col = PHASE_COLORS[String(s.phase)]||'#4466aa';
-  linkLayer.append('line')
-    .attr('x1',s.ax).attr('y1',s.ay).attr('x2',t.ax).attr('y2',t.ay)
-    .attr('stroke',col).attr('stroke-width',0.5).attr('stroke-opacity',0.15);
+RING_LABELS.forEach(([ring, label]) => {
+  lblLayer.append('text').attr('x', 0).attr('y', -RING_RADIUS[ring] - 5).attr('class', 'ring-label').text(label);
 });
 
-// node groups
+// Links
+const linkLayer = g.append('g');
+links.forEach(({ s: fromId, t: toId }) => {
+  const from = nodeMap[fromId], to = nodeMap[toId];
+  if (!from || !to) return;
+  const color = PHASE_COLORS[String(from.phase)] || '#4466aa';
+  linkLayer.append('line')
+    .attr('x1', from.ax).attr('y1', from.ay).attr('x2', to.ax).attr('y2', to.ay)
+    .attr('stroke', color).attr('stroke-width', 0.5).attr('stroke-opacity', 0.15);
+});
+
+// ─── NODES ───────────────────────────────────────────────────────────────────
+
 const nodeLayer = g.append('g');
 
 function getStatusFromState(id) {
-  if(id==='start') return 'done';
-  return getNodeState(id).status;
+  return id === 'start' ? STATUS.DONE : getNodeState(id).status;
 }
 
 let selectedId = null;
 
-function renderNode(n) {
-  const color = PHASE_COLORS[String(n.phase)]||'#fff';
-  const status = getStatusFromState(n.id);
-  const vr = n.ring === 0 ? 44 : Math.round(n.size * 3.2);
-  n._vr = vr;
+// ─── DOM CACHE ────────────────────────────────────────────────────────────────
 
-  // ring glow
-  if(status==='done'||status==='active') {
-    n._glowEl?.remove();
-    n._glowEl = nodeLayer.insert('circle','g.node')
-      .attr('cx',n.ax).attr('cy',n.ay)
-      .attr('r',vr+6).attr('fill','none')
-      .attr('stroke',color).attr('stroke-width',0.8)
-      .attr('stroke-opacity',0.12).node();
-  }
+const dom = {
+  panel:        document.getElementById('panel'),
+  panelBadge:   document.getElementById('panel-phase-badge'),
+  panelTitle:   document.getElementById('panel-title'),
+  panelDesc:    document.getElementById('panel-desc'),
+  criteriaList: document.getElementById('criteria-list'),
+  critProgress: document.getElementById('criteria-progress'),
+  critBarFill:  document.getElementById('criteria-bar-fill'),
+  critCount:    document.getElementById('criteria-count'),
+  completion:   document.getElementById('panel-completion'),
+  materialLink: document.getElementById('panel-material-link'),
+  globalBar:    document.getElementById('progress-bar'),
+  title:        document.getElementById('title'),
+  tooltip:      document.getElementById('tooltip'),
+  tooltipName:  document.querySelector('#tooltip .tt-name'),
+  portalBtn:    document.getElementById('portal-btn'),
+  themeBtn:     document.getElementById('theme-btn'),
+};
 
-  const grp = nodeLayer.append('g')
-    .attr('class','node')
-    .attr('transform',`translate(${n.ax},${n.ay})`)
-    .attr('id',`node-${n.id}`);
+// ─── EVENT WIRING ─────────────────────────────────────────────────────────────
 
-  if(n.ring<=1) grp.classed('always-show',true);
+document.getElementById('panel-close').addEventListener('click', closePanel);
+document.getElementById('theme-btn').addEventListener('click', toggleTheme);
+document.getElementById('panel-status-row').addEventListener('click', e => {
+  const btn = e.target.closest('.status-btn');
+  if (btn) setNodeStatus(btn.dataset.s);
+});
 
-  const circ = grp.append('circle')
-    .attr('r', vr)
-    .attr('fill', status==='todo' ? '#090f1c' : color)
-    .attr('stroke', color)
-    .attr('stroke-width', status==='todo'?0.8:1.4)
-    .attr('class',`status-${n.id==='start'?'start':status}`)
-    .style('color', color);
+// ─── NODE HELPERS ─────────────────────────────────────────────────────────────
 
-  // label — centered inside circle
-  const raw = n.label.replace(/\n/g, ' ');
-  const mid = Math.floor(raw.length / 2);
-  const splitAt = raw.indexOf(' ', mid);
-  const lines = splitAt > 0 ? [raw.slice(0, splitAt), raw.slice(splitAt + 1)] : [raw];
-  const fs = n.ring === 0 ? 8 : n.ring <= 2 ? 7 : 6.5;
-  const lineH = fs + 2;
-  const totalH = (lines.length - 1) * lineH;
-  lines.forEach((line, i) => {
-    grp.append('text')
-      .attr('class', 'node-label')
-      .attr('x', 0)
-      .attr('y', -totalH / 2 + i * lineH)
-      .attr('text-anchor', 'middle')
-      .attr('dominant-baseline', 'middle')
-      .style('font-size', fs + 'px')
-      .text(line);
-  });
-
-  // events
-  const tooltip = document.getElementById('tooltip');
-  grp
-    .on('mouseover', function(ev){
-      tooltip.querySelector('.tt-name').textContent = n.label.replace('\n',' ');
-      tooltip.querySelector('.tt-name').style.color = color;
-      tooltip.classList.add('visible');
-      posTooltip(ev);
-    })
-    .on('mousemove', posTooltip)
-    .on('mouseleave', ()=> tooltip.classList.remove('visible'))
-    .on('click', function(ev){
-      ev.stopPropagation();
-      tooltip.classList.remove('visible');
-      openPanel(n.id);
-    });
-
-  n._grp = grp;
+function phaseColor(node) {
+  return PHASE_COLORS[String(node.phase)] || '#fff';
 }
 
-function posTooltip(ev) {
-  const t = document.getElementById('tooltip');
-  const tw = t.offsetWidth||200, th = t.offsetHeight||50;
-  let x = ev.clientX+14, y = ev.clientY-10;
-  if(x+tw>window.innerWidth-10) x=ev.clientX-tw-14;
-  if(y+th>window.innerHeight-10) y=window.innerHeight-th-10;
-  t.style.left=x+'px'; t.style.top=y+'px';
+function nodeCircle(id) {
+  return document.getElementById(`node-${id}`)?.querySelector('circle');
+}
+
+// ─── RENDER NODES ─────────────────────────────────────────────────────────────
+
+function renderNode(node) {
+  const color  = phaseColor(node);
+  const status = getStatusFromState(node.id);
+  const radius = node.ring === 0 ? 44 : Math.round(node.size * 3.2);
+  node._vr = radius;
+
+  if (status === STATUS.DONE || status === STATUS.ACTIVE) {
+    node._glowEl?.remove();
+    node._glowEl = nodeLayer.insert('circle', 'g.node')
+      .attr('cx', node.ax).attr('cy', node.ay)
+      .attr('r', radius + 6).attr('fill', 'none')
+      .attr('stroke', color).attr('stroke-width', 0.8).attr('stroke-opacity', 0.12)
+      .node();
+  }
+
+  const group = nodeLayer.append('g')
+    .attr('class', 'node')
+    .attr('transform', `translate(${node.ax},${node.ay})`)
+    .attr('id', `node-${node.id}`);
+
+  if (node.ring <= 1) group.classed('always-show', true);
+
+  group.append('circle')
+    .attr('r', radius)
+    .attr('fill', status === STATUS.TODO ? '#090f1c' : color)
+    .attr('stroke', color)
+    .attr('stroke-width', status === STATUS.TODO ? 0.8 : 1.4)
+    .attr('class', `status-${node.id === 'start' ? 'start' : status}`)
+    .style('color', color);
+
+  renderNodeLabel(group, node);
+  attachNodeEvents(group, node, color);
+  node._grp = group;
+}
+
+function renderNodeLabel(group, node) {
+  const raw      = node.label.replace(/\n/g, ' ');
+  const splitAt  = raw.indexOf(' ', Math.floor(raw.length / 2));
+  const lines    = splitAt > 0 ? [raw.slice(0, splitAt), raw.slice(splitAt + 1)] : [raw];
+  const fontSize = node.ring === 0 ? 8 : node.ring <= 2 ? 7 : 6.5;
+  const lineH    = fontSize + 2;
+  const totalH   = (lines.length - 1) * lineH;
+
+  lines.forEach((line, i) => {
+    group.append('text')
+      .attr('class', 'node-label')
+      .attr('x', 0).attr('y', -totalH / 2 + i * lineH)
+      .attr('text-anchor', 'middle').attr('dominant-baseline', 'middle')
+      .style('font-size', `${fontSize}px`)
+      .text(line);
+  });
+}
+
+function attachNodeEvents(group, node, color) {
+  group
+    .on('mouseover', ev => showTooltip(node, color, ev))
+    .on('mousemove', positionTooltip)
+    .on('mouseleave', hideTooltip)
+    .on('click', ev => { ev.stopPropagation(); hideTooltip(); openPanel(node.id); });
+}
+
+function showTooltip(node, color, ev) {
+  dom.tooltipName.textContent = node.label.replace('\n', ' ');
+  dom.tooltipName.style.color = color;
+  dom.tooltip.classList.add('visible');
+  positionTooltip(ev);
+}
+
+function hideTooltip() { dom.tooltip.classList.remove('visible'); }
+
+function positionTooltip(ev) {
+  const tw = dom.tooltip.offsetWidth  || 200;
+  const th = dom.tooltip.offsetHeight || 50;
+  let x = ev.clientX + 14;
+  let y = ev.clientY - 10;
+  if (x + tw > window.innerWidth  - 10) x = ev.clientX - tw - 14;
+  if (y + th > window.innerHeight - 10) y = window.innerHeight - th - 10;
+  dom.tooltip.style.left = `${x}px`;
+  dom.tooltip.style.top  = `${y}px`;
 }
 
 nodes.forEach(renderNode);
-
-// click background = close panel
-svg.on('click', ()=>{ closePanel(); });
+svg.on('click', closePanel);
 
 // ─── PANEL ───────────────────────────────────────────────────────────────────
 
 function openPanel(id) {
-  const n = nodeMap[id];
-  if(!n) return;
+  const node = nodeMap[id];
+  if (!node) return;
 
-  // deselect previous
-  if(selectedId && selectedId!==id) {
-    const prev = document.getElementById(`node-${selectedId}`);
-    if(prev) prev.querySelector('circle').classList.remove('selected');
-  }
-  selectedId = id;
-  const grpEl = document.getElementById(`node-${id}`);
-  if(grpEl) grpEl.querySelector('circle').classList.add('selected');
+  updateNodeSelection(id);
 
-  const color = PHASE_COLORS[String(n.phase)]||'#fff';
+  const color = phaseColor(node);
   const state = getNodeState(id);
 
-  // header
-  document.getElementById('panel-phase-badge').textContent = PHASE_NAMES[String(n.phase)]||'';
-  document.getElementById('panel-phase-badge').style.color = color;
-  document.getElementById('panel-title').textContent = n.label.replace('\n',' ');
-  document.getElementById('panel-title').style.color = color;
+  renderPanelHeader(node, color, state);
+  renderCriteriaSection(node, state, id);
+  renderMaterialLink(id);
 
-  // desc
-  document.getElementById('panel-desc').textContent = n.desc;
-
-  // status buttons
-  document.querySelectorAll('.status-btn').forEach(btn=>{
-    btn.classList.remove('active-btn');
-    if(btn.dataset.s===state.status) btn.classList.add('active-btn');
-  });
-
-  // criteria
-  const list = document.getElementById('criteria-list');
-  list.innerHTML = '';
-
-  if(n.criteria.length===0) {
-    list.innerHTML = '<p style="font-size:11px;color:#2a4060;">Nó central — explore os nós ao redor para começar.</p>';
-    document.getElementById('criteria-progress').style.display='none';
-    document.getElementById('panel-completion').classList.remove('visible');
-  } else {
-    document.getElementById('criteria-progress').style.display='block';
-    n.criteria.forEach((text, i)=>{
-      const checked = state.checked.includes(i);
-      const div = document.createElement('div');
-      div.className = 'criterion' + (checked?' checked':'');
-      div.innerHTML = `
-        <div class="crit-box">${checked?'✓':''}</div>
-        <span class="crit-text">${text}</span>`;
-      div.addEventListener('click', ()=> criterionClick(id, i));
-      list.appendChild(div);
-    });
-    updateProgress(id);
-  }
-
-  // material link
-  const path = NODE_PATHS[id];
-  const link = document.getElementById('panel-material-link');
-  if(path) {
-    link.href = path;
-    link.style.display = 'block';
-  } else {
-    link.style.display = 'none';
-  }
-
-  document.getElementById('panel').classList.add('open');
+  dom.panel.classList.add('open');
   updateTitlePosition(true);
+  setOverlayButtonsVisible(false);
 }
 
 function closePanel() {
-  if(selectedId) {
-    const prev = document.getElementById(`node-${selectedId}`);
-    if(prev) prev.querySelector('circle').classList.remove('selected');
-    selectedId = null;
-  }
-  document.getElementById('panel').classList.remove('open');
+  deselectNode(selectedId);
+  selectedId = null;
+  dom.panel.classList.remove('open');
   updateTitlePosition(false);
+  setOverlayButtonsVisible(true);
+}
+
+function updateNodeSelection(id) {
+  if (selectedId && selectedId !== id) deselectNode(selectedId);
+  selectedId = id;
+  nodeCircle(id)?.classList.add('selected');
+}
+
+function deselectNode(id) {
+  if (id) nodeCircle(id)?.classList.remove('selected');
+}
+
+function renderPanelHeader(node, color, state) {
+  dom.panelBadge.textContent = PHASE_NAMES[String(node.phase)] || '';
+  dom.panelBadge.style.color = color;
+  dom.panelTitle.textContent = node.label.replace('\n', ' ');
+  dom.panelTitle.style.color = color;
+  dom.panelDesc.textContent  = node.desc;
+  renderStatusButtons(state.status);
+}
+
+function renderStatusButtons(currentStatus) {
+  document.querySelectorAll('.status-btn').forEach(btn => {
+    btn.classList.toggle('active-btn', btn.dataset.s === currentStatus);
+  });
+}
+
+function renderCriteriaSection(node, state, id) {
+  dom.criteriaList.innerHTML = '';
+
+  if (node.criteria.length === 0) {
+    dom.criteriaList.innerHTML = '<p class="no-criteria">Nó central — explore os nós ao redor para começar.</p>';
+    dom.critProgress.style.display = 'none';
+    dom.completion.classList.remove('visible');
+    return;
+  }
+
+  dom.critProgress.style.display = 'block';
+  node.criteria.forEach((text, i) => {
+    dom.criteriaList.appendChild(buildCriterionItem(text, i, state.checked.includes(i), id));
+  });
+  renderCriteriaProgress(node, state);
+}
+
+function buildCriterionItem(text, index, isChecked, nodeId) {
+  const div = document.createElement('div');
+  div.className = 'criterion' + (isChecked ? ' checked' : '');
+  div.innerHTML = `<div class="crit-box">${isChecked ? '✓' : ''}</div><span class="crit-text">${text}</span>`;
+  div.addEventListener('click', () => criterionClick(nodeId, index));
+  return div;
+}
+
+function renderMaterialLink(id) {
+  const path = NODE_PATHS[id];
+  dom.materialLink.href         = path || '#';
+  dom.materialLink.style.display = path ? 'block' : 'none';
 }
 
 function updateTitlePosition(panelOpen) {
-  const title = document.getElementById('title');
-  if(panelOpen) {
-    title.style.left = `calc(50% - 190px)`;
-    title.style.transform = 'translateX(-50%)';
-  } else {
-    title.style.left = '50%';
-    title.style.transform = 'translateX(-50%)';
-  }
+  dom.title.style.left = panelOpen ? 'calc(50% - 190px)' : '50%';
 }
 
+function setOverlayButtonsVisible(visible) {
+  const opacity = visible ? '' : '0';
+  const events  = visible ? '' : 'none';
+  dom.portalBtn.style.opacity       = opacity;
+  dom.portalBtn.style.pointerEvents = events;
+  dom.themeBtn.style.opacity        = opacity;
+  dom.themeBtn.style.pointerEvents  = events;
+}
+
+// ─── STATUS & CRITERIA ───────────────────────────────────────────────────────
+
 function setNodeStatus(status) {
-  if(!selectedId) return;
+  if (!selectedId) return;
   setNodeStateStatus(selectedId, status);
-  // update button highlight
-  document.querySelectorAll('.status-btn').forEach(btn=>{
-    btn.classList.remove('active-btn');
-    if(btn.dataset.s===status) btn.classList.add('active-btn');
-  });
-  // update node visual
+  renderStatusButtons(status);
   refreshNodeVisual(selectedId);
   updateGlobalProgress();
 }
 
 function criterionClick(id, idx) {
   const checked = toggleCriterion(id, idx);
-  const n = nodeMap[id];
+  const node    = nodeMap[id];
 
-  // update UI
-  const items = document.querySelectorAll('.criterion');
-  items.forEach((el, i)=>{
+  document.querySelectorAll('.criterion').forEach((el, i) => {
     const isChecked = checked.includes(i);
     el.classList.toggle('checked', isChecked);
     el.querySelector('.crit-box').textContent = isChecked ? '✓' : '';
   });
 
-  updateProgress(id);
-
-  // auto-suggest done when all checked
-  if(n.criteria && checked.length===n.criteria.length) {
-    document.getElementById('panel-completion').classList.add('visible');
-  } else {
-    document.getElementById('panel-completion').classList.remove('visible');
-  }
+  renderCriteriaProgress(node, getNodeState(id));
+  dom.completion.classList.toggle('visible', checked.length === node.criteria.length);
 }
 
-function updateProgress(id) {
-  const n = nodeMap[id];
-  if(!n||!n.criteria||n.criteria.length===0) return;
-  const state = getNodeState(id);
-  const done = state.checked.length;
-  const total = n.criteria.length;
-  const pct = Math.round(done/total*100);
-  document.getElementById('criteria-bar-fill').style.width = pct+'%';
-  document.getElementById('criteria-count').textContent = `${done} / ${total} concluídos`;
+function renderCriteriaProgress(node, state) {
+  if (!node.criteria.length) return;
+  const done  = state.checked.length;
+  const total = node.criteria.length;
+  dom.critBarFill.style.width = `${Math.round(done / total * 100)}%`;
+  dom.critCount.textContent   = `${done} / ${total} concluídos`;
 }
 
 function refreshNodeVisual(id) {
-  const n = nodeMap[id];
-  if(!n) return;
+  const node = nodeMap[id];
+  if (!node) return;
   const status = getStatusFromState(id);
-  const color = PHASE_COLORS[String(n.phase)]||'#fff';
-  const grpEl = document.getElementById(`node-${id}`);
-  if(!grpEl) return;
-  const circ = grpEl.querySelector('circle');
-  // remove all status classes
-  circ.className.baseVal = circ.className.baseVal
-    .replace(/status-\w+/,'')
-    .replace(/selected/,'').trim();
+  const color  = phaseColor(node);
+  const circ   = nodeCircle(id);
+  if (!circ) return;
+
+  [...circ.classList]
+    .filter(c => c.startsWith('status-'))
+    .forEach(c => circ.classList.remove(c));
   circ.classList.add(`status-${status}`);
-  if(id===selectedId) circ.classList.add('selected');
-  circ.setAttribute('fill', status==='todo'?'#090f1c':color);
+  circ.classList.toggle('selected', id === selectedId);
+  circ.setAttribute('fill', status === STATUS.TODO ? '#090f1c' : color);
 }
 
 // ─── GLOBAL PROGRESS ─────────────────────────────────────────────────────────
 
 function updateGlobalProgress() {
-  const countable = nodes.filter(n=>n.id!=='start');
-  const state = loadState();
-  const done = countable.filter(n=>(state[n.id]?.status||'todo')==='done').length;
-  const pct = Math.round(done/countable.length*100);
-  document.getElementById('progress-bar').style.width = pct+'%';
+  const state      = loadState();
+  const countable  = nodes.filter(n => n.id !== 'start');
+  const doneCount  = countable.filter(n => (state[n.id]?.status || STATUS.TODO) === STATUS.DONE).length;
+  dom.globalBar.style.width = `${Math.round(doneCount / countable.length * 100)}%`;
 }
 
-// Initial render of node visuals from saved state
 function applyStoredState() {
   const state = loadState();
-  nodes.forEach(n => {
-    if(n.id==='start') return;
-    const ns = state[n.id];
-    if(ns?.status && ns.status!=='todo') refreshNodeVisual(n.id);
-  });
+  nodes
+    .filter(n => n.id !== 'start' && state[n.id]?.status && state[n.id].status !== STATUS.TODO)
+    .forEach(n => refreshNodeVisual(n.id));
   updateGlobalProgress();
 }
 applyStoredState();
+
+// ─── THEME ───────────────────────────────────────────────────────────────────
+
+function toggleTheme() {
+  const isLight = document.body.classList.toggle('light');
+  dom.themeBtn.textContent = isLight ? '🌙' : '☀';
+  localStorage.setItem(THEME_KEY, isLight ? 'light' : 'dark');
+}
+
+function initTheme() {
+  if (localStorage.getItem(THEME_KEY) === 'light') {
+    document.body.classList.add('light');
+    dom.themeBtn.textContent = '🌙';
+  }
+}
+initTheme();
 
 </script>
 </body>
