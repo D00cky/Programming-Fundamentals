@@ -74,18 +74,31 @@ nav:
     - Algoritmos de Ordenação: fase1-c/04-algoritmos-ordenacao/README.md
     - Árvores: fase1-c/05-arvores/README.md
     - Algoritmos Avançados: fase1-c/06-algoritmos-avancados/README.md
+    - 'Projetos':
+      - libft: fase1-c/projetos/libft/README.md
+      - ft_printf: fase1-c/projetos/ft_printf/README.md
+      - get_next_line: fase1-c/projetos/get_next_line/README.md
+      - push_swap: fase1-c/projetos/push_swap/README.md
+      - minitalk: fase1-c/projetos/minitalk/README.md
+      - pipex: fase1-c/projetos/pipex/README.md
   - 'Fase 2 — Sistemas':
     - Visão Geral: fase2-sistemas/README.md
     - Processos e Sinais: fase2-sistemas/01-processos-sinais/README.md
     - File Descriptors: fase2-sistemas/02-file-descriptors/README.md
     - Threads e Concorrência: fase2-sistemas/03-threads-concorrencia/README.md
     - Sockets: fase2-sistemas/04-sockets/README.md
+    - 'Projetos':
+      - philosophers: fase2-sistemas/projetos/philosophers/README.md
+      - minishell: fase2-sistemas/projetos/minishell/README.md
   - 'Fase 3 — C++':
     - Visão Geral: fase3-cpp/README.md
     - Transição C→C++: fase3-cpp/01-transicao/README.md
     - OOP: fase3-cpp/02-oop/README.md
     - STL: fase3-cpp/03-stl/README.md
     - Modern C++: fase3-cpp/04-modern-cpp/README.md
+    - 'Projetos':
+      - CPP Modules: fase3-cpp/projetos/cpp_modules/README.md
+      - CPP Containers: fase3-cpp/projetos/cpp_containers/README.md
   - 'Fase 4 — Java':
     - Visão Geral: fase4-java/README.md
     - Fundamentos: fase4-java/01-fundamentos/README.md
@@ -93,6 +106,10 @@ nav:
     - Concorrência: fase4-java/03-concorrencia/README.md
     - JVM: fase4-java/04-jvm/README.md
     - Design Patterns: fase4-java/05-design-patterns/README.md
+    - 'Projetos':
+      - Java DS: fase4-java/projetos/java_ds/README.md
+      - Java CRUD: fase4-java/projetos/java_crud/README.md
+      - Java Concurrent: fase4-java/projetos/java_conc/README.md
   - 'Fase 5 — Teoria CS':
     - Visão Geral: fase5-teoria-cs/README.md
     - Complexidade: fase5-teoria-cs/01-complexidade/README.md
