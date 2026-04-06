@@ -31,13 +31,13 @@ java Main
 
 ## Módulos
 
-| # | Módulo | Conceitos | Status |
-|---|--------|-----------|--------|
-| 01 | [Fundamentos](01-fundamentos/README.md) | tipos, OOP, interfaces, generics, exceções, enums, lambdas | ⬜ |
-| 02 | [Collections & Streams](02-collections-streams/README.md) | ArrayList, HashMap, TreeMap, Stream API, Optional | ⬜ |
-| 03 | [Concorrência](03-concorrencia/README.md) | Thread, Executor, CompletableFuture, synchronized, locks | ⬜ |
-| 04 | [JVM Internals](04-jvm/README.md) | bytecode, ClassLoader, GC, JIT, profiling, heap tuning | ⬜ |
-| 05 | [Design Patterns](05-design-patterns/README.md) | GoF 23 patterns: creational, structural, behavioral | ⬜ |
+| # | Módulo | Conceitos |
+|---|--------|-----------|
+| 01 | [Fundamentos](01-fundamentos/README.md) | tipos, OOP, interfaces, generics, exceções, enums, lambdas |
+| 02 | [Collections & Streams](02-collections-streams/README.md) | ArrayList, HashMap, TreeMap, Stream API, Optional |
+| 03 | [Concorrência](03-concorrencia/README.md) | Thread, Executor, CompletableFuture, synchronized, locks |
+| 04 | [JVM Internals](04-jvm/README.md) | bytecode, ClassLoader, GC, JIT, profiling, heap tuning |
+| 05 | [Design Patterns](05-design-patterns/README.md) | GoF 23 patterns: creational, structural, behavioral |
 
 ---
 

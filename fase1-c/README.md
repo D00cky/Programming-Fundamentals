@@ -18,14 +18,14 @@ Quando você terminar essa fase, vai entender:
 
 ## Módulos
 
-| # | Módulo | Conceitos | Status |
-|---|--------|-----------|--------|
-| 01 | [Fundamentos](01-fundamentos/README.md) | tipos, operadores, controle de fluxo, funções, arrays, strings, I/O | 🔵 atual |
-| 02 | [Ponteiros & Memória](02-ponteiros-memoria/README.md) | ponteiros, aritmética, malloc/free, stack vs heap, Valgrind | ⬜ |
-| 03 | [Estruturas de Dados](03-estruturas-dados/README.md) | linked list, stack, queue, hash table | ⬜ |
-| 04 | [Ordenação & Busca](04-algoritmos-ordenacao/README.md) | bubble, merge, quick, heap, radix, binary search | ⬜ |
-| 05 | [Árvores](05-arvores/README.md) | BST, AVL, heap, traversals | ⬜ |
-| 06 | [Algoritmos Avançados](06-algoritmos-avancados/README.md) | string matching, backtracking, recursão avançada | ⬜ |
+| # | Módulo | Conceitos |
+|---|--------|-----------|
+| 01 | [Fundamentos](01-fundamentos/README.md) | tipos, operadores, controle de fluxo, funções, arrays, strings, I/O |
+| 02 | [Ponteiros & Memória](02-ponteiros-memoria/README.md) | ponteiros, aritmética, malloc/free, stack vs heap, Valgrind |
+| 03 | [Estruturas de Dados](03-estruturas-dados/README.md) | linked list, stack, queue, hash table |
+| 04 | [Ordenação & Busca](04-algoritmos-ordenacao/README.md) | bubble, merge, quick, heap, radix, binary search |
+| 05 | [Árvores](05-arvores/README.md) | BST, AVL, heap, traversals |
+| 06 | [Algoritmos Avançados](06-algoritmos-avancados/README.md) | string matching, backtracking, recursão avançada |
 
 ---
 

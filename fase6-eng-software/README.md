@@ -14,13 +14,13 @@ Programadores que chegam aqui sabem codar. A diferença entre um programador e u
 
 ## Módulos
 
-| # | Módulo | Conceitos | Status |
-|---|--------|-----------|--------|
-| 01 | [SOLID](01-solid/README.md) | 5 princípios de design orientado a objetos | ⬜ |
-| 02 | [Clean Code](02-clean-code/README.md) | naming, funções, comentários, code smells, refactoring | ⬜ |
-| 03 | [Testes](03-testes/README.md) | TDD, unit/integration/e2e, mocks, cobertura | ⬜ |
-| 04 | [Arquitetura](04-arquitetura/README.md) | Clean Architecture, Hexagonal, DDD, microservices | ⬜ |
-| 05 | [CI/CD](05-cicd/README.md) | GitHub Actions, Docker, containers, deploy automatizado | ⬜ |
+| # | Módulo | Conceitos |
+|---|--------|-----------|
+| 01 | [SOLID](01-solid/README.md) | 5 princípios de design orientado a objetos |
+| 02 | [Clean Code](02-clean-code/README.md) | naming, funções, comentários, code smells, refactoring |
+| 03 | [Testes](03-testes/README.md) | TDD, unit/integration/e2e, mocks, cobertura |
+| 04 | [Arquitetura](04-arquitetura/README.md) | Clean Architecture, Hexagonal, DDD, microservices |
+| 05 | [CI/CD](05-cicd/README.md) | GitHub Actions, Docker, containers, deploy automatizado |
 
 ---
 

@@ -2,7 +2,7 @@
 
 Progressão: **C → C++ → Java** | Inspirado em: 42SP · Akita · IME-USP
 
-Site: https://d00cky.github.io/Programming-Fundamentals/galaxy.html
+Site: https://d00cky.github.io/Programming-Fundamentals/
 
 ---
 
@@ -18,6 +18,7 @@ mindmap
       Terminal Linux
       Git
       Compilação
+      IA no Aprendizado
     ("💻 Fase 1\nC")
       Fundamentos
       Ponteiros & Memória
@@ -70,6 +71,7 @@ mindmap
 | [04 — Terminal Linux](fase0-fundacao/04-terminal-linux/README.md) | Navegação, pipes, redirecionamento, scripts |
 | [05 — Git](fase0-fundacao/05-git/README.md) | Controle de versão, branches, merge, rebase |
 | [06 — Compilação](fase0-fundacao/06-compilacao/README.md) | Pré-processador → compilador → assembler → linker |
+| [07 — IA no Aprendizado](fase0-fundacao/07-ia-no-aprendizado/README.md) | Vibe Coding, one-shot prompt, mercado de juniors, qual LLM usar, segurança com agentes |
 
 ---
 

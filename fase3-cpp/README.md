@@ -16,12 +16,12 @@ Quando você escrever `std::vector<int>`, vai saber que por baixo há um array d
 
 ## Módulos
 
-| # | Módulo | Conceitos | Status |
-|---|--------|-----------|--------|
-| 01 | [Transição C → C++](01-transicao/README.md) | namespaces, refs, RAII, streams, classes básicas | ⬜ |
-| 02 | [OOP](02-oop/README.md) | herança, polimorfismo, virtual, interfaces, operator overloading | ⬜ |
-| 03 | [Templates & STL](03-stl/README.md) | templates, vector, map, set, iteradores, algorithms | ⬜ |
-| 04 | [Modern C++](04-modern-cpp/README.md) | C++11/14/17: smart pointers, lambdas, move semantics, auto | ⬜ |
+| # | Módulo | Conceitos |
+|---|--------|-----------|
+| 01 | [Transição C → C++](01-transicao/README.md) | namespaces, refs, RAII, streams, classes básicas |
+| 02 | [OOP](02-oop/README.md) | herança, polimorfismo, virtual, interfaces, operator overloading |
+| 03 | [Templates & STL](03-stl/README.md) | templates, vector, map, set, iteradores, algorithms |
+| 04 | [Modern C++](04-modern-cpp/README.md) | C++11/14/17: smart pointers, lambdas, move semantics, auto |
 
 ---
 

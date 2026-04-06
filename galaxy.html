@@ -463,6 +463,7 @@ const NODE_PATHS = {
   f0_term:'study/fase0-fundacao/04-terminal-linux/',
   f0_git:'study/fase0-fundacao/05-git/',
   f0_comp:'study/fase0-fundacao/06-compilacao/',
+  f0_ia:'study/fase0-fundacao/07-ia-no-aprendizado/',
   f1_fund:'study/fase1-c/01-fundamentos/',
   f1_ptr:'study/fase1-c/02-ponteiros-memoria/',
   f1_ds:'study/fase1-c/03-estruturas-dados/',
@@ -564,6 +565,16 @@ const nodes = [
       'Compilo com -Wall -Wextra -Werror e corrijo todos os warnings',
       'Entendo a diferença entre biblioteca estática (.a) e dinâmica (.so)',
       'Tenho Makefile funcional com targets: all, clean, fclean, re',
+    ]},
+  { id:'f0_ia', label:'IA no Aprendizado', phase:0, ring:1, size:10,
+    desc:'Como usar IA sem parar de pensar: limites do Vibe Coding, mito do one-shot prompt, segurança com agentes, quais LLMs funcionam para código.',
+    criteria:[
+      'Consigo explicar por que "velocidade de execução" deixou de ser diferencial em 2026',
+      'Entendo o que é Vibe Coding e por que one-shot prompt é um mito',
+      'Sei como IA afeta o mercado de juniors (compressão, não eliminação)',
+      'Consigo identificar quando um LLM está inventando APIs inexistentes',
+      'Aplico o fluxo correto: tento → trava → pergunto sobre o conceito → resolvo eu mesmo',
+      'Conheço ao menos uma prática de sandboxing para agentes de IA',
     ]},
 
   // ── Fase 1 módulos
@@ -978,9 +989,9 @@ nodes.forEach(n => nodeMap[n.id]=n);
 
 const links = [
   {s:'start',t:'f0_cpu'},{s:'start',t:'f0_num'},{s:'start',t:'f0_so'},
-  {s:'start',t:'f0_term'},{s:'start',t:'f0_git'},{s:'start',t:'f0_comp'},
+  {s:'start',t:'f0_term'},{s:'start',t:'f0_git'},{s:'start',t:'f0_comp'},{s:'start',t:'f0_ia'},
   {s:'f0_cpu',t:'f1_fund'},{s:'f0_num',t:'f1_fund'},{s:'f0_so',t:'f1_fund'},
-  {s:'f0_comp',t:'f1_fund'},{s:'f0_git',t:'f1_tools'},{s:'f0_term',t:'f1_tools'},
+  {s:'f0_comp',t:'f1_fund'},{s:'f0_ia',t:'f1_fund'},{s:'f0_git',t:'f1_tools'},{s:'f0_term',t:'f1_tools'},
   {s:'f1_fund',t:'f1_ptr'},{s:'f1_ptr',t:'f1_ds'},{s:'f1_ds',t:'f1_sort'},
   {s:'f1_ds',t:'f1_trees'},{s:'f1_trees',t:'f1_adv'},{s:'f1_sort',t:'f1_adv'},
   {s:'f1_tools',t:'f1_fund'},

@@ -16,13 +16,13 @@ Entender complexidade te impede de escolher O(n²) quando existe O(n log n). Ent
 
 ## Módulos
 
-| # | Módulo | Conceitos | Status |
-|---|--------|-----------|--------|
-| 01 | [Complexidade Computacional](01-complexidade/README.md) | P, NP, NP-completo, reduções, Big-O rigoroso, Master Theorem | ⬜ |
-| 02 | [Paradigmas Algorítmicos](02-paradigmas/README.md) | Divide & Conquer, Programação Dinâmica, Greedy, Backtracking | ⬜ |
-| 03 | [Teoria dos Grafos](03-grafos/README.md) | Dijkstra, Bellman-Ford, Floyd-Warshall, MST, SCC, fluxo | ⬜ |
-| 04 | [Compiladores](04-compiladores/README.md) | Léxico, parser LL/LR, AST, geração de código, otimização | ⬜ |
-| 05 | [Criptografia](05-criptografia/README.md) | Simétrica (AES), assimétrica (RSA/EC), hashes, TLS | ⬜ |
+| # | Módulo | Conceitos |
+|---|--------|-----------|
+| 01 | [Complexidade Computacional](01-complexidade/README.md) | P, NP, NP-completo, reduções, Big-O rigoroso, Master Theorem |
+| 02 | [Paradigmas Algorítmicos](02-paradigmas/README.md) | Divide & Conquer, Programação Dinâmica, Greedy, Backtracking |
+| 03 | [Teoria dos Grafos](03-grafos/README.md) | Dijkstra, Bellman-Ford, Floyd-Warshall, MST, SCC, fluxo |
+| 04 | [Compiladores](04-compiladores/README.md) | Léxico, parser LL/LR, AST, geração de código, otimização |
+| 05 | [Criptografia](05-criptografia/README.md) | Simétrica (AES), assimétrica (RSA/EC), hashes, TLS |
 
 ---
 

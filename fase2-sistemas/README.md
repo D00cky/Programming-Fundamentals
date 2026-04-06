@@ -16,12 +16,12 @@ Entender isso te diferencia de quem só usa frameworks.
 
 ## Módulos
 
-| # | Módulo | Conceitos | Status |
-|---|--------|-----------|--------|
-| 01 | [Processos & Sinais](01-processos-sinais/README.md) | fork, exec, wait, signals, kill | ⬜ |
-| 02 | [File Descriptors & I/O](02-file-descriptors/README.md) | open/read/write, dup2, pipe, redirecionamento | ⬜ |
-| 03 | [Threads & Concorrência](03-threads-concorrencia/README.md) | pthreads, mutex, semáforos, race conditions | ⬜ |
-| 04 | [Sockets & Redes](04-sockets/README.md) | TCP/IP, socket(), bind(), listen(), cliente/servidor | ⬜ |
+| # | Módulo | Conceitos |
+|---|--------|-----------|
+| 01 | [Processos & Sinais](01-processos-sinais/README.md) | fork, exec, wait, signals, kill |
+| 02 | [File Descriptors & I/O](02-file-descriptors/README.md) | open/read/write, dup2, pipe, redirecionamento |
+| 03 | [Threads & Concorrência](03-threads-concorrencia/README.md) | pthreads, mutex, semáforos, race conditions |
+| 04 | [Sockets & Redes](04-sockets/README.md) | TCP/IP, socket(), bind(), listen(), cliente/servidor |
 
 ---
 
