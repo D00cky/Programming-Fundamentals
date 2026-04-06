@@ -14,6 +14,7 @@ Antes de tocar em C, você precisa entender a máquina. Não em nível de engenh
 | 04 | [Terminal Linux](04-terminal-linux/README.md) | Comandos essenciais, navegação, pipes, redirecionamento |
 | 05 | [Git](05-git/README.md) | Controle de versão como hábito desde o primeiro dia |
 | 06 | [Compilação](06-compilacao/README.md) | O que acontece de `.c` até executável |
+| 07 | [IA no Aprendizado](07-ia-no-aprendizado/README.md) | Como usar IA sem parar de pensar, limites do Vibe Coding, segurança com agentes |
 
 ## Por que essa fase existe?
 

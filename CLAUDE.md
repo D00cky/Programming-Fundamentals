@@ -11,7 +11,7 @@ Ver `roadmap.md` para o mapa completo de conteúdos e ordem de estudo.
 ## Estrutura
 
 ```
-fase0-fundacao/          # Como a máquina funciona, terminal, git, compilação
+fase0-fundacao/          # Como a máquina funciona, terminal, git, compilação, IA no aprendizado
 fase1-c/                 # Fundamentos C, ponteiros, estruturas de dados, algoritmos
   ├── 01-fundamentos/
   ├── 02-ponteiros-memoria/
@@ -67,16 +67,24 @@ Ao adicionar novos módulos ou editar READMEs existentes, manter este padrão.
 
 O repositório serve como site estático via GitHub Pages usando MkDocs Material.
 
-- **Config:** `mkdocs.yml` na raiz — `docs_dir: '.'` (sem mover arquivos)
+- **Config:** `mkdocs.yml` na raiz — `docs_dir: 'content'` (diretório com symlinks para as pastas reais)
 - **Tema:** Material slate, primary black, accent deep orange, font JetBrains Mono
 - **CSS custom:** `docs/css/extra.css` — visual Akita (fundo `#0f0f0f`, acentos amber `#ffb300`)
-- **Build:** `mkdocs build --strict` — `--strict` pega links quebrados antes do deploy
-- **CI/CD:** `.github/workflows/pages.yml` — jobs separados `build` + `deploy`
+- **Build:** `mkdocs build` (CI usa `--strict` via workflow)
+- **CI/CD:** `.github/workflows/pages.yml` — symlinks `content/` → pastas reais, depois `build` + `deploy`
 - **URL prod:** `https://d00cky.github.io/Programming-Fundamentals/`
-- **Local:** `pip install mkdocs-material==9.5.30 && mkdocs serve`
+- **Homepage:** `galaxy.html` é copiado para `site/index.html` (sobrescreve o index do MkDocs)
 - **Mermaid:** funciona nativamente (client-side) com `pymdownx.superfences`
-- **galaxy.html:** copiado para `site/` automaticamente, acessível via URL direta
-- **Push pendente:** requer `gh auth login` antes do primeiro push
+
+**Dev local:**
+```bash
+pip install mkdocs-material==9.5.30
+mkdir -p content
+for item in README.md docs fase0-fundacao fase1-c fase2-sistemas fase3-cpp fase4-java fase5-teoria-cs fase6-eng-software; do
+  [ -e "$item" ] && ln -sf "$(pwd)/$item" "content/$item"
+done
+mkdocs serve
+```
 
 Não mover READMEs de lugar — o nav do `mkdocs.yml` aponta para os paths existentes.
 
